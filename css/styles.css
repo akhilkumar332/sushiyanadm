@@ -1,0 +1,233 @@
+body.navigation {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #000;
+}
+
+body.artikelliste {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #000;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+header {
+    width: 100%;
+    background-color: #000;
+    color: white;
+    padding: 10px 0;
+    text-align: center;
+}
+
+h1 {
+    color:#6A2477;
+    font-size: clamp(30px, 4vw, 40px);
+}
+
+span.anzahl {
+    color:white;
+    font-size: clamp(20px, 4vw, 26px);
+}
+h2 {
+    font-size: clamp(18px, 4vw, 22px);
+}
+
+.logo {
+    max-width: 50%; /* Verkleinert das Bild auf 50% der Containerbreite */
+    height: auto;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    padding: 20px;
+    width: 90%;
+    max-width: 600px;
+    padding-bottom: 60px; /* Fügt Platz für den Footer hinzu */
+    position: relative; /* Stellt sicher, dass der Text relativ zum Grid-Container positioniert ist */
+}
+
+.grid-item {
+    background-color: #000;
+    border: 1px solid #6A2477;
+    border-radius: 8px;
+    text-align: center;
+    overflow: hidden;
+    position: relative; /* Stellt sicher, dass der Text relativ zum Grid-Item positioniert ist */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+}
+
+.grid-item img {
+    width: 100%;
+
+    object-fit: cover; 
+}
+
+.grid-item .text {
+    position: absolute; /* Positioniert den Text relativ zum Grid-Item */
+    bottom: 0; /* Platzierung am unteren Rand */
+    left: 0;
+    width: 100%;
+    color: white;
+    padding: 10px;
+    box-sizing: border-box;
+    font-size: 1em;
+    background-color: rgba(0, 0, 0, 0.5); /* Hintergrundfarbe mit Transparenz für den Text */
+}
+
+.grid-item:hover {
+    transform: scale(1.05);
+}
+
+.content {
+    width: 90%;
+    max-width: 600px;
+    background-color: #000;
+    color:#fff;
+    border: 1px;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin: 20px;
+}
+
+.dish {
+    cursor: pointer;
+    padding: 10px; /* Hier das Padding anpassen */
+    margin: 10px 0; /* Hier den Margin anpassen */
+    border-bottom: 1px solid #444;
+}
+
+.dish h3 {
+    margin: 0;
+    font-size: clamp(12px, 3vw, 13px); /* Standardgröße auf 13px festlegen, aber bis 3vw skalieren */
+    color: white;
+    display: flex;
+    align-items: center;
+    white-space: nowrap; /* Text nicht umbrechen */
+    overflow: hidden; /* Überlauf verstecken */
+    text-overflow: ellipsis; /* Mit ... am Ende abschneiden, wenn der Text zu lang ist */
+}
+
+@media only screen and (max-width: 600px) {
+    .dish h3 {
+        font-size: 12px; /* Bei Umbrüchen auf 12px reduzieren */
+    }
+}
+
+.description {
+    display: none;
+    margin: 10px 0 0 0;
+}
+.description p {
+    font-size: 16px;
+}
+
+.mini-logo {
+    width: auto;
+    height: 1em; /* Hier können Sie die Höhe des Bildes anpassen */
+    margin:3px;
+}
+
+.info-logo {
+    width: auto;
+    height: 1em; /* Hier können Sie die Höhe des Bildes anpassen */
+    margin:4px;
+}
+
+.dropdown {
+    width: auto;
+    height: 0.4em; /* Hier können Sie die Höhe des Bildes anpassen */
+    margin:3px;
+    margin-right: 5px;
+
+}
+
+.price {
+    margin-left: auto;
+    color: white;
+    white-space: nowrap;
+}
+
+.dishname {
+    max-width: 60%;
+    white-space: normal;
+}
+
+.unbestellbar {
+    max-width: 60%;
+    white-space: normal;
+    text-decoration-line: line-through;
+    text-decoration-thickness: 3px;
+    text-decoration-color: #6A2477;
+}
+
+footer {
+    width: 100%;
+    text-align: center;
+    padding: 10px 0;
+    background-color: #333;
+    color: white;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+
+
+/* Modal */
+.modal { 
+    display: none;
+    position: fixed; 
+    z-index: 1; 
+    left: 0;
+    top: 0;
+    width: 100%; 
+    height: 100%; 
+    overflow: auto; 
+    background-color: black;
+    justify-content: center; 
+    align-items: center; 
+    margin: auto;
+    
+}
+
+/* Modal Content */
+.modal-content {
+    background-color: black;
+    margin: 15% auto; 
+    padding: 20px;
+    border: 1px solid #6A2477;
+    width: 80%; 
+    color: white;
+}
+
+/* Close Button */
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}

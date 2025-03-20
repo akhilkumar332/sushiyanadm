@@ -1,0 +1,239 @@
+body.navigation {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #000;
+}
+
+body.artikelliste {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #000;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+header {
+    width: 100%;
+    background-color: #000;
+    color: white;
+    padding: 10px 0;
+    text-align: center;
+}
+
+h1 {
+    color: #6A2477;
+    font-size: clamp(30px, 4vw, 40px);
+}
+
+span.anzahl {
+    color: white;
+    font-size: clamp(20px, 4vw, 26px);
+}
+
+h2 {
+    font-size: clamp(18px, 4vw, 22px);
+    text-align: center; /* Center the menu name */
+}
+
+.logo {
+    max-width: 50%; /* Verkleinert das Bild auf 50% der Containerbreite */
+    height: auto;
+}
+
+/* Scoped styles for menu items */
+body.artikelliste .grid-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Two columns */
+    gap: 20px; /* Space between grid items */
+    padding: 20px;
+    width: 90%;
+    max-width: 800px;
+}
+
+body.artikelliste .grid-item {
+    background-color: #1a1a1a; /* Dark background for items */
+    border: 1px solid #6A2477; /* Border color */
+    border-radius: 8px; /* Rounded corners */
+    text-align: center; /* Center text */
+    overflow: hidden; /* Hide overflow */
+    position: relative; /* Position relative for absolute elements */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Shadow effect */
+    transition: transform 0.2s; /* Smooth scaling on hover */
+    padding-bottom: 60px; /* Space for buttons at the bottom */
+}
+
+body.artikelliste .grid-item:hover {
+    transform: scale(1.05); /* Scale effect on hover */
+}
+
+body.artikelliste .dish-image {
+    width: 100%; /* Full width for images */
+    height: auto; /* Maintain aspect ratio */
+}
+
+body.artikelliste .info-button {
+    position: absolute; /* Positioning for the info button */
+    top: 10px; /* Distance from the top */
+    right: 10px; /* Distance from the right */
+    background-color: #6A2477; /* Button background color */
+    color: white; /* Text color */
+    border: none; /* No border */
+    border-radius: 50%; /* Circular button */
+    width: 30px; /* Button width */
+    height: 30px; /* Button height */
+    cursor: pointer; /* Pointer cursor on hover */
+    display: flex; /* Flexbox for centering */
+    align-items: center; /* Center vertically */
+    justify-content: center; /* Center horizontally */
+}
+
+body.artikelliste .ingredients-button {
+    position: absolute; /* Positioning for the ingredients button */
+    top: 42px; /* Distance from the top */
+    right: 10px; /* Distance from the right */
+    background-color: #6A2477; /* Button background color */
+    color: white; /* Text color */
+    border: none; /* No border */
+    border-radius: 5px; /* Rounded corners */
+    width: 30px; /* Button width */
+    height: 30px; /* Button height */
+    cursor: pointer; /* Pointer cursor on hover */
+    display: flex; /* Flexbox for centering */
+    align-items: center; /* Center vertically */
+    justify-content: center; /* Center horizontally */
+}
+
+body.artikelliste .cart-button {
+    position: absolute; /* Positioning for the cart button */
+    top: 75px; /* Distance from the top */
+    right: 10px; /* Distance from the right */
+    background-color: #6A2477; /* Button background color */
+    color: white; /* Text color */
+    border: none; /* No border */
+    border-radius: 5px; /* Rounded corners */
+    width: 30px; /* Button width */
+    height: 30px; /* Button height */
+    cursor: pointer; /* Pointer cursor on hover */
+    display: flex; /* Flexbox for centering */
+    align-items: center; /* Center vertically */
+    justify-content: center; /* Center horizontally */
+}
+
+body.artikelliste .dish-details {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centers content */
+    text-align: center;
+}
+
+body.artikelliste .mini-logo-container {
+    display: flex; /* Aligns logos in a row */
+    gap: 5px; /* Adds spacing between logos */
+    justify-content: center; /* Centers them */
+    margin-top: 5px; /* Adds some space above logos */
+}
+
+body.artikelliste .mini-logo {
+    width: 20px; /* Set fixed width */
+    height: 20px; /* Set fixed height */
+    object-fit: contain; /* Ensures logos keep their aspect ratio */
+}
+
+body.artikelliste .description {
+    display: none;
+    font-size: 14px;
+    color: #555;
+    margin-top: 5px;
+    padding: 0 10px;
+}
+
+body.artikelliste .dishname {
+    cursor: pointer;
+    font-weight: bold;
+}
+
+body.artikelliste .price-button {
+    background-color: #6A2477; /* Button background color */
+    color: white; /* Text color */
+    border: none; /* No border */
+    border-radius: 5px; /* Rounded corners */
+    padding: 10px 15px; /* Padding for button */
+    cursor: pointer; /* Pointer cursor on hover */
+    font-size: clamp(14px, 2.5vw, 18px); /* Responsive font size */
+    position: absolute; /* Positioning for fixed placement */
+    bottom: 10px; /* Distance from the bottom */
+    left: 50%; /* Center horizontally */
+    transform: translateX(-50%); /* Adjust for centering */
+    width: 80%; /* Width for alignment */
+}
+
+body.artikelliste .price-button:hover {
+    background-color: #5a1f6a; /* Darker shade on hover */
+}
+
+body.artikelliste .modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Fixed position */
+    z-index: 1; /* On top of other elements */
+    left: 0; /* Align left */
+    top: 0; /* Align top */
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Scroll if needed */
+    background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent background */
+    justify-content: center; /* Center modal content */
+    align-items: center; /* Center modal content */
+}
+
+body.artikelliste .modal-content {
+    background-color: black; /* Modal background color */
+    margin: 15% auto; /* Center modal */
+    padding: 20px; /* Padding inside modal */
+    border: 1px solid #6A2477; /* Border color */
+    width: 80%; /* Width of modal */
+    color: white; /* Text color */
+}
+
+body.artikelliste .close {
+    color: #aaa; /* Close button color */
+    float: right; /* Float to the right */
+    font-size: 28px; /* Font size */
+    font-weight: bold; /* Bold text */
+}
+
+body.artikelliste .close:hover,
+body.artikelliste .close:focus {
+    color: black; /* Color on hover */
+    text-decoration: none; /* No underline */
+    cursor: pointer; /* Pointer cursor */
+}
+
+body.artikelliste .no-items {
+    color: white; /* Text color for no items */
+    text-align: center; /* Center text */
+    margin-top: 20px; /* Margin above */
+    font-size: 18px; /* Font size */
+}
+
+footer {
+    width: 100%;
+    text-align: center;
+    padding: 10px 0;
+    background-color: #333;
+    color: white;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
