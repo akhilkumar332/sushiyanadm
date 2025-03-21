@@ -45,51 +45,51 @@ if (!isset($_SESSION['cart'])) {
     </header>
 
     <div class="grid-container">
-        <a href="warmekueche/nudeln.php" class="grid-item">
+        <a href="warmekueche/menu.php?category=nudeln" class="grid-item">
             <img src="/bilder/warmekueche/gebratene_nudeln.jpg" alt="Gebratene Nudeln">
             <div class="text">Gebratene Nudeln</div>
         </a>
-        <a href="warmekueche/reis.php" class="grid-item">
+        <a href="warmekueche/menu.php?category=reis" class="grid-item">
             <img src="/bilder/warmekueche/gebratener_reis.jpg" alt="Gebratener Reis">
             <div class="text">Gebratener Reis</div>
         </a>
-        <a href="warmekueche/gemuese.php" class="grid-item">
+        <a href="warmekueche/menu.php?category=gemuese" class="grid-item">
             <img src="/bilder/warmekueche/gebratenes_gemuese.jpg" alt="Gebratenes Gemüse">
             <div class="text">Gebratenes Gemüse</div>
         </a>
-        <a href="warmekueche/yellowcurry.php" class="grid-item">
+        <a href="warmekueche/menu.php?category=yellowcurry" class="grid-item">
             <img src="/bilder/warmekueche/yellow_curry.jpg" alt="Yellow Curry">
             <div class="text">Yellow Curry</div>
         </a>
-        <a href="warmekueche/mangochutney.php" class="grid-item">
+        <a href="warmekueche/menu.php?category=mangochutney" class="grid-item">
             <img src="/bilder/warmekueche/mango_chutney.jpg" alt="Mango Chutney">
             <div class="text">Mango Chutney</div>
         </a>
-        <a href="warmekueche/erdnussgericht.php" class="grid-item">
+        <a href="warmekueche/menu.php?category=erdnussgericht" class="grid-item">
             <img src="/bilder/warmekueche/erdnussgericht.jpg" alt="Erdnussgericht">
             <div class="text">Erdnussgericht</div>
         </a>
-        <a href="warmekueche/chopsuey.php" class="grid-item">
+        <a href="warmekueche/menu.php?category=chopsuey" class="grid-item">
             <img src="/bilder/warmekueche/chop_suey.jpg" alt="Chop Suey">
             <div class="text">Chop Suey</div>
         </a>
-        <a href="warmekueche/redcurry.php" class="grid-item">
+        <a href="warmekueche/menu.php?category=redcurry" class="grid-item">
             <img src="/bilder/warmekueche/red_curry.jpg" alt="Red Curry">
             <div class="text">Red Curry</div>
         </a>
-        <a href="warmekueche/suesssauersauce.php" class="grid-item">
+        <a href="warmekueche/menu.php?category=suesssauersauce" class="grid-item">
             <img src="/bilder/warmekueche/suess_sauer_sauce.jpg" alt="Süss-Sauer Sauce">
             <div class="text">Süss-Sauer Sauce</div>
         </a>
-        <a href="warmekueche/extras.php" class="grid-item">
+        <a href="warmekueche/menu.php?category=extras" class="grid-item">
             <img src="/bilder/warmekueche/Extras.jpg" alt="Extras">
             <div class="text">Extras</div>
         </a>
     </div>
     
-<?php include_once './config/floating_bar.php'; ?>
-<?php include_once './config/footer.php'; ?>
-<script>
+    <?php include_once './config/floating_bar.php'; ?>
+    <?php include_once './config/footer.php'; ?>
+    <script>
         function updateLocalCart() {
             const cart = <?php echo json_encode($_SESSION['cart']); ?>;
             localStorage.setItem('cart', JSON.stringify(cart));

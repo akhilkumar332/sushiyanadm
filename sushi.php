@@ -28,6 +28,7 @@ if (!isset($_SESSION['cart'])) {
     </script>";
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -44,44 +45,43 @@ if (!isset($_SESSION['cart'])) {
     </header>
 
     <div class="grid-container">
-        <a href="sushi/menues.php" class="grid-item">
+        <a href="sushi/menu.php?category=menues" class="grid-item">
             <img src="/bilder/sushi/Ebi_Menu.jpg" alt="Menüs">
             <div class="text">Menüs</div>
         </a>
-        <a href="sushi/sashimi.php" class="grid-item">
+        <a href="sushi/menu.php?category=sashimi" class="grid-item">
             <img src="/bilder/sushi/Sashimi_Sake.jpg" alt="Sashimi">
             <div class="text">Sashimi</div>
         </a>
-        <a href="sushi/makis.php" class="grid-item">
+        <a href="sushi/menu.php?category=makis" class="grid-item">
             <img src="/bilder/sushi/maki.jpg" alt="Makis">
             <div class="text">Makis</div>
         </a>
-        <a href="sushi/iorolls.php" class="grid-item">
+        <a href="sushi/menu.php?category=insideoutrolls" class="grid-item">
             <img src="/bilder/sushi/ioroll.jpg" alt="Inside Out Rolls">
             <div class="text">Inside Out Rolls</div>
         </a>
-        <a href="sushi/miniyanarolls.php" class="grid-item">
+        <a href="sushi/menu.php?category=miniyanarolls" class="grid-item">
             <img src="/bilder/sushi/miniyanaroll.jpg" alt="Mini Yana Rolls">
             <div class="text">Mini Yana Rolls</div>
         </a>
-        <a href="sushi/yanarolls.php" class="grid-item">
+        <a href="sushi/menu.php?category=yanarolls" class="grid-item">
             <img src="/bilder/sushi/yanaroll.jpg" alt="Yana Rolls">
             <div class="text">Yana Rolls</div>
         </a>
-        <a href="sushi/nigiris.php" class="grid-item">
+        <a href="sushi/menu.php?category=nigiris" class="grid-item">
             <img src="/bilder/sushi/Nigiris_Head.jpg" alt="Nigiris">
             <div class="text">Nigiris</div>
         </a>
-        <a href="sushi/specialRolls.php" class="grid-item">
+        <a href="sushi/menu.php?category=specialrolls" class="grid-item">
             <img src="/bilder/sushi/special.jpg" alt="Special Rolls">
             <div class="text">Special Rolls</div>
         </a>
-        <a href="sushi/temaki.php" class="grid-item">
+        <a href="sushi/menu.php?category=temaki" class="grid-item">
             <img src="/bilder/sushi/temaki.jpg" alt="Temaki">
             <div class="text">Temaki</div>
         </a>
-        <!-- Placeholder for vegetarisch until clarified -->
-        <a href="sushi/makis.php" class="grid-item">
+        <a href="sushi/menu.php?category=vegetarisch" class="grid-item">
             <img src="/bilder/sushi/Maki_Wakame.jpg" alt="Vegetarisch">
             <div class="text">Vegetarisch</div>
         </a>

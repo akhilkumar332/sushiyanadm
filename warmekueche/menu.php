@@ -21,9 +21,36 @@ if (!isset($_SESSION['cart'])) {
     </script>";
 }
 
+// Define allowed categories and their display titles
+$categories = [
+    'chopsuey' => 'Chop Suey',
+    'erdnussgericht' => 'Erdnussgericht',
+    'extras' => 'Extras',
+    'gemuese' => 'Gemüse',
+    'mangochutney' => 'Mango Chutney',
+    'nudeln' => 'Nudeln',
+    'redcurry' => 'Rotes Curry',
+    'reis' => 'Reis',
+    'suesssauersauce' => 'Süß Sauer Sauce',
+    'yellowcurry' => 'Gelbes Curry',
+];
+
+// Get the category from the URL parameter
+$category = isset($_GET['category']) ? strtolower($_GET['category']) : '';
+
+// Validate the category
+if (!array_key_exists($category, $categories)) {
+    // Redirect to a default category or show an error
+    header('Location: ../index.php');
+    exit;
+}
+
+// Set the table and title
+$table = $category;
+$title = $categories[$category];
+
 // Use $filiale from config.php (e.g., "neukoelln")
 global $filiale;
-$table = 'gyoza'; // Corresponding table name
 
 // Database connection
 $conn = new mysqli($servername, $username, $password, $dbname, $port);
@@ -31,8 +58,8 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Fetch bowls items
-$sql = "SELECT * FROM gyoza ORDER BY artikelnummer ASC";
+// Fetch items for the given category
+$sql = "SELECT * FROM " . $table . " ORDER BY artikelnummer ASC";
 $result = $conn->query($sql);
 ?>
 
@@ -41,7 +68,7 @@ $result = $conn->query($sql);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>Digitale Speisekarte - Gyoza</title>
+    <title>Digitale Speisekarte - <?php echo htmlspecialchars($title); ?></title>
     <link rel="stylesheet" href="../css/styles.css">
     <script src="../skripte/skripte.js"></script>
 </head>
@@ -51,12 +78,11 @@ $result = $conn->query($sql);
     </header>
 
     <div class="content">
-        <h1>Gyoza</h1>
+        <h1><?php echo htmlspecialchars($title); ?></h1>
         <?php include '../config/artikelliste.php'; ?>
     </div>
 
     <?php include_once '../config/floating_bar.php'; ?>
-
     <?php include_once '../config/footer.php'; ?>
 
     <?php $conn->close(); ?>
