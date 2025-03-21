@@ -102,11 +102,11 @@
 <body>
     <footer>
         <div class="footer-content">
-            <p class="footer-text">Sushi Yana © All Rights Reserved. 2025</p>
             <div class="footer-links">
                 <a href="/impressum.php">Impressum</a>
                 <a href="/datenschutz.php">Datenschutz</a>
             </div>
+            <p class="footer-text">Sushi Yana © All Rights Reserved. 2025</p>
         </div>
     </footer>
 </body>

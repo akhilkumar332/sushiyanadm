@@ -73,6 +73,7 @@ $timestamp = date('d.m.Y H:i:s'); // e.g., "20.03.2025 14:30:45"
                 <table class="bill-table">
                     <thead>
                         <tr>
+                            <th>Nummer</th>
                             <th>Artikel</th>
                             <th class="quantity">Menge</th>
                             <th class="price">Einzelpreis</th>
@@ -89,7 +90,7 @@ $timestamp = date('d.m.Y H:i:s'); // e.g., "20.03.2025 14:30:45"
                             }
                             list($table, $item_id) = explode(':', $item_key);
                             if (!in_array($table, $tables)) continue;
-                            $stmt = $conn->prepare("SELECT artikelname, preis FROM " . mysqli_real_escape_string($conn, $table) . " WHERE id = ?");
+                            $stmt = $conn->prepare("SELECT artikelnummer, artikelname, preis FROM " . mysqli_real_escape_string($conn, $table) . " WHERE id = ?");
                             $stmt->bind_param("i", $item_id);
                             $stmt->execute();
                             $result = $stmt->get_result();
@@ -99,6 +100,7 @@ $timestamp = date('d.m.Y H:i:s'); // e.g., "20.03.2025 14:30:45"
                             $total += $subtotal;
                             ?>
                             <tr>
+                                <td><?php echo htmlspecialchars($item['artikelnummer']); ?></td>
                                 <td><?php echo htmlspecialchars($item['artikelname']); ?></td>
                                 <td class="quantity"><?php echo $quantity; ?></td>
                                 <td class="price"><?php echo number_format($price, 2); ?> €</td>
