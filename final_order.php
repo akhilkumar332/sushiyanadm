@@ -124,8 +124,8 @@ $timestamp = date('d.m.Y H:i:s'); // e.g., "20.03.2025 14:30:45"
     </main>
     <script>
         $(document).ready(function() {
-            const inactivityTimeout = 5 * 60 * 1000; // 5 minutes
-            const timerThreshold = 4 * 60 * 1000; // 4 minutes
+            const inactivityTimeout = 2 * 60 * 1000; // 5 minutes
+            const timerThreshold = 1 * 60 * 1000; // 4 minutes
             let timeoutId;
 
             function resetTimer() {

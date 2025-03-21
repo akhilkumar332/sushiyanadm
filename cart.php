@@ -100,9 +100,10 @@ $tables = [
     <title>Digitale Speisekarte - Warenkorb</title>
     <link rel="stylesheet" href="./css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <style>
-        /* Existing styles unchanged */
         .cart-wrapper { max-width: 1200px; margin: 20px auto; padding: 0 15px; font-family: 'Arial', sans-serif; }
         .cart-header { text-align: center; padding: 20px 0; color: #fff !important; background: #6A2477; border-radius: 10px 10px 0 0; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); }
         .cart-header h1 { margin: 0; font-size: 28px; font-weight: 600; letter-spacing: 1px; color: #fff !important; }
@@ -145,6 +146,22 @@ $tables = [
         @media (min-width: 769px) {
             .cart-item-details h3 { font-size: 18px; }
             .cart-item-details p { font-size: 15px; }
+        }
+        .toastify {
+            background: #6A2477 !important;
+            color: #fff !important;
+            border-radius: 8px !important;
+            padding: 12px 20px !important;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3) !important;
+            font-family: 'Arial', sans-serif !important;
+            font-size: 16px !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 10px !important;
+            max-width: 300px !important;
+        }
+        .toastify i {
+            font-size: 18px !important;
         }
     </style>
 </head>
@@ -221,6 +238,20 @@ $tables = [
     </main>
     <script>
         $(document).ready(function() {
+            // Reusable toast function
+            function showRemoveToast() {
+                Toastify({
+                    text: '<i class="fas fa-trash"></i> Item entfernt',
+                    duration: 3000,
+                    gravity: "top",
+                    position: "right",
+                    escapeMarkup: false,
+                    style: {
+                        background: "#6A2477",
+                    }
+                }).showToast();
+            }
+
             function updateCart(itemKey, quantity, element) {
                 $.ajax({
                     url: 'cart.php',
@@ -239,6 +270,7 @@ $tables = [
                                     $('.cart-items').html('<div class="cart-empty"><p>Ihr Warenkorb ist leer.</p></div>');
                                     $('.cart-buttons').remove();
                                 }
+                                showRemoveToast(); // Trigger toast on removal
                             } else {
                                 $item.find('.quantity').text(newSubtotal.toFixed(2).replace('.', ',') + ' €');
                                 updateTotal();
@@ -265,6 +297,7 @@ $tables = [
                                 $('.cart-items').html('<div class="cart-empty"><p>Ihr Warenkorb ist leer.</p></div>');
                                 $('.cart-buttons').remove();
                             }
+                            showRemoveToast(); // Trigger toast on removal
                         } else {
                             console.error('Remove failed:', response.error);
                         }
@@ -294,15 +327,16 @@ $tables = [
                 const $input = $(this).siblings('.quantity-input');
                 const itemKey = $(this).closest('.cart-item').data('item-key');
                 let quantity = parseInt($input.val()) - 1;
-                if (quantity < 1) quantity = 0;
+                if (quantity < 0) quantity = 0; // Ensure quantity doesn’t go below 0
                 $input.val(quantity);
                 updateCart(itemKey, quantity, $(this));
             });
 
             $('.quantity-input').on('change', function() {
                 const itemKey = $(this).closest('.cart-item').data('item-key');
-                const quantity = parseInt($(this).val());
-                if (quantity < 1) $(this).val(1);
+                let quantity = parseInt($(this).val());
+                if (isNaN(quantity) || quantity < 0) quantity = 0; // Handle invalid/negative manual input
+                $(this).val(quantity);
                 updateCart(itemKey, quantity, $(this));
             });
 
