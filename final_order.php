@@ -118,7 +118,7 @@ $timestamp = date('d.m.Y H:i:s'); // e.g., "20.03.2025 14:30:45"
                 </div>
             </div>
             <div class="bill-buttons">
-                <button class="btn" id="back-to-home">Zurück zur Startseite</button>
+                <button class="btn" id="back-to-home">Löschen & Zurückgeben</button>
             </div>
         </div>
     </main>
