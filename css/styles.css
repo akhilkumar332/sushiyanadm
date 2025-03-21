@@ -19,6 +19,26 @@ body.artikelliste {
     align-items: center;
 }
 
+.floating-bar {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000; /* Ensures it’s above other content */
+    background-color: #333; /* Dark background for visibility */
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.cart-icon {
+    color: white; /* White text for contrast */
+    text-decoration: none;
+    font-size: 16px;
+}
+
+.cart-icon span {
+    font-weight: bold;
+}
+
 header {
     width: 100%;
     background-color: #000;
@@ -43,6 +63,11 @@ h2 {
 .logo {
     max-width: 50%; /* Verkleinert das Bild auf 50% der Containerbreite */
     height: auto;
+}
+
+.page-title {
+    color: white;
+    text-align: center;
 }
 
 .grid-container {
@@ -206,6 +231,7 @@ a {
     margin: auto;
     
 }
+
 
 /* Modal Content */
 .modal-content {
