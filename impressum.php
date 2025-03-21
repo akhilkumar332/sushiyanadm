@@ -74,9 +74,7 @@
         <p>Unsere Franchisezentrale erreichen Sie über die Mailadresse <a href="mailto:buero@sushi-yana.de" class="email-link">buero@sushi-yana.de</a>. Bitte nutzen Sie diese ausschließlich für allgemeine Anfragen.</p>
     </div>
 
-    <footer>
-       <a href="impressum.html">Impressum</a> - <a href="datenschutz.html">Datenschutz</a>
-    </footer>
+    <?php include_once './config/footer.php'; ?>
 </body>
 </html>
 

@@ -89,6 +89,7 @@ if (!isset($_SESSION['cart'])) {
         <span>Cart (<span id="cart-count"><?php echo array_sum($_SESSION['cart']); ?></span>)</span>
     </a>
 </div>
+<?php include_once './config/footer.php'; ?>
 <script>
         function updateLocalCart() {
             const cart = <?php echo json_encode($_SESSION['cart']); ?>;

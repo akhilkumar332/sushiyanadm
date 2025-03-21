@@ -61,9 +61,7 @@ $result = $conn->query($sql);
         </a>
     </div>
 
-    <footer>
-        <a href="../index.php">Zurück zur Startseite</a> - <a href="../impressum.html">Impressum</a> - <a href="../datenschutz.html">Datenschutz</a>
-    </footer>
+    <?php include_once '../config/footer.php'; ?>
 
     <?php $conn->close(); ?>
 </body>

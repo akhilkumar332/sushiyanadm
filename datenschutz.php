@@ -216,9 +216,7 @@
         Europ&auml;ischen Union oder eines Mitgliedstaats verarbeitet werden.</p>
     </div>
 
-    <footer>
-        <a href="impressum.html">Impressum</a> - <a href="datenschutz.html">Datenschutz</a>
-    </footer>
+    <?php include_once './config/footer.php'; ?>
     
 </body>
 </html>
