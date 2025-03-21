@@ -1,8 +1,39 @@
+<?php
+session_start();
+if (!isset($_SESSION['cart'])) {
+    $_SESSION['cart'] = [];
+    echo "<script>
+        if (localStorage.getItem('cart')) {
+            fetch('restore_cart.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: 'cart=' + encodeURIComponent(localStorage.getItem('cart'))
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Network response was not ok: ' + response.status);
+                return response.text();
+            })
+            .then(text => {
+                console.log('Raw response:', text);
+                const cleanedText = text.replace(/%+$/, '').trim();
+                return JSON.parse(cleanedText);
+            })
+            .then(data => {
+                console.log('Cart restored:', data);
+                updateCartCount();
+            })
+            .catch(error => console.error('Error restoring cart:', error));
+        }
+    </script>";
+}
+?>
 <!DOCTYPE html>
 <html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <!-- Add Font Awesome CDN -->
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <title>Impressum</title>
     <style>
         body {
@@ -215,7 +246,7 @@
         nat&uuml;rlichen oder juristischen Person oder aus Gr&uuml;nden eines wichtigen &ouml;ffentlichen Interesses der
         Europ&auml;ischen Union oder eines Mitgliedstaats verarbeitet werden.</p>
     </div>
-
+    <?php include_once './config/floating_bar.php'; ?>
     <?php include_once './config/footer.php'; ?>
     
 </body>

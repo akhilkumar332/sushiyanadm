@@ -58,7 +58,7 @@ if ($result->num_rows > 0) {
             echo '<form method="POST" action="" style="display:inline;">';
             echo '<input type="hidden" name="item_key" value="' . $table . ':' . $row["id"] . '">';
             echo '<input type="hidden" name="quantity" value="1">';
-            echo '<button type="submit" name="add_to_cart" class="cart-button" onclick="event.stopPropagation();">
+            echo '<button type="submit" name="add_to_cart" class="cart-button-list" onclick="event.stopPropagation();">
                     <i class="fas fa-shopping-cart"></i>
                   </button>';
             echo '</form>';

@@ -110,7 +110,7 @@ body.artikelliste .ingredients-button {
     justify-content: center; /* Center horizontally */
 }
 
-body.artikelliste .cart-button {
+body.artikelliste .cart-button-list {
     position: absolute; /* Positioning for the cart button */
     top: 75px; /* Distance from the top */
     right: 10px; /* Distance from the right */
@@ -220,20 +220,4 @@ body.artikelliste .no-items {
     text-align: center; /* Center text */
     margin-top: 20px; /* Margin above */
     font-size: 18px; /* Font size */
-}
-
-footer {
-    width: 100%;
-    text-align: center;
-    padding: 10px 0;
-    background-color: #333;
-    color: white;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-}
-
-a {
-    color: inherit;
-    text-decoration: none;
 }
