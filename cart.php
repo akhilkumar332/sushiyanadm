@@ -1,4 +1,5 @@
 <?php
+session_set_cookie_params(['path' => '/']);
 session_start();
 include 'config/config.php';
 
@@ -49,15 +50,13 @@ if (!isset($_SESSION['cart'])) {
                 return response.text();
             })
             .then(text => {
-                console.log('Raw response:', text);
                 const cleanedText = text.replace(/%+$/, '').trim();
                 return JSON.parse(cleanedText);
             })
             .then(data => {
-                console.log('Cart restored:', data);
                 updateCartCount();
             })
-            .catch(error => console.error('Error restoring cart:', error));
+            .catch(error => {});
         }
     </script>";
 }
@@ -90,6 +89,12 @@ $tables = [
     'sommerrollen', 'specialRolls', 'suesssauersauce', 'suppen', 'temaki', 'warmgetraenke',
     'yanarolls', 'yellowcurry'
 ];
+
+// Database connection
+$conn = new mysqli($servername, $username, $password, $dbname, $port);
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
 ?>
 
 <!DOCTYPE html>
@@ -184,44 +189,47 @@ $tables = [
                     $total = 0;
                     foreach ($_SESSION['cart'] as $item_key => $quantity) {
                         if (strpos($item_key, ':') === false) {
-                            error_log("Invalid cart item key: $item_key");
                             continue;
                         }
                         list($table, $item_id) = explode(':', $item_key);
                         if (!in_array($table, $tables)) continue;
-                        $stmt = $conn->prepare("SELECT artikelname, preis, image FROM " . mysqli_real_escape_string($conn, $table) . " WHERE id = ?");
-                        $stmt->bind_param("i", $item_id);
+                        $stmt = $conn->prepare("SELECT artikelname, preis, image FROM " . mysqli_real_escape_string($conn, $table) . " WHERE artikelnummer = ?");
+                        $stmt->bind_param("s", $item_id);
                         $stmt->execute();
                         $result = $stmt->get_result();
-                        $item = $result->fetch_assoc();
-                        $price = floatval($item['preis']);
-                        $subtotal = $price * $quantity;
-                        $total += $subtotal;
-                        ?>
-                        <div class="cart-item" data-item-key="<?php echo htmlspecialchars($item_key); ?>">
-                            <img src="<?php echo htmlspecialchars($item['image']); ?>" 
-                                 onerror="this.onerror=null; this.src='https://placehold.co/150';" 
-                                 alt="<?php echo htmlspecialchars($item['artikelname']); ?>">
-                            <div class="cart-item-details">
-                                <h3><?php echo htmlspecialchars($item['artikelname']); ?></h3>
-                                <p><?php echo number_format($price, 2); ?> €</p>
-                            </div>
-                            <div class="cart-item-actions">
-                                <div class="quantity-controls">
-                                    <button type="button" class="btn-decrement">-</button>
-                                    <input type="number" name="quantity" value="<?php echo $quantity; ?>" min="1" class="quantity-input">
-                                    <button type="button" class="btn-increment">+</button>
+                        if ($item = $result->fetch_assoc()) {
+                            $price = floatval($item['preis']);
+                            $subtotal = $price * $quantity;
+                            $total += $subtotal;
+                            ?>
+                            <div class="cart-item" data-item-key="<?php echo htmlspecialchars($item_key); ?>">
+                                <img src="<?php echo htmlspecialchars($item['image']); ?>" 
+                                     onerror="this.onerror=null; this.src='https://placehold.co/150';" 
+                                     alt="<?php echo htmlspecialchars($item['artikelname']); ?>">
+                                <div class="cart-item-details">
+                                    <h3><?php echo htmlspecialchars($item['artikelname']); ?></h3>
+                                    <p><?php echo number_format($price, 2); ?> €</p>
                                 </div>
-                                <span class="quantity"><?php echo number_format($subtotal, 2); ?> €</span>
-                                <form method="POST" action="cart.php" class="remove-form" style="display:inline;">
-                                    <input type="hidden" name="item_key" value="<?php echo $item_key; ?>">
-                                    <button type="submit" name="remove_from_cart" class="btn-remove">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </form>
+                                <div class="cart-item-actions">
+                                    <div class="quantity-controls">
+                                        <button type="button" class="btn-decrement">-</button>
+                                        <input type="number" name="quantity" value="<?php echo $quantity; ?>" min="1" class="quantity-input">
+                                        <button type="button" class="btn-increment">+</button>
+                                    </div>
+                                    <span class="quantity"><?php echo number_format($subtotal, 2); ?> €</span>
+                                    <form method="POST" action="cart.php" class="remove-form" style="display:inline;">
+                                        <input type="hidden" name="item_key" value="<?php echo $item_key; ?>">
+                                        <button type="submit" name="remove_from_cart" class="btn-remove">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
                             </div>
-                        </div>
-                    <?php $stmt->close(); } ?>
+                        <?php
+                        }
+                        $stmt->close();
+                    }
+                    ?>
                     <div class="cart-total">
                         <span>Gesamtbetrag</span>
                         <span class="total-amount"><?php echo number_format($total, 2); ?> €</span>
@@ -258,7 +266,6 @@ $tables = [
                     type: 'POST',
                     data: { action: 'update', item_key: itemKey, quantity: quantity },
                     success: function(response) {
-                        console.log('Raw response:', response);
                         if (response.success) {
                             const $item = element.closest('.cart-item');
                             const price = parseFloat($item.find('.cart-item-details p').text().replace(' €', '').replace(',', '.'));
@@ -270,16 +277,14 @@ $tables = [
                                     $('.cart-items').html('<div class="cart-empty"><p>Ihr Warenkorb ist leer.</p></div>');
                                     $('.cart-buttons').remove();
                                 }
-                                showRemoveToast(); // Trigger toast on removal
+                                showRemoveToast();
                             } else {
                                 $item.find('.quantity').text(newSubtotal.toFixed(2).replace('.', ',') + ' €');
                                 updateTotal();
                             }
-                        } else {
-                            console.error('Update failed:', response.error);
                         }
                     },
-                    error: function(xhr, status, error) { console.error('AJAX error:', status, error); }
+                    error: function(xhr, status, error) {}
                 });
             }
 
@@ -289,7 +294,6 @@ $tables = [
                     type: 'POST',
                     data: { action: 'remove', item_key: itemKey },
                     success: function(response) {
-                        console.log('Raw response:', response);
                         if (response.success) {
                             element.closest('.cart-item').remove();
                             updateTotal();
@@ -297,12 +301,10 @@ $tables = [
                                 $('.cart-items').html('<div class="cart-empty"><p>Ihr Warenkorb ist leer.</p></div>');
                                 $('.cart-buttons').remove();
                             }
-                            showRemoveToast(); // Trigger toast on removal
-                        } else {
-                            console.error('Remove failed:', response.error);
+                            showRemoveToast();
                         }
                     },
-                    error: function(xhr, status, error) { console.error('AJAX error:', status, error); }
+                    error: function(xhr, status, error) {}
                 });
             }
 
@@ -327,7 +329,7 @@ $tables = [
                 const $input = $(this).siblings('.quantity-input');
                 const itemKey = $(this).closest('.cart-item').data('item-key');
                 let quantity = parseInt($input.val()) - 1;
-                if (quantity < 0) quantity = 0; // Ensure quantity doesn’t go below 0
+                if (quantity < 0) quantity = 0;
                 $input.val(quantity);
                 updateCart(itemKey, quantity, $(this));
             });
@@ -335,7 +337,7 @@ $tables = [
             $('.quantity-input').on('change', function() {
                 const itemKey = $(this).closest('.cart-item').data('item-key');
                 let quantity = parseInt($(this).val());
-                if (isNaN(quantity) || quantity < 0) quantity = 0; // Handle invalid/negative manual input
+                if (isNaN(quantity) || quantity < 0) quantity = 0;
                 $(this).val(quantity);
                 updateCart(itemKey, quantity, $(this));
             });
@@ -348,5 +350,6 @@ $tables = [
         });
     </script>
     <?php include_once './config/footer.php'; ?>
+    <?php $conn->close(); ?>
 </body>
 </html>

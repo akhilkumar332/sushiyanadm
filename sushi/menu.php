@@ -68,7 +68,7 @@ $result = $conn->query($sql);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <title>Digitale Speisekarte - <?php echo htmlspecialchars($title); ?></title>
-    <link rel="stylesheet" href="../css/styles.min.css">
+    <link rel="stylesheet" href="../css/styles.css">
     <script src="../skripte/skripte.js"></script>
 </head>
 <body class="artikelliste">
