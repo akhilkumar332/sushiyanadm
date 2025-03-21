@@ -21,19 +21,11 @@ if (!isset($_SESSION['cart'])) {
     </script>";
 }
 
-// Use $filiale from config.php (e.g., "neukoelln")
-global $filiale;
-$table = 'vegetarisch'; // Corresponding table name
-
 // Database connection
 $conn = new mysqli($servername, $username, $password, $dbname, $port);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
-
-// Fetch bowls items
-$sql = "SELECT * FROM vegetarisch ORDER BY artikelnummer ASC";
-$result = $conn->query($sql);
 ?>
 
 <!DOCTYPE html>
@@ -51,14 +43,78 @@ $result = $conn->query($sql);
     </header>
 
     <div class="content">
-        <h1>Vegetarisch</h1>
-        <?php include '../config/artikelliste.php'; ?>
+        <h1>Menüs</h1>
+        <?php
+        // Fetch vegetarian items from menues
+        $table = 'menues';
+        $sql = "SELECT * FROM `menues` WHERE vegetarisch = 1 ORDER BY `menues`.`artikelnummer` ASC";
+        $result = $conn->query($sql);
+        include '../config/artikelliste.php';
+        ?>
+
+        <h1>Makis <span class="anzahl">- je 6 Stück</span></h1>
+        <?php
+        $table = 'makis';
+        $sql = "SELECT * FROM `makis` WHERE vegetarisch = 1 ORDER BY `makis`.`artikelnummer` ASC";
+        $result = $conn->query($sql);
+        include '../config/artikelliste.php';
+        ?>
+
+        <h1>Inside Out Rolls <span class="anzahl">- je 8 Stück</span></h1>
+        <?php
+        $table = 'insideoutrolls';
+        $sql = "SELECT * FROM `insideoutrolls` WHERE vegetarisch = 1 ORDER BY `insideoutrolls`.`artikelnummer` ASC";
+        $result = $conn->query($sql);
+        include '../config/artikelliste.php';
+        ?>
+
+        <h1>Mini Yana Rolls <span class="anzahl">- je 6 Stück</span></h1>
+        <?php
+        $table = 'miniyanarolls';
+        $sql = "SELECT * FROM `miniyanarolls` WHERE vegetarisch = 1 ORDER BY `miniyanarolls`.`artikelnummer` ASC";
+        $result = $conn->query($sql);
+        include '../config/artikelliste.php';
+        ?>
+
+        <h1>Yana Rolls <span class="anzahl">- je 6 Stück</span></h1>
+        <?php
+        $table = 'yanarolls';
+        $sql = "SELECT * FROM `yanarolls` WHERE vegetarisch = 1 ORDER BY `yanarolls`.`artikelnummer` ASC";
+        $result = $conn->query($sql);
+        include '../config/artikelliste.php';
+        ?>
+
+        <h1>Nigiris <span class="anzahl">- 1 Stück</span></h1>
+        <?php
+        $table = 'nigiris';
+        $sql = "SELECT * FROM `nigiris` WHERE vegetarisch = 1 ORDER BY `nigiris`.`artikelnummer` ASC";
+        $result = $conn->query($sql);
+        include '../config/artikelliste.php';
+        ?>
+
+        <h1>Special Rolls <span class="anzahl">- je 8 Stück</span></h1>
+        <?php
+        $table = 'specialrolls';
+        $sql = "SELECT * FROM `specialrolls` WHERE vegetarisch = 1 ORDER BY `specialrolls`.`artikelnummer` ASC";
+        $result = $conn->query($sql);
+        include '../config/artikelliste.php';
+        ?>
+
+        <h1>Temaki <span class="anzahl">- 1 Stück</span></h1>
+        <?php
+        $table = 'temaki';
+        $sql = "SELECT * FROM `temaki` WHERE vegetarisch = 1 ORDER BY `temaki`.`artikelnummer` ASC";
+        $result = $conn->query($sql);
+        include '../config/artikelliste.php';
+        ?>
+
+        <?php
+        // Close the database connection
+        $conn->close();
+        ?>
     </div>
 
     <?php include_once '../config/floating_bar.php'; ?>
-
     <?php include_once '../config/footer.php'; ?>
-
-    <?php $conn->close(); ?>
 </body>
 </html>

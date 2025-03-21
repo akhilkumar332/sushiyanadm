@@ -81,7 +81,7 @@ if (!isset($_SESSION['cart'])) {
             <img src="/bilder/sushi/temaki.jpg" alt="Temaki">
             <div class="text">Temaki</div>
         </a>
-        <a href="sushi/menu.php?category=vegetarisch" class="grid-item">
+        <a href="sushi/vegetarisch.php" class="grid-item">
             <img src="/bilder/sushi/Maki_Wakame.jpg" alt="Vegetarisch">
             <div class="text">Vegetarisch</div>
         </a>
