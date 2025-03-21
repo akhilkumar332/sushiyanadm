@@ -15,7 +15,6 @@ if (!isset($_SESSION['cart'])) {
             })
             .then(text => {
                 console.log('Raw response:', text);
-                // Trim trailing % or whitespace
                 const cleanedText = text.replace(/%+$/, '').trim();
                 return JSON.parse(cleanedText);
             })
@@ -94,11 +93,7 @@ if (!isset($_SESSION['cart'])) {
             <div class="text">Warme Getränke</div>
         </a>
     </div>
-    <div class="floating-bar">
-        <a href="cart.php" class="cart-icon">
-            <span>Cart (<span id="cart-count"><?php echo array_sum($_SESSION['cart']); ?></span>)</span>
-        </a>
-    </div>
+    <?php include_once './config/floating_bar.php'; ?>
     <?php include_once './config/footer.php'; ?>
     <script>
         function updateLocalCart() {
