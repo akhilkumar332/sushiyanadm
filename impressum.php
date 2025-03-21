@@ -56,7 +56,7 @@
 </head>
 <body>
     <header>
-        <img src="bilder/logo.webp" alt="Restaurant Logo" class="logo">
+    <a href="./"><img src="/bilder/logo.webp" alt="Restaurant Logo" class="logo"></a>
     </header>
 
     <div class="content">
