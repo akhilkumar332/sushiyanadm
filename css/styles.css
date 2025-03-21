@@ -28,20 +28,21 @@ header {
 }
 
 h1 {
-    color:#6A2477;
+    color: #6A2477;
     font-size: clamp(30px, 4vw, 40px);
 }
 
 span.anzahl {
-    color:white;
+    color: white;
     font-size: clamp(20px, 4vw, 26px);
 }
+
 h2 {
     font-size: clamp(18px, 4vw, 22px);
 }
 
 .logo {
-    max-width: 50%; /* Verkleinert das Bild auf 50% der Containerbreite */
+    max-width: 50%;
     height: auto;
 }
 
@@ -57,8 +58,8 @@ h2 {
     padding: 20px;
     width: 90%;
     max-width: 600px;
-    padding-bottom: 60px; /* Fügt Platz für den Footer hinzu */
-    position: relative; /* Stellt sicher, dass der Text relativ zum Grid-Container positioniert ist */
+    padding-bottom: 60px;
+    position: relative;
 }
 
 .grid-item {
@@ -67,38 +68,173 @@ h2 {
     border-radius: 8px;
     text-align: center;
     overflow: hidden;
-    position: relative; /* Stellt sicher, dass der Text relativ zum Grid-Item positioniert ist */
+    position: relative;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s;
 }
 
 .grid-item img {
     width: 100%;
-
-    object-fit: cover; 
+    object-fit: cover;
 }
 
 .grid-item .text {
-    position: absolute; /* Positioniert den Text relativ zum Grid-Item */
-    bottom: 0; /* Platzierung am unteren Rand */
+    position: absolute;
+    bottom: 0;
     left: 0;
     width: 100%;
     color: white;
     padding: 10px;
     box-sizing: border-box;
     font-size: 1em;
-    background-color: rgba(0, 0, 0, 0.5); /* Hintergrundfarbe mit Transparenz für den Text */
+    background-color: rgba(0, 0, 0, 0.5);
 }
 
-.grid-item:hover {
+/* Animations for index.php grid items */
+#menu-grid {
+    opacity: 1;
+    transition: opacity 0.3s ease;
+}
+
+#menu-grid.loading {
+    opacity: 0;
+}
+
+#menu-grid .grid-item {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    opacity: 0;
+    animation: fadeIn 0.5s ease forwards;
+}
+
+#menu-grid .grid-item img {
+    transition: filter 0.2s ease;
+}
+
+#menu-grid .grid-item .text {
+    transition: background-color 0.2s ease;
+}
+
+#menu-grid .grid-item:hover {
     transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2), 0 0 10px rgba(106, 36, 119, 0.5);
 }
 
+#menu-grid .grid-item:hover img {
+    filter: brightness(1.2);
+}
+
+#menu-grid .grid-item:hover .text {
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Skeleton styles */
+.skeleton-item {
+    border-radius: 8px;
+    height: 0;
+    padding-bottom: 100%;
+    position: relative;
+    overflow: hidden;
+    background-color: #000;
+    border: 1px solid #6A2477;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.skeleton-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #e0e0e0;
+    animation: shimmer 1.5s infinite;
+}
+
+.skeleton-text {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 40px;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.skeleton-text::before {
+    content: '';
+    width: 60%;
+    height: 10px;
+    background: #e0e0e0;
+    border-radius: 4px;
+    animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+.skeleton-image,
+.skeleton-text::before {
+    background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
+    background-size: 200% 100%;
+}
+
+/* Loading spinner */
+.loading-spinner {
+    display: none;
+    width: 30px;
+    height: 30px;
+    border: 4px solid #6A2477;
+    border-top: 4px solid transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 10px auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Retry button */
+#retry-menu {
+    background-color: #6A2477;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#retry-menu:hover {
+    background-color: #551e61;
+}
+
+/* Remaining original styles */
 .content {
     width: 90%;
     max-width: 600px;
     background-color: #000;
-    color:#fff;
+    color: #fff;
     border: 1px;
     border-radius: 8px;
     padding: 20px;
@@ -108,25 +244,25 @@ h2 {
 
 .dish {
     cursor: pointer;
-    padding: 10px; /* Hier das Padding anpassen */
-    margin: 10px 0; /* Hier den Margin anpassen */
+    padding: 10px;
+    margin: 10px 0;
     border-bottom: 1px solid #444;
 }
 
 .dish h3 {
     margin: 0;
-    font-size: clamp(12px, 3vw, 13px); /* Standardgröße auf 13px festlegen, aber bis 3vw skalieren */
+    font-size: clamp(12px, 3vw, 13px);
     color: white;
     display: flex;
     align-items: center;
-    white-space: nowrap; /* Text nicht umbrechen */
-    overflow: hidden; /* Überlauf verstecken */
-    text-overflow: ellipsis; /* Mit ... am Ende abschneiden, wenn der Text zu lang ist */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 @media only screen and (max-width: 600px) {
     .dish h3 {
-        font-size: 12px; /* Bei Umbrüchen auf 12px reduzieren */
+        font-size: 12px;
     }
 }
 
@@ -134,28 +270,28 @@ h2 {
     display: none;
     margin: 10px 0 0 0;
 }
+
 .description p {
     font-size: 16px;
 }
 
 .mini-logo {
     width: auto;
-    height: 1em; /* Hier können Sie die Höhe des Bildes anpassen */
-    margin:3px;
+    height: 1em;
+    margin: 3px;
 }
 
 .info-logo {
     width: auto;
-    height: 1em; /* Hier können Sie die Höhe des Bildes anpassen */
-    margin:4px;
+    height: 1em;
+    margin: 4px;
 }
 
 .dropdown {
     width: auto;
-    height: 0.4em; /* Hier können Sie die Höhe des Bildes anpassen */
-    margin:3px;
+    height: 0.4em;
+    margin: 3px;
     margin-right: 5px;
-
 }
 
 .price {
@@ -177,36 +313,30 @@ h2 {
     text-decoration-color: #6A2477;
 }
 
-
-/* Modal */
-.modal { 
+.modal {
     display: none;
-    position: fixed; 
-    z-index: 1; 
+    position: fixed;
+    z-index: 1;
     left: 0;
     top: 0;
-    width: 100%; 
-    height: 100%; 
-    overflow: auto; 
+    width: 100%;
+    height: 100%;
+    overflow: auto;
     background-color: black;
-    justify-content: center; 
-    align-items: center; 
+    justify-content: center;
+    align-items: center;
     margin: auto;
-    
 }
 
-
-/* Modal Content */
 .modal-content {
     background-color: black;
-    margin: 15% auto; 
+    margin: 15% auto;
     padding: 20px;
     border: 1px solid #6A2477;
-    width: 80%; 
+    width: 80%;
     color: white;
 }
 
-/* Close Button */
 .close {
     color: #aaa;
     float: right;
