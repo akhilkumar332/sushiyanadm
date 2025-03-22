@@ -26,6 +26,37 @@
         .toastify i {
             font-size: 18px !important;
         }
+
+        /* Styling for the cart button to position the product count */
+        .cart-button-list {
+            position: relative; /* Make the cart button a positioning context for the product count */
+        }
+
+        /* Styling for the product count on the cart icon */
+        .product-count {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background: #6A2477;
+            color: #fff;
+            font-size: 10px; /* Smaller font size */
+            font-weight: bold;
+            padding: 1px 4px; /* Smaller padding */
+            border-radius: 8px; /* Slightly smaller border-radius */
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2); /* Smaller shadow */
+            display: none; /* Hidden by default, shown if count > 0 */
+            line-height: 1; /* Ensure proper vertical alignment */
+        }
+
+        @media (max-width: 768px) {
+            .product-count {
+                font-size: 8px; /* Even smaller font on mobile */
+                padding: 0px 3px; /* Even smaller padding */
+                top: -4px; /* Adjust position for smaller button */
+                right: -4px;
+                border-radius: 6px; /* Smaller border-radius */
+            }
+        }
     </style>
 </head>
 <body class="artikelliste">
@@ -40,6 +71,9 @@ echo '<div class="grid-container">';
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
         if ($row[$filiale] == 1) {
+            $item_key = $table . ':' . $row["id"];
+            $quantity_in_cart = isset($_SESSION['cart'][$item_key]) ? (int)$_SESSION['cart'][$item_key] : 0;
+
             echo '<div class="grid-item">';
             
             // Use absolute path from root, add onerror for fallback
@@ -79,9 +113,11 @@ if ($result->num_rows > 0) {
             echo '<form action="" style="display:inline;">';
             echo '<input type="hidden" name="item_key" value="' . $table . ':' . $row["id"] . '">';
             echo '<input type="hidden" name="quantity" value="1">';
-            echo '<button type="submit" name="add_to_cart" class="cart-button-list" onclick="event.stopPropagation();">
-                    <i class="fas fa-shopping-cart"></i>
-                  </button>';
+            echo '<button type="submit" name="add_to_cart" class="cart-button-list" onclick="event.stopPropagation();">';
+            echo '<i class="fas fa-shopping-cart"></i>';
+            // Add the product count inside the cart button
+            echo '<span class="product-count" data-item-key="' . htmlspecialchars($item_key) . '" style="' . ($quantity_in_cart > 0 ? 'display: inline-block;' : 'display: none;') . '">' . $quantity_in_cart . '</span>';
+            echo '</button>';
             echo '</form>';
             
             echo '</div>';
@@ -165,12 +201,23 @@ function updateLocalCart() {
 function updateCartCount() {
     const cart = JSON.parse(localStorage.getItem('cart') || '{}');
     let total = 0;
+
+    // Update total cart count (for floating bar)
     for (let itemKey in cart) {
         if (cart.hasOwnProperty(itemKey)) {
             const quantity = parseInt(cart[itemKey]) || 0;
             total += quantity;
+
+            // Update individual product count on the card
+            const productCountElement = document.querySelector(`.product-count[data-item-key="${itemKey}"]`);
+            if (productCountElement) {
+                productCountElement.textContent = quantity.toString();
+                productCountElement.style.display = quantity > 0 ? 'inline-block' : 'none';
+            }
         }
     }
+
+    // Update the total cart count in the floating bar
     const cartCountElement = document.getElementById('cart-count');
     if (cartCountElement) {
         cartCountElement.textContent = total.toString();
@@ -229,9 +276,9 @@ if (!window.artikellisteEventListenerAttached) {
                 .then(data => {
                     if (data.status === 'success') {
                         updateLocalCart();
-                        showToast('Item added to cart!');
+                        showToast('Artikel hinzugefügt!');
                     } else {
-                        showToast('Failed to add item to cart.', true);
+                        showToast('Der Artikel konnte nicht in den Warenkorb gelegt werden.', true);
                     }
                 })
                 .catch(error => {

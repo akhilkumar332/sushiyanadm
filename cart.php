@@ -249,7 +249,7 @@ if ($conn->connect_error) {
             // Reusable toast function
             function showRemoveToast() {
                 Toastify({
-                    text: '<i class="fas fa-trash"></i> Item entfernt',
+                    text: '<i class="fas fa-trash"></i> Artikel entfernt',
                     duration: 3000,
                     gravity: "top",
                     position: "right",

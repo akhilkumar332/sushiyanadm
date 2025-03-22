@@ -96,7 +96,7 @@ body.artikelliste .info-button {
 
 body.artikelliste .ingredients-button {
     position: absolute; /* Positioning for the ingredients button */
-    top: 42px; /* Distance from the top */
+    top: 45px; /* Distance from the top */
     right: 10px; /* Distance from the right */
     background-color: #6A2477; /* Button background color */
     color: white; /* Text color */
@@ -112,7 +112,7 @@ body.artikelliste .ingredients-button {
 
 body.artikelliste .cart-button-list {
     position: absolute; /* Positioning for the cart button */
-    top: 75px; /* Distance from the top */
+    top: 80px; /* Distance from the top */
     right: 10px; /* Distance from the right */
     background-color: #6A2477; /* Button background color */
     color: white; /* Text color */
