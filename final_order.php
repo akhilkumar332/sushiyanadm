@@ -42,7 +42,18 @@ $timestamp = date('d.m.Y H:i:s'); // e.g., "20.03.2025 14:30:45"
         .bill-table .quantity { text-align: center; }
         .bill-table .price, .bill-table .subtotal { text-align: right; }
         .bill-total { display: flex; justify-content: space-between; padding: 15px; background-color: #f9f9f9; font-size: 18px; font-weight: 600; color: #333; border-top: 1px solid #eee; }
-        .timer { text-align: center; margin-top: 20px; font-size: 16px; color: #6A2477; display: none; }
+        .timer { text-align: center; margin-top: 20px; font-size: 16px; color: #6A2477; display: none; background: rgba(106, 36, 119, 0.1); padding: 10px; border-radius: 5px; transition: opacity 0.3s ease; }
+        .timer.visible { opacity: 1; }
+        #timer-countdown {
+            display: inline-block;
+            min-width: 100px; /* Fixed width to prevent shaking */
+            text-align: center;
+            font-family: monospace; /* Monospace font for consistent digit width */
+        }
+        .timer.warning {
+            color: #dc3545;
+            background: rgba(220, 53, 69, 0.1);
+        }
         .bill-buttons { padding: 20px 0; text-align: center; }
         .bill-buttons .btn { display: inline-block; padding: 12px 25px; margin: 10px; text-decoration: none; border-radius: 50px; font-size: 16px; font-weight: 500; background-color: #6A2477; color: #fff !important; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); cursor: pointer; border: none; }
         .bill-buttons .btn:hover { background-color: #4A1A55; transform: translateY(-2px); }
@@ -54,6 +65,8 @@ $timestamp = date('d.m.Y H:i:s'); // e.g., "20.03.2025 14:30:45"
             .bill-details { padding: 15px; }
             .bill-table th, .bill-table td { font-size: 14px; padding: 8px; }
             .bill-total { font-size: 16px; padding: 10px; }
+            .timer { font-size: 14px; }
+            #timer-countdown { min-width: 80px; }
             .bill-buttons { padding: 15px 0; }
             .bill-buttons .btn { display: block; width: 90%; max-width: 400px; margin: 10px auto; padding: 12px 20px; }
         }
@@ -113,7 +126,7 @@ $timestamp = date('d.m.Y H:i:s'); // e.g., "20.03.2025 14:30:45"
                     <span>Gesamtbetrag</span>
                     <span><?php echo number_format($total, 2); ?> €</span>
                 </div>
-                <div class="timer" id="inactivity-timer">
+                <div class="timer" id="inactivity-timer" aria-live="polite">
                     Inaktivitätstimer: <span id="timer-countdown"></span>
                 </div>
             </div>
@@ -124,65 +137,130 @@ $timestamp = date('d.m.Y H:i:s'); // e.g., "20.03.2025 14:30:45"
     </main>
     <script>
         $(document).ready(function() {
-            const inactivityTimeout = 2 * 60 * 1000; // 5 minutes
-            const timerThreshold = 1 * 60 * 1000; // 4 minutes
-            let timeoutId;
+            const inactivityTimeout = 2 * 60 * 1000; // 2 minutes (for testing; adjust to 5 minutes if needed)
+            const timerThreshold = 1 * 60 * 1000; // 1 minute (for testing; adjust to 4 minutes if needed)
+            const countdownDuration = 60 * 1000; // 1 minute countdown
+            const gracePeriod = 1000; // 1 second grace period to prevent last-second resets
+            let lastActivityTime = Date.now(); // Track the last user activity time
+            let countdownInterval = null;
+            let countdownStartTime = null; // Track when the countdown starts
+            let isRedirecting = false; // Flag to prevent multiple redirects
 
             function resetTimer() {
-                clearTimeout(timeoutId);
-                $('#inactivity-timer').hide();
-                timeoutId = setTimeout(clearCartAndRedirect, inactivityTimeout);
-                setTimeout(startCountdown, timerThreshold);
+                const elapsed = Date.now() - lastActivityTime;
+                const timeUntilTimeout = inactivityTimeout - elapsed;
+
+                // Prevent reset if we're within the grace period before timeout
+                if (timeUntilTimeout <= gracePeriod) {
+                    console.log('Grace period active, ignoring reset');
+                    return;
+                }
+
+                lastActivityTime = Date.now(); // Update the last activity time
+                // Clear any existing countdown
+                if (countdownInterval) {
+                    clearInterval(countdownInterval);
+                    countdownInterval = null;
+                }
+                $('#inactivity-timer').hide().removeClass('visible').removeClass('warning');
+                // Start checking for inactivity
+                checkInactivity();
+            }
+
+            function checkInactivity() {
+                // Clear any existing interval to prevent overlap
+                if (countdownInterval) {
+                    clearInterval(countdownInterval);
+                    countdownInterval = null;
+                }
+
+                const elapsed = Date.now() - lastActivityTime;
+                const timeUntilThreshold = timerThreshold - elapsed;
+                const timeUntilTimeout = inactivityTimeout - elapsed;
+
+                if (elapsed >= inactivityTimeout) {
+                    console.log('Inactivity timeout reached, redirecting');
+                    clearCartAndRedirect();
+                    return;
+                }
+
+                if (elapsed >= timerThreshold && !countdownInterval) {
+                    // Start the countdown if the threshold is reached and no countdown is running
+                    startCountdown();
+                } else {
+                    // Schedule the next check
+                    setTimeout(checkInactivity, Math.min(timeUntilThreshold, timeUntilTimeout));
+                }
             }
 
             function startCountdown() {
-                let remaining = 60; // 1 minute countdown
-                $('#inactivity-timer').show();
+                countdownStartTime = Date.now();
+                $('#inactivity-timer').show().addClass('visible');
                 const $countdown = $('#timer-countdown');
-                $countdown.text(remaining + ' Sekunden');
 
-                const countdownInterval = setInterval(function() {
-                    remaining--;
-                    $countdown.text(remaining + ' Sekunden');
-                    if (remaining <= 0) {
+                countdownInterval = setInterval(function() {
+                    const elapsedSinceStart = Date.now() - countdownStartTime;
+                    const remainingMs = countdownDuration - elapsedSinceStart;
+                    const remainingSeconds = Math.max(0, Math.floor(remainingMs / 1000));
+
+                    $countdown.text(remainingSeconds.toString().padStart(2, '0') + ' Sekunden');
+
+                    // Add warning class for the last 10 seconds
+                    if (remainingSeconds <= 10) {
+                        $('#inactivity-timer').addClass('warning');
+                    } else {
+                        $('#inactivity-timer').removeClass('warning');
+                    }
+
+                    if (remainingSeconds <= 0) {
+                        console.log('Countdown reached 0, redirecting');
                         clearInterval(countdownInterval);
+                        countdownInterval = null;
+                        clearCartAndRedirect();
                     }
                 }, 1000);
             }
 
             function clearCartAndRedirect() {
+                if (isRedirecting) {
+                    console.log('Redirect already in progress, skipping');
+                    return;
+                }
+                isRedirecting = true;
+
+                console.log('Calling clear_cart.php');
                 $.ajax({
                     url: 'clear_cart.php',
                     type: 'POST',
-                    success: function() {
+                    dataType: 'json',
+                })
+                .done(function(response) {
+                    console.log('clear_cart.php response:', response);
+                    if (response.status === 'success') {
                         localStorage.clear();
                         window.location.href = 'index.php';
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('Clear cart error:', status, error);
+                    } else {
+                        console.error('Clear cart failed:', response.message);
                         localStorage.clear();
                         window.location.href = 'index.php';
                     }
+                })
+                .fail(function(xhr, status, error) {
+                    console.error('Clear cart AJAX error:', status, error, xhr.responseText);
+                    localStorage.clear();
+                    window.location.href = 'index.php';
                 });
             }
 
             $('#back-to-home').on('click', function() {
-                $.ajax({
-                    url: 'clear_cart.php',
-                    type: 'POST',
-                    success: function() {
-                        localStorage.clear();
-                        window.location.href = 'index.php';
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('Clear cart error:', status, error);
-                        localStorage.clear();
-                        window.location.href = 'index.php';
-                    }
-                });
+                console.log('Back to home clicked');
+                clearCartAndRedirect();
             });
 
+            // Listen for user activity
             $(document).on('mousemove keydown click', resetTimer);
+
+            // Start the timer on page load
             resetTimer();
         });
     </script>
