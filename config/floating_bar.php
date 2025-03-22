@@ -3,8 +3,9 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Always use root-relative path
-$base_path = '/'; // Ensures links start from document root
+$base_path = '/';
+$current_page = basename($_SERVER['PHP_SELF']);
+$hide_cart_button = in_array($current_page, ['cart.php', 'final_order.php']);
 ?>
 
 <style>
@@ -96,10 +97,12 @@ $base_path = '/'; // Ensures links start from document root
 
 <div class="floating-bar-wrapper">
     <div class="floating-bar">
-        <a href="<?php echo $base_path; ?>cart.php" class="cart-button">
-            <i class="fas fa-shopping-cart"></i>
-            <span class="cart-count" id="cart-count"><?php echo array_sum($_SESSION['cart'] ?? []); ?></span>
-        </a>
+        <?php if (!$hide_cart_button): ?>
+            <a href="<?php echo $base_path; ?>cart.php" class="cart-button">
+                <i class="fas fa-shopping-cart"></i>
+                <span class="cart-count" id="cart-count"><?php echo array_sum($_SESSION['cart'] ?? []); ?></span>
+            </a>
+        <?php endif; ?>
         <a href="<?php echo $base_path; ?>index.php" class="home-button">
             <i class="fas fa-home"></i>
         </a>

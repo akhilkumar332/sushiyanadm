@@ -350,6 +350,7 @@ if ($conn->connect_error) {
             });
         });
     </script>
+    <?php include_once './config/floating_bar.php'; ?>
     <?php include_once './config/footer.php'; ?>
     <?php $conn->close(); ?>
 </body>
