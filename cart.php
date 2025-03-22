@@ -86,7 +86,7 @@ $tables = [
     'bowls', 'chopsuey', 'desserts', 'erdnussgericht', 'extras', 'extrasWarm', 'fingerfood',
     'gemuese', 'getraenke', 'gyoza', 'insideoutrolls', 'makis', 'mangochutney', 'menues',
     'miniyanarolls', 'nigiris', 'nudeln', 'redcurry', 'reis', 'salate', 'sashimi',
-    'sommerrollen', 'specialRolls', 'suesssauersauce', 'suppen', 'temaki', 'warmgetraenke',
+    'sommerrollen', 'specialrolls', 'suesssauersauce', 'suppen', 'temaki', 'warmgetraenke',
     'yanarolls', 'yellowcurry'
 ];
 
@@ -193,8 +193,9 @@ if ($conn->connect_error) {
                         }
                         list($table, $item_id) = explode(':', $item_key);
                         if (!in_array($table, $tables)) continue;
-                        $stmt = $conn->prepare("SELECT artikelname, preis, image FROM " . mysqli_real_escape_string($conn, $table) . " WHERE artikelnummer = ?");
-                        $stmt->bind_param("s", $item_id);
+                        // Use 'id' instead of 'artikelnummer' to match the item_key
+                        $stmt = $conn->prepare("SELECT artikelname, preis, image FROM " . mysqli_real_escape_string($conn, $table) . " WHERE id = ?");
+                        $stmt->bind_param("i", $item_id); // Use 'i' since id is an integer
                         $stmt->execute();
                         $result = $stmt->get_result();
                         if ($item = $result->fetch_assoc()) {

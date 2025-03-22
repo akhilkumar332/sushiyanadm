@@ -1,6 +1,14 @@
 <?php
+session_set_cookie_params(['path' => '/']);
 session_start();
 include '../config/config.php';
+
+// Handle cart fetching request
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'get_cart') {
+    header('Content-Type: application/json');
+    echo json_encode($_SESSION['cart'] ?? []);
+    exit;
+}
 
 if (!isset($_SESSION['cart'])) {
     $_SESSION['cart'] = [];

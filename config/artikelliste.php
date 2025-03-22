@@ -30,7 +30,7 @@
 </head>
 <body class="artikelliste">
 <?php
-// No session_start() here; handled by suppen.php
+// No session_start() here; handled by the including page (e.g., menu.php)
 if (!isset($_SESSION['cart'])) {
     $_SESSION['cart'] = [];
 }
@@ -130,8 +130,19 @@ function closeIngredientsModal(id) {
 }
 
 function updateLocalCart() {
-    // Fetch the latest cart data from vegetarisch.php (or wherever the cart is managed)
-    fetch('/sushi/vegetarisch.php?action=get_cart', {
+    const currentUrl = window.location.pathname;
+    let cartFetchUrl;
+    if (currentUrl.includes('/sushi/vegetarisch.php')) {
+        cartFetchUrl = '/sushi/vegetarisch.php?action=get_cart';
+    } else if (currentUrl.includes('/warmekueche/menu.php')) {
+        cartFetchUrl = window.location.href + (window.location.search ? '&' : '?') + 'action=get_cart';
+    } else if (currentUrl.includes('/sushi/menu.php')) {
+        cartFetchUrl = window.location.href + (window.location.search ? '&' : '?') + 'action=get_cart';
+    } else {
+        cartFetchUrl = '/sushi/vegetarisch.php?action=get_cart'; // Fallback
+    }
+
+    fetch(cartFetchUrl, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' }
     })
