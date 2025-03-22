@@ -6,6 +6,7 @@ if (session_status() === PHP_SESSION_NONE) {
 $base_path = '/';
 $current_page = basename($_SERVER['PHP_SELF']);
 $hide_cart_button = in_array($current_page, ['cart.php', 'final_order.php']);
+$show_back_button = ($current_page === 'final_order.php');
 ?>
 
 <style>
@@ -26,7 +27,8 @@ $hide_cart_button = in_array($current_page, ['cart.php', 'final_order.php']);
     }
 
     .floating-bar .cart-button, 
-    .floating-bar .home-button {
+    .floating-bar .home-button,
+    .floating-bar .back-button {
         background: #6A2477 !important;
         color: #fff !important;
         padding: 10px !important;
@@ -43,16 +45,15 @@ $hide_cart_button = in_array($current_page, ['cart.php', 'final_order.php']);
     }
 
     .floating-bar .cart-button:hover, 
-    .floating-bar .home-button:hover {
+    .floating-bar .home-button:hover,
+    .floating-bar .back-button:hover {
         background: #4A1A55 !important;
         transform: scale(1.05) !important;
     }
 
-    .floating-bar .cart-button .fa-shopping-cart {
-        font-size: 18px !important;
-    }
-
-    .floating-bar .home-button .fa-home {
+    .floating-bar .cart-button .fa-shopping-cart,
+    .floating-bar .home-button .fa-home,
+    .floating-bar .back-button .fa-arrow-left {
         font-size: 18px !important;
     }
 
@@ -75,14 +76,16 @@ $hide_cart_button = in_array($current_page, ['cart.php', 'final_order.php']);
         }
 
         .floating-bar .cart-button, 
-        .floating-bar .home-button {
+        .floating-bar .home-button,
+        .floating-bar .back-button {
             width: 32px !important;
             height: 32px !important;
             padding: 8px !important;
         }
 
         .floating-bar .cart-button .fa-shopping-cart, 
-        .floating-bar .home-button .fa-home {
+        .floating-bar .home-button .fa-home,
+        .floating-bar .back-button .fa-arrow-left {
             font-size: 14px !important;
         }
 
@@ -97,6 +100,11 @@ $hide_cart_button = in_array($current_page, ['cart.php', 'final_order.php']);
 
 <div class="floating-bar-wrapper">
     <div class="floating-bar">
+        <?php if ($show_back_button): ?>
+            <a href="<?php echo $base_path; ?>cart.php" class="back-button">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+        <?php endif; ?>
         <?php if (!$hide_cart_button): ?>
             <a href="<?php echo $base_path; ?>cart.php" class="cart-button">
                 <i class="fas fa-shopping-cart"></i>
