@@ -93,5 +93,12 @@ $result = $conn->query($sql);
     <?php include_once '../config/footer.php'; ?>
 
     <?php $conn->close(); ?>
+
+    <script>
+        // Initial cart update (optional, since artikelliste.php already does this)
+        document.addEventListener('DOMContentLoaded', function() {
+            setInterval(updateCartCount, 1000);
+        });
+    </script>
 </body>
 </html>

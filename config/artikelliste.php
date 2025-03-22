@@ -191,56 +191,62 @@ function showToast(message, isError = false) {
     }).showToast();
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Intercept form submissions for cart buttons
-    const cartForms = document.querySelectorAll('form[action=""]');
-    cartForms.forEach(form => {
-        form.addEventListener('submit', function(event) {
-            event.preventDefault(); // Prevent default form submission
+// Ensure the event listener is attached only once
+if (!window.artikellisteEventListenerAttached) {
+    document.addEventListener('DOMContentLoaded', function() {
+        // Intercept form submissions for cart buttons
+        const cartForms = document.querySelectorAll('form[action=""]');
+        cartForms.forEach(form => {
+            form.addEventListener('submit', function(event) {
+                event.preventDefault(); // Prevent default form submission
 
-            const button = form.querySelector('.cart-button-list');
-            if (!button) {
-                return;
-            }
-
-            // Extract item_key and quantity from the form
-            const itemKeyInput = form.querySelector('input[name="item_key"]');
-            const quantityInput = form.querySelector('input[name="quantity"]');
-            if (!itemKeyInput || !quantityInput) {
-                return;
-            }
-
-            const itemKey = itemKeyInput.value;
-            const quantity = parseInt(quantityInput.value) || 1;
-            const [table, itemId] = itemKey.split(':');
-            if (!itemId || !table) {
-                return;
-            }
-
-            // Add item to cart via AJAX to vegetarisch.php
-            fetch('/sushi/vegetarisch.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: `item_id=${encodeURIComponent(itemId)}&table=${encodeURIComponent(table)}`
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    updateLocalCart();
-                    showToast('Item added to cart!');
-                } else {
-                    showToast('Failed to add item to cart.', true);
+                const button = form.querySelector('.cart-button-list');
+                if (!button) {
+                    return;
                 }
-            })
-            .catch(error => {
-                showToast('Error adding item to cart.', true);
+
+                // Extract item_key and quantity from the form
+                const itemKeyInput = form.querySelector('input[name="item_key"]');
+                const quantityInput = form.querySelector('input[name="quantity"]');
+                if (!itemKeyInput || !quantityInput) {
+                    return;
+                }
+
+                const itemKey = itemKeyInput.value;
+                const quantity = parseInt(quantityInput.value) || 1;
+                const [table, itemId] = itemKey.split(':');
+                if (!itemId || !table) {
+                    return;
+                }
+
+                // Add item to cart via AJAX to vegetarisch.php
+                fetch('/sushi/vegetarisch.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `item_id=${encodeURIComponent(itemId)}&table=${encodeURIComponent(table)}`
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        updateLocalCart();
+                        showToast('Item added to cart!');
+                    } else {
+                        showToast('Failed to add item to cart.', true);
+                    }
+                })
+                .catch(error => {
+                    showToast('Error adding item to cart.', true);
+                });
             });
         });
+
+        // Initial cart update
+        updateLocalCart();
     });
 
-    // Initial cart update
-    updateLocalCart();
-});
+    // Mark the event listener as attached
+    window.artikellisteEventListenerAttached = true;
+}
 </script>
 </body>
 </html>
