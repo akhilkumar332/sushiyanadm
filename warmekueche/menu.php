@@ -78,58 +78,6 @@ $result = $conn->query($sql);
     <title>Digitale Speisekarte - <?php echo htmlspecialchars($title); ?></title>
     <link rel="stylesheet" href="../css/styles.css">
     <script src="../skripte/skripte.js"></script>
-    <script>
-        // Function to fetch the latest cart data from the server
-        function fetchCartData() {
-            return fetch(window.location.href + (window.location.search ? '&' : '?') + 'action=get_cart', {
-                method: 'GET',
-                headers: { 'Content-Type': 'application/json' }
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                localStorage.setItem('cart', JSON.stringify(data));
-                return data;
-            })
-            .catch(error => {
-                return JSON.parse(localStorage.getItem('cart') || '{}');
-            });
-        }
-
-        // Update localStorage with the latest cart data
-        function updateMenuLocalCart() {
-            fetchCartData().then(cart => {
-                updateCartCount();
-            });
-        }
-
-        // Update the cart count in the DOM
-        function updateCartCount() {
-            const cart = JSON.parse(localStorage.getItem('cart') || '{}');
-            let total = 0;
-            for (let itemKey in cart) {
-                if (cart.hasOwnProperty(itemKey)) {
-                    const quantity = parseInt(cart[itemKey]) || 0;
-                    total += quantity;
-                }
-            }
-            const cartCountElement = Array.from(document.querySelectorAll('#cart-count'))
-                .find(el => el.closest('body.artikelliste') === document.body);
-            if (cartCountElement) {
-                cartCountElement.textContent = total.toString();
-            }
-        }
-
-        // Run initial cart update on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            updateMenuLocalCart();
-            setInterval(updateCartCount, 1000);
-        });
-    </script>
 </head>
 <body class="artikelliste">
     <header>
@@ -145,5 +93,12 @@ $result = $conn->query($sql);
     <?php include_once '../config/footer.php'; ?>
 
     <?php $conn->close(); ?>
+
+    <script>
+        // Initial cart update (optional, since artikelliste.php already does this)
+        document.addEventListener('DOMContentLoaded', function() {
+            setInterval(updateCartCount, 1000);
+        });
+    </script>
 </body>
 </html>
