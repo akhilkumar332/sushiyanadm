@@ -109,7 +109,7 @@ if ($conn->connect_error) {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <style>
-        .cart-wrapper { max-width: 1200px; margin: 20px auto; padding: 0 15px; font-family: 'Arial', sans-serif; }
+        .cart-wrapper { max-width: 100%; width: 700px; margin: 20px auto; padding: 0 15px; font-family: 'Arial', sans-serif; }
         .cart-header { text-align: center; padding: 20px 0; color: #fff !important; background: #6A2477; border-radius: 10px 10px 0 0; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); }
         .cart-header h1 { margin: 0; font-size: 28px; font-weight: 600; letter-spacing: 1px; color: #fff !important; }
         .cart-items { background-color: #fff; border-radius: 0 0 10px 10px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); overflow: hidden; }
