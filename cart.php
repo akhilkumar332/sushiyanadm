@@ -239,7 +239,6 @@ if ($conn->connect_error) {
             </div>
             <?php if (!empty($_SESSION['cart'])): ?>
                 <div class="cart-buttons">
-                    <a href="index.php" class="btn">Zurück zur Startseite</a>
                     <a href="final_order.php" class="btn">Bestätigen</a>
                 </div>
             <?php endif; ?>
