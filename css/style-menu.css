@@ -1,4 +1,8 @@
-/* General body styles */
+/* ==========================================================================
+   General Styles
+   ========================================================================== */
+
+/* General body styles for navigation pages */
 body.navigation {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
     margin: 0;
@@ -6,6 +10,7 @@ body.navigation {
     background-color: #000;
 }
 
+/* General body styles for artikelliste pages */
 body.artikelliste {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
     margin: 0;
@@ -16,8 +21,10 @@ body.artikelliste {
     display: flex;
     flex-direction: column;
     align-items: center;
+    overflow-x: hidden; /* Ensure no horizontal overflow */
 }
 
+/* Header styles */
 header {
     width: 100%;
     background-color: #000;
@@ -26,6 +33,7 @@ header {
     text-align: center;
 }
 
+/* Typography */
 h1 {
     color: #6A2477;
     font-size: clamp(30px, 4vw, 40px);
@@ -41,10 +49,20 @@ h2 {
     text-align: center;
 }
 
+/* Logo styles */
 .logo {
     max-width: 50%;
     height: auto;
 }
+
+/* Smooth scrolling for mobile */
+html {
+    scroll-behavior: smooth;
+}
+
+/* ==========================================================================
+   Product Grid Styles (used in artikelliste.php)
+   ========================================================================== */
 
 /* Grid container for product cards */
 body.artikelliste .grid-container {
@@ -75,7 +93,7 @@ body.artikelliste .grid-item {
     animation: fadeIn 0.5s ease forwards;
 }
 
-/* Fade-in animation */
+/* Fade-in animation for product cards */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
@@ -86,7 +104,7 @@ body.artikelliste .grid-item:hover {
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
 }
 
-/* Image container */
+/* Image container for dish images */
 body.artikelliste .dish-image-container {
     width: 100%;
     height: 150px;
@@ -106,7 +124,7 @@ body.artikelliste .grid-item:hover .dish-image {
     transform: scale(1.05);
 }
 
-/* Action buttons container */
+/* Action buttons container (info, ingredients, cart) */
 body.artikelliste .action-buttons {
     position: absolute;
     top: 12px;
@@ -139,6 +157,7 @@ body.artikelliste .cart-button-list {
     justify-content: center;
     transition: background-color 0.3s ease, transform 0.3s ease;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    position: relative; /* Added for positioning the product count */
 }
 
 body.artikelliste .info-button:hover,
@@ -152,6 +171,22 @@ body.artikelliste .info-button i,
 body.artikelliste .ingredients-button i,
 body.artikelliste .cart-button-list i {
     font-size: 16px;
+}
+
+/* Product count on the cart button */
+body.artikelliste .product-count {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background: #6A2477;
+    color: #fff;
+    font-size: 10px;
+    font-weight: bold;
+    padding: 1px 4px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    display: none;
+    line-height: 1;
 }
 
 /* Dish details */
@@ -177,7 +212,7 @@ body.artikelliste .dishname {
     word-wrap: break-word;
 }
 
-/* Dietary icons */
+/* Dietary icons container */
 body.artikelliste .mini-logo-container {
     display: flex;
     gap: 3px;
@@ -223,7 +258,7 @@ body.artikelliste .price-button:hover {
     background-color: #4A1A55;
 }
 
-/* Modal styles */
+/* Modal styles for allergens and ingredients */
 body.artikelliste .modal {
     display: none;
     position: fixed;
@@ -282,7 +317,26 @@ body.artikelliste .no-items {
     font-weight: 500;
 }
 
-/* Footer (if present) */
+/* Toastify styles for notifications */
+body.artikelliste .toastify {
+    background: #6A2477;
+    color: #fff;
+    border-radius: 8px;
+    padding: 12px 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    font-family: 'Arial', sans-serif;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    max-width: 300px;
+}
+
+body.artikelliste .toastify i {
+    font-size: 18px;
+}
+
+/* Footer styles (if present) */
 footer {
     width: 100%;
     background-color: #000;
@@ -292,7 +346,38 @@ footer {
     margin-top: auto;
 }
 
-/* Responsive adjustments */
+/* ==========================================================================
+   Accessibility and Aesthetic Enhancements
+   ========================================================================== */
+
+/* Focus styles for accessibility */
+body.artikelliste .info-button:focus,
+body.artikelliste .ingredients-button:focus,
+body.artikelliste .cart-button-list:focus,
+body.artikelliste .price-button:focus {
+    outline: 2px solid #6A2477;
+    outline-offset: 2px;
+}
+
+/* Additional aesthetic improvements for action buttons */
+body.artikelliste .action-buttons {
+    opacity: 0.9;
+    transition: opacity 0.3s ease;
+}
+
+body.artikelliste .grid-item:hover .action-buttons {
+    opacity: 1;
+}
+
+body.artikelliste .dish-details {
+    border-radius: 0 0 12px 12px;
+}
+
+/* ==========================================================================
+   Responsive Adjustments
+   ========================================================================== */
+
+/* Responsive adjustments for smaller screens */
 @media (max-width: 768px) {
     body.artikelliste .grid-container {
         grid-template-columns: repeat(2, 1fr); /* Changed from 1fr to create 2 columns */
@@ -371,43 +456,19 @@ footer {
         top: 12px;
         right: 12px;
     }
+
+    body.artikelliste .product-count {
+        font-size: 8px;
+        padding: 0px 3px;
+        top: -4px;
+        right: -4px;
+        border-radius: 6px;
+    }
 }
 
+/* Responsive adjustments for larger screens */
 @media (min-width: 1200px) {
     body.artikelliste .grid-container {
         grid-template-columns: repeat(3, 1fr);
     }
-}
-
-/* Additional aesthetic improvements */
-body.artikelliste .action-buttons {
-    opacity: 0.9;
-    transition: opacity 0.3s ease;
-}
-
-body.artikelliste .grid-item:hover .action-buttons {
-    opacity: 1;
-}
-
-body.artikelliste .dish-details {
-    border-radius: 0 0 12px 12px;
-}
-
-/* Focus styles for accessibility */
-body.artikelliste .info-button:focus,
-body.artikelliste .ingredients-button:focus,
-body.artikelliste .cart-button-list:focus,
-body.artikelliste .price-button:focus {
-    outline: 2px solid #6A2477;
-    outline-offset: 2px;
-}
-
-/* Smooth scrolling for mobile */
-html {
-    scroll-behavior: smooth;
-}
-
-/* Ensure no horizontal overflow */
-body.artikelliste {
-    overflow-x: hidden;
 }

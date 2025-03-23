@@ -15,56 +15,6 @@ if (!isset($_SESSION['cart'])) {
     <!-- Add Toastify CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <title>Menu Items</title>
-    <style>
-        /* Toastify styling (similar to cart.php) */
-        .toastify {
-            background: #6A2477 !important;
-            color: #fff !important;
-            border-radius: 8px !important;
-            padding: 12px 20px !important;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3) !important;
-            font-family: 'Arial', sans-serif !important;
-            font-size: 16px !important;
-            display: flex !important;
-            align-items: center !important;
-            gap: 10px !important;
-            max-width: 300px !important;
-        }
-        .toastify i {
-            font-size: 18px !important;
-        }
-
-        /* Styling for the cart button to position the product count */
-        .cart-button-list {
-            position: relative;
-        }
-
-        /* Styling for the product count on the cart icon */
-        .product-count {
-            position: absolute;
-            top: -6px;
-            right: -6px;
-            background: #6A2477;
-            color: #fff;
-            font-size: 10px;
-            font-weight: bold;
-            padding: 1px 4px;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-            display: none;
-            line-height: 1;
-        }
-
-        @media (max-width: 768px) {
-            .product-count {
-                font-size: 8px;
-                padding: 0px 3px;
-                top: -4px;
-                right: -4px;
-                border-radius: 6px;
-            }
-        }
-    </style>
 </head>
 <body class="artikelliste">
     <div class="grid-container">
