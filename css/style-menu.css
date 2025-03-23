@@ -295,7 +295,7 @@ footer {
 /* Responsive adjustments */
 @media (max-width: 768px) {
     body.artikelliste .grid-container {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr); /* Changed from 1fr to create 2 columns */
         gap: 12px;
         padding: 16px 8px;
         width: 100%;
@@ -305,10 +305,10 @@ footer {
     body.artikelliste .grid-item {
         border-radius: 10px;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-        min-height: 220px; /* Reduced from 258px to reduce the gap */
-        width: 100%;
-        max-width: 400px;
-        margin: 0 auto;
+        min-height: 220px;
+        width: 100%; /* Ensure it takes the full column width */
+        max-width: none; /* Remove max-width to fit the column */
+        margin: 0; /* Remove centering */
     }
 
     body.artikelliste .dish-image-container {
