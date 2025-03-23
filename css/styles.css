@@ -1,8 +1,13 @@
+/* ==========================================================================
+   Global Styles
+   ========================================================================== */
+
 /* Reset default styles to avoid conflicts */
 * {
     box-sizing: border-box;
 }
 
+/* Base styles for body with navigation class (used in warmekueche.php, final_order.php, etc.) */
 body.navigation {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
     margin: 0;
@@ -12,8 +17,10 @@ body.navigation {
     align-items: center;
     background-color: #000;
     min-height: 100vh;
+    overflow-x: hidden; /* Ensure no horizontal overflow */
 }
 
+/* Base styles for body with artikelliste class */
 body.artikelliste {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
     margin: 0;
@@ -25,6 +32,7 @@ body.artikelliste {
     align-items: center;
 }
 
+/* Header styles (used across all pages) */
 header {
     width: 100%;
     background-color: #000;
@@ -33,6 +41,7 @@ header {
     text-align: center;
 }
 
+/* Typography */
 h1 {
     color: #6A2477;
     font-size: clamp(30px, 4vw, 40px);
@@ -47,17 +56,28 @@ h2 {
     font-size: clamp(18px, 4vw, 22px);
 }
 
+/* Logo styles (used in header) */
 .logo {
     max-width: 50%;
     height: auto;
 }
 
+/* Page title (used in warmekueche.php) */
 .page-title {
     color: white;
     text-align: center;
 }
 
-/* Reset conflicting styles */
+/* Smooth scrolling for mobile */
+html {
+    scroll-behavior: smooth;
+}
+
+/* ==========================================================================
+   Menu Grid Styles (used in warmekueche.php, sushi.php, etc.)
+   ========================================================================== */
+
+/* Reset conflicting styles for grid items */
 .grid-item {
     background-color: transparent;
     border: none;
@@ -160,7 +180,7 @@ body.navigation .category-name {
     word-wrap: break-word;
 }
 
-/* Animations */
+/* Animations for menu grid */
 #menu-grid {
     opacity: 1;
     transition: opacity 0.3s ease;
@@ -185,7 +205,7 @@ body.navigation .category-name {
     }
 }
 
-/* Skeleton styles */
+/* Skeleton styles for menu grid */
 body.navigation .skeleton-item {
     background: linear-gradient(180deg, #1a1a1a 70%, #2a2a2a 100%);
     border: 2px solid #6A2477;
@@ -255,8 +275,12 @@ body.navigation .skeleton-text {
 }
 
 @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 /* Retry button */
@@ -279,67 +303,10 @@ body.navigation .grid-item:focus {
     outline-offset: 2px;
 }
 
-/* Smooth scrolling for mobile */
-html {
-    scroll-behavior: smooth;
-}
+/* ==========================================================================
+   Dish List Styles (used in artikelliste pages)
+   ========================================================================== */
 
-/* Ensure no horizontal overflow */
-body.navigation {
-    overflow-x: hidden;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    body.navigation .grid-container {
-        grid-template-columns: 1fr 1fr;
-        gap: 12px;
-        padding: 16px 8px;
-        width: 100%;
-        max-width: 100%;
-    }
-
-    body.navigation .grid-item {
-        border: 2px solid #6A2477;
-        border-radius: 10px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-        min-height: 180px;
-    }
-
-    body.navigation .category-image-container {
-        height: 130px;
-    }
-
-    body.navigation .category-details {
-        padding: 6px 10px;
-    }
-
-    body.navigation .category-name {
-        font-size: 13px;
-        max-width: 95%;
-    }
-
-    body.navigation .skeleton-item {
-        border: 2px solid #6A2477;
-        border-radius: 10px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-        min-height: 180px;
-    }
-
-    body.navigation .skeleton-image {
-        height: 130px;
-    }
-
-    body.navigation .skeleton-details {
-        padding: 6px 10px;
-    }
-
-    body.navigation .skeleton-text {
-        height: 13px;
-    }
-}
-
-/* Remaining original styles */
 .content {
     width: 90%;
     max-width: 600px;
@@ -368,12 +335,6 @@ body.navigation {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-}
-
-@media only screen and (max-width: 600px) {
-    .dish h3 {
-        font-size: 12px;
-    }
 }
 
 .description {
@@ -423,6 +384,10 @@ body.navigation {
     text-decoration-color: #6A2477;
 }
 
+/* ==========================================================================
+   Modal Styles (used in artikelliste pages)
+   ========================================================================== */
+
 .modal {
     display: none;
     position: fixed;
@@ -459,4 +424,510 @@ body.navigation {
     color: black;
     text-decoration: none;
     cursor: pointer;
+}
+
+/* ==========================================================================
+   Final Order Styles (used in final_order.php)
+   ========================================================================== */
+
+/* Note: .bill-wrapper uses font-family: 'Arial', sans-serif, which differs from the global font-family ('Inter', ...). This is a stylistic choice, not a conflict. */
+.bill-wrapper {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 0 15px;
+    font-family: 'Arial', sans-serif;
+}
+
+.bill-header {
+    text-align: center;
+    padding: 20px;
+    color: #fff;
+    background: #6A2477;
+    border-radius: 10px 10px 0 0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.bill-header h1 {
+    margin: 0 0 10px 0;
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: #fff;
+}
+
+.bill-header p {
+    margin: 0;
+    font-size: 16px;
+    color: #fff;
+    font-weight: 300;
+}
+
+.bill-details {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 0 0 10px 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.bill-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.bill-table th,
+.bill-table td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.bill-table th {
+    background-color: #f9f9f9;
+    font-weight: 600;
+    color: #333;
+}
+
+.bill-table td {
+    color: #666;
+}
+
+.bill-table .quantity {
+    text-align: center;
+}
+
+.bill-table .price,
+.bill-table .subtotal {
+    text-align: right;
+}
+
+.bill-total {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px;
+    background-color: #f9f9f9;
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    border-top: 1px solid #eee;
+}
+
+.timer {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 16px;
+    color: #6A2477;
+    display: none;
+    background: rgba(106, 36, 119, 0.1);
+    padding: 10px;
+    border-radius: 5px;
+    transition: opacity 0.3s ease;
+}
+
+.timer.visible {
+    opacity: 1;
+}
+
+#timer-countdown {
+    display: inline-block;
+    min-width: 100px; /* Fixed width to prevent shaking */
+    text-align: center;
+    font-family: monospace; /* Monospace font for consistent digit width */
+}
+
+.timer.warning {
+    color: #dc3545;
+    background: rgba(220, 53, 69, 0.1);
+}
+
+.bill-buttons {
+    padding: 20px 0;
+    text-align: center;
+}
+
+.bill-buttons .btn {
+    display: inline-block;
+    padding: 12px 25px;
+    margin: 10px;
+    text-decoration: none;
+    border-radius: 50px;
+    font-size: 16px;
+    font-weight: 500;
+    background-color: #6A2477;
+    color: #fff;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    border: none;
+}
+
+.bill-buttons .btn:hover {
+    background-color: #4A1A55;
+    transform: translateY(-2px);
+}
+
+/* ==========================================================================
+   Footer Styles (used in footer.php)
+   ========================================================================== */
+
+footer {
+    background: linear-gradient(135deg, #2a1a2f 0%, #1a0f1d 100%); /* Darker gradient to match site theme */
+    color: #fff;
+    text-align: center;
+    padding: 40px 20px;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.5);
+    box-sizing: border-box;
+    border-top: 2px solid #6A2477; /* Match the purple border used elsewhere */
+}
+
+footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(106, 36, 119, 0.15) 0%, rgba(106, 36, 119, 0) 70%);
+    animation: glow 8s ease-in-out infinite alternate;
+    z-index: 0;
+}
+
+.footer-content {
+    position: relative;
+    z-index: 1;
+    max-width: 100%;
+    box-sizing: border-box;
+    opacity: 0; /* Initial state for fade-in animation */
+    animation: fadeInFooter 1s ease forwards; /* Fade-in animation */
+}
+
+.footer-divider {
+    width: 60px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #6A2477, transparent); /* Gradient divider */
+    margin: 15px auto;
+    opacity: 0.8;
+}
+
+.footer-text {
+    font-size: 16px;
+    font-weight: 300;
+    margin: 15px 0;
+    letter-spacing: 0.5px;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    box-sizing: border-box;
+}
+
+.footer-links {
+    margin: 15px 0;
+    white-space: nowrap;
+    box-sizing: border-box;
+    display: flex; /* Use flexbox for better control over spacing */
+    justify-content: center;
+    align-items: center;
+    gap: 15px; /* Equal spacing between items */
+}
+
+.footer-links a {
+    color: #D4AF37; /* Gold accent */
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 500;
+    transition: color 0.3s ease, transform 0.3s ease, text-shadow 0.3s ease; /* Added text-shadow transition */
+    position: relative;
+    display: inline-block;
+}
+
+.footer-links a::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 1px;
+    bottom: -2px;
+    left: 0;
+    background-color: #fff;
+    transition: width 0.3s ease;
+    z-index: 1; /* Ensure the underline is above other elements */
+}
+
+.footer-links a:hover::after {
+    width: 100%;
+}
+
+.footer-links a:hover {
+    color: #fff;
+    transform: translateY(-2px);
+    text-shadow: 0 0 8px rgba(212, 175, 55, 0.5); /* Glow effect on hover */
+}
+
+.footer-separator {
+    color: #fff;
+    font-size: 15px;
+    font-weight: 500;
+}
+
+/* Fade-in animation for footer content */
+@keyframes fadeInFooter {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Refined glow effect for footer background */
+@keyframes glow {
+    0% {
+        transform: scale(1);
+        opacity: 0.5;
+    }
+    100% {
+        transform: scale(1.03);
+        opacity: 0.8; /* Softer opacity for a subtler effect */
+    }
+}
+
+/* ==========================================================================
+   Floating Bar Styles (used in floating_bar.php)
+   ========================================================================== */
+
+.floating-bar-wrapper {
+    position: fixed;
+    bottom: 70px;
+    right: 20px;
+    z-index: 2000;
+    pointer-events: none;
+}
+
+.floating-bar {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: none;
+    pointer-events: auto;
+}
+
+.floating-bar .cart-button,
+.floating-bar .home-button,
+.floating-bar .back-button {
+    background: #6A2477;
+    color: #fff;
+    padding: 10px;
+    border-radius: 50%;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.floating-bar .cart-button:hover,
+.floating-bar .home-button:hover,
+.floating-bar .back-button:hover {
+    background: #4A1A55;
+    transform: scale(1.05);
+}
+
+.floating-bar .cart-button .fa-shopping-cart,
+.floating-bar .home-button .fa-home,
+.floating-bar .back-button .fa-arrow-left {
+    font-size: 18px;
+}
+
+.floating-bar .cart-count {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #6A2477;
+    color: #fff;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 2px 6px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* ==========================================================================
+   Responsive Adjustments
+   ========================================================================== */
+
+/* Responsive adjustments for menu grid (warmekueche.php, sushi.php, etc.) */
+@media (max-width: 768px) {
+    body.navigation .grid-container {
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        padding: 16px 8px;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    body.navigation .grid-item {
+        border: 2px solid #6A2477;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        min-height: 180px;
+    }
+
+    body.navigation .category-image-container {
+        height: 130px;
+    }
+
+    body.navigation .category-details {
+        padding: 6px 10px;
+    }
+
+    body.navigation .category-name {
+        font-size: 13px;
+        max-width: 95%;
+    }
+
+    body.navigation .skeleton-item {
+        border: 2px solid #6A2477;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        min-height: 180px;
+    }
+
+    body.navigation .skeleton-image {
+        height: 130px;
+    }
+
+    body.navigation .skeleton-details {
+        padding: 6px 10px;
+    }
+
+    body.navigation .skeleton-text {
+        height: 13px;
+    }
+}
+
+/* Responsive adjustments for dish list */
+@media only screen and (max-width: 600px) {
+    .dish h3 {
+        font-size: 12px;
+    }
+}
+
+/* Responsive adjustments for final order (final_order.php) */
+@media (max-width: 768px) {
+    .bill-wrapper {
+        margin: 10px;
+        padding: 0;
+        width: auto;
+        max-width: 100%;
+    }
+
+    .bill-header {
+        padding: 15px;
+        border-radius: 10px 10px 0 0;
+    }
+
+    .bill-header h1 {
+        font-size: 24px;
+    }
+
+    .bill-header p {
+        font-size: 14px;
+    }
+
+    .bill-details {
+        padding: 15px;
+    }
+
+    .bill-table th,
+    .bill-table td {
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    .bill-total {
+        font-size: 16px;
+        padding: 10px;
+    }
+
+    .timer {
+        font-size: 14px;
+    }
+
+    #timer-countdown {
+        min-width: 80px;
+    }
+
+    .bill-buttons {
+        padding: 15px 0;
+    }
+
+    .bill-buttons .btn {
+        display: block;
+        width: 90%;
+        max-width: 400px;
+        margin: 10px auto;
+        padding: 12px 20px;
+    }
+}
+
+/* Responsive adjustments for footer (footer.php) */
+@media (max-width: 768px) {
+    footer {
+        padding: 30px 15px;
+    }
+
+    .footer-text {
+        font-size: 14px;
+    }
+
+    .footer-links {
+        white-space: normal; /* Allow wrapping on small screens */
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .footer-links a {
+        font-size: 14px;
+    }
+
+    .footer-separator {
+        font-size: 14px;
+    }
+}
+
+/* Responsive adjustments for floating bar (floating_bar.php) */
+@media (max-width: 768px) {
+    .floating-bar-wrapper {
+        bottom: 60px;
+    }
+
+    .floating-bar .cart-button,
+    .floating-bar .home-button,
+    .floating-bar .back-button {
+        width: 32px;
+        height: 32px;
+        padding: 8px;
+    }
+
+    .floating-bar .cart-button .fa-shopping-cart,
+    .floating-bar .home-button .fa-home,
+    .floating-bar .back-button .fa-arrow-left {
+        font-size: 14px;
+    }
+
+    .floating-bar .cart-count {
+        font-size: 10px;
+        padding: 1px 4px;
+        top: -6px;
+        right: -6px;
+    }
 }
