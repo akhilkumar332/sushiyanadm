@@ -110,7 +110,7 @@ body.artikelliste .grid-item:hover .dish-image {
 body.artikelliste .action-buttons {
     position: absolute;
     top: 12px;
-    right: 12px;
+    right: 5px;
     display: flex;
     flex-direction: column;
     gap: 8px;
