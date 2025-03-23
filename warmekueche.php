@@ -9,21 +9,10 @@ if (!isset($_SESSION['cart'])) {
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: 'cart=' + encodeURIComponent(localStorage.getItem('cart'))
             })
-            .then(response => {
-                if (!response.ok) throw new Error('Network response was not ok: ' + response.status);
-                return response.text();
-            })
-            .then(text => {
-                console.log('Raw response:', text);
-                // Trim trailing % or whitespace
-                const cleanedText = text.replace(/%+$/, '').trim();
-                return JSON.parse(cleanedText);
-            })
-            .then(data => {
-                console.log('Cart restored:', data);
-                updateCartCount();
-            })
-            .catch(error => console.error('Error restoring cart:', error));
+            .then(response => response.text())
+            .then(text => JSON.parse(text.replace(/%+$/, '').trim()))
+            .then(data => updateCartCount())
+            .catch(error => {});
         }
     </script>";
 }
@@ -34,59 +23,113 @@ if (!isset($_SESSION['cart'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>Digitale Speisekarte</title>
+    <title>Digitale Speisekarte - Warme Küche</title>
     <link rel="stylesheet" href="/css/styles.css">
-    <!-- Add Font Awesome CDN -->
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Preload logo -->
+    <link rel="preload" href="/bilder/logo.webp" as="image">
+    <!-- jQuery CDN -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 </head>
 <body class="navigation">
     <header>
         <a href="./"><img src="/bilder/logo.webp" alt="Restaurant Logo" class="logo"></a>
     </header>
-
-    <div class="grid-container">
-        <a href="warmekueche/menu.php?category=nudeln" class="grid-item">
-            <img src="/bilder/warmekueche/gebratene_nudeln.jpg" alt="Gebratene Nudeln">
-            <div class="text">Gebratene Nudeln</div>
-        </a>
-        <a href="warmekueche/menu.php?category=reis" class="grid-item">
-            <img src="/bilder/warmekueche/gebratener_reis.jpg" alt="Gebratener Reis">
-            <div class="text">Gebratener Reis</div>
-        </a>
-        <a href="warmekueche/menu.php?category=gemuese" class="grid-item">
-            <img src="/bilder/warmekueche/gebratenes_gemuese.jpg" alt="Gebratenes Gemüse">
-            <div class="text">Gebratenes Gemüse</div>
-        </a>
-        <a href="warmekueche/menu.php?category=yellowcurry" class="grid-item">
-            <img src="/bilder/warmekueche/yellow_curry.jpg" alt="Yellow Curry">
-            <div class="text">Yellow Curry</div>
-        </a>
-        <a href="warmekueche/menu.php?category=mangochutney" class="grid-item">
-            <img src="/bilder/warmekueche/mango_chutney.jpg" alt="Mango Chutney">
-            <div class="text">Mango Chutney</div>
-        </a>
-        <a href="warmekueche/menu.php?category=erdnussgericht" class="grid-item">
-            <img src="/bilder/warmekueche/erdnussgericht.jpg" alt="Erdnussgericht">
-            <div class="text">Erdnussgericht</div>
-        </a>
-        <a href="warmekueche/menu.php?category=chopsuey" class="grid-item">
-            <img src="/bilder/warmekueche/chop_suey.jpg" alt="Chop Suey">
-            <div class="text">Chop Suey</div>
-        </a>
-        <a href="warmekueche/menu.php?category=redcurry" class="grid-item">
-            <img src="/bilder/warmekueche/red_curry.jpg" alt="Red Curry">
-            <div class="text">Red Curry</div>
-        </a>
-        <a href="warmekueche/menu.php?category=suesssauersauce" class="grid-item">
-            <img src="/bilder/warmekueche/suess_sauer_sauce.jpg" alt="Süss-Sauer Sauce">
-            <div class="text">Süss-Sauer Sauce</div>
-        </a>
-        <a href="warmekueche/menu.php?category=extras" class="grid-item">
-            <img src="/bilder/warmekueche/Extras.jpg" alt="Extras">
-            <div class="text">Extras</div>
-        </a>
+    <div>
+        <h1 class="page-title">Warme Küche</h1>
     </div>
-    
+    <div class="loading-spinner" id="loading-spinner"></div>
+    <div class="grid-container" id="menu-grid" aria-busy="true">
+        <!-- Skeleton placeholders (10 to match warmekueche items) -->
+        <div class="skeleton-item">
+            <div class="skeleton-image"></div>
+            <div class="skeleton-details">
+                <div class="skeleton-text"></div>
+            </div>
+        </div>
+        <div class="skeleton-item">
+            <div class="skeleton-image"></div>
+            <div class="skeleton-details">
+                <div class="skeleton-text"></div>
+            </div>
+        </div>
+        <div class="skeleton-item">
+            <div class="skeleton-image"></div>
+            <div class="skeleton-details">
+                <div class="skeleton-text"></div>
+            </div>
+        </div>
+        <div class="skeleton-item">
+            <div class="skeleton-image"></div>
+            <div class="skeleton-details">
+                <div class="skeleton-text"></div>
+            </div>
+        </div>
+        <div class="skeleton-item">
+            <div class="skeleton-image"></div>
+            <div class="skeleton-details">
+                <div class="skeleton-text"></div>
+            </div>
+        </div>
+        <div class="skeleton-item">
+            <div class="skeleton-image"></div>
+            <div class="skeleton-details">
+                <div class="skeleton-text"></div>
+            </div>
+        </div>
+        <div class="skeleton-item">
+            <div class="skeleton-image"></div>
+            <div class="skeleton-details">
+                <div class="skeleton-text"></div>
+            </div>
+        </div>
+        <div class="skeleton-item">
+            <div class="skeleton-image"></div>
+            <div class="skeleton-details">
+                <div class="skeleton-text"></div>
+            </div>
+        </div>
+        <div class="skeleton-item">
+            <div class="skeleton-image"></div>
+            <div class="skeleton-details">
+                <div class="skeleton-text"></div>
+            </div>
+        </div>
+        <div class="skeleton-item">
+            <div class="skeleton-image"></div>
+            <div class="skeleton-details">
+                <div class="skeleton-text"></div>
+            </div>
+        </div>
+    </div>
+    <noscript>
+        <div class="grid-container" id="menu-grid">
+            <?php
+            $warmekueche_items = [
+                ['href' => 'warmekueche/menu.php?category=nudeln', 'img' => 'bilder/warmekueche/gebratene_nudeln.jpg', 'alt' => 'Gebratene Nudeln', 'text' => 'Gebratene Nudeln'],
+                ['href' => 'warmekueche/menu.php?category=reis', 'img' => 'bilder/warmekueche/gebratener_reis.jpg', 'alt' => 'Gebratener Reis', 'text' => 'Gebratener Reis'],
+                ['href' => 'warmekueche/menu.php?category=gemuese', 'img' => 'bilder/warmekueche/gebratenes_gemuese.jpg', 'alt' => 'Gebratenes Gemüse', 'text' => 'Gebratenes Gemüse'],
+                ['href' => 'warmekueche/menu.php?category=yellowcurry', 'img' => 'bilder/warmekueche/yellow_curry.jpg', 'alt' => 'Yellow Curry', 'text' => 'Yellow Curry'],
+                ['href' => 'warmekueche/menu.php?category=mangochutney', 'img' => 'bilder/warmekueche/mango_chutney.jpg', 'alt' => 'Mango Chutney', 'text' => 'Mango Chutney'],
+                ['href' => 'warmekueche/menu.php?category=erdnussgericht', 'img' => 'bilder/warmekueche/erdnussgericht.jpg', 'alt' => 'Erdnussgericht', 'text' => 'Erdnussgericht'],
+                ['href' => 'warmekueche/menu.php?category=chopsuey', 'img' => 'bilder/warmekueche/chop_suey.jpg', 'alt' => 'Chop Suey', 'text' => 'Chop Suey'],
+                ['href' => 'warmekueche/menu.php?category=redcurry', 'img' => 'bilder/warmekueche/red_curry.jpg', 'alt' => 'Red Curry', 'text' => 'Red Curry'],
+                ['href' => 'warmekueche/menu.php?category=suesssauersauce', 'img' => 'bilder/warmekueche/suess_sauer_sauce.jpg', 'alt' => 'Süss-Sauer Sauce', 'text' => 'Süss-Sauer Sauce'],
+                ['href' => 'warmekueche/menu.php?category=extras', 'img' => 'bilder/warmekueche/Extras.jpg', 'alt' => 'Extras', 'text' => 'Extras'],
+            ];
+            foreach ($warmekueche_items as $item) {
+                echo '<a href="' . htmlspecialchars($item['href']) . '" class="grid-item">';
+                echo '<div class="category-image-container">';
+                echo '<img src="' . htmlspecialchars($item['img']) . '" alt="' . htmlspecialchars($item['alt']) . '" class="category-image" loading="lazy">';
+                echo '</div>';
+                echo '<div class="category-details">';
+                echo '<h2 class="category-name">' . htmlspecialchars($item['text']) . '</h2>';
+                echo '</div>';
+                echo '</a>';
+            }
+            ?>
+        </div>
+    </noscript>
     <?php include_once './config/floating_bar.php'; ?>
     <?php include_once './config/footer.php'; ?>
     <script>
@@ -99,6 +142,82 @@ if (!isset($_SESSION['cart'])) {
             const cart = JSON.parse(localStorage.getItem('cart') || '{}');
             document.getElementById('cart-count').innerText = Object.values(cart).reduce((a, b) => a + b, 0);
         }
+
+        // Load warmekueche menu asynchronously
+        $(document).ready(function() {
+            const cachedWarmekuecheMenu = localStorage.getItem('cachedWarmekuecheMenu');
+            $('#loading-spinner').show();
+            $('#menu-grid').addClass('loading');
+            if (cachedWarmekuecheMenu) {
+                $('#menu-grid').html(cachedWarmekuecheMenu);
+                $('#menu-grid .grid-item').each(function(index) {
+                    $(this).css('animation-delay', (index * 0.1) + 's');
+                    const categoryName = $(this).find('.category-name').text();
+                    if (categoryName) {
+                        $(this).attr('aria-label', categoryName);
+                    }
+                });
+                $('#menu-grid').removeClass('loading');
+                $('#menu-grid').attr('aria-busy', 'false');
+                $('#loading-spinner').hide();
+            } else {
+                $.ajax({
+                    url: '/config/load_warmekueche_menu.php',
+                    method: 'GET',
+                    success: function(data) {
+                        $('#menu-grid').html(data);
+                        $('#menu-grid .grid-item').each(function(index) {
+                            $(this).css('animation-delay', (index * 0.1) + 's');
+                            const categoryName = $(this).find('.category-name').text();
+                            if (categoryName) {
+                                $(this).attr('aria-label', categoryName);
+                            }
+                        });
+                        localStorage.setItem('cachedWarmekuecheMenu', data);
+                        $('#menu-grid').removeClass('loading');
+                        $('#menu-grid').attr('aria-busy', 'false');
+                        $('#loading-spinner').hide();
+                    },
+                    error: function() {
+                        $('#menu-grid').html('<p>Fehler beim Laden des Menüs. <button id="retry-menu">Erneut versuchen</button></p>');
+                        $('#menu-grid').removeClass('loading');
+                        $('#menu-grid').attr('aria-busy', 'false');
+                        $('#loading-spinner').hide();
+                        $('#retry-menu').on('click', function() {
+                            $('#menu-grid').html('');
+                            $('#menu-grid').addClass('loading');
+                            $('#menu-grid').attr('aria-busy', 'true');
+                            $('#loading-spinner').show();
+                            $.ajax({
+                                url: '/config/load_warmekueche_menu.php',
+                                method: 'GET',
+                                success: function(data) {
+                                    $('#menu-grid').html(data);
+                                    $('#menu-grid .grid-item').each(function(index) {
+                                        $(this).css('animation-delay', (index * 0.1) + 's');
+                                        const categoryName = $(this).find('.category-name').text();
+                                        if (categoryName) {
+                                            $(this).attr('aria-label', categoryName);
+                                        }
+                                    });
+                                    localStorage.setItem('cachedWarmekuecheMenu', data);
+                                    $('#menu-grid').removeClass('loading');
+                                    $('#menu-grid').attr('aria-busy', 'false');
+                                    $('#loading-spinner').hide();
+                                },
+                                error: function() {
+                                    $('#menu-grid').html('<p>Fehler beim Laden des Menüs. <button id="retry-menu">Erneut versuchen</button></p>');
+                                    $('#menu-grid').removeClass('loading');
+                                    $('#menu-grid').attr('aria-busy', 'false');
+                                    $('#loading-spinner').hide();
+                                }
+                            });
+                        });
+                    }
+                });
+            }
+        });
+
         window.onload = updateLocalCart;
         setInterval(updateCartCount, 1000);
     </script>
