@@ -20,9 +20,13 @@ $menu_items = [
 ob_start();
 foreach ($menu_items as $item) {
     echo '<a href="' . htmlspecialchars($item['href']) . '" class="grid-item">';
-    echo '<img src="' . htmlspecialchars($item['img']) . '" alt="' . htmlspecialchars($item['alt']) . '" loading="lazy">';
-    echo '<div class="text">' . htmlspecialchars($item['text']) . '</div>';
+    echo '<div class="category-image-container">';
+    echo '<img src="' . htmlspecialchars($item['img']) . '" alt="' . htmlspecialchars($item['alt']) . '" class="category-image" loading="lazy">';
+    echo '</div>';
+    echo '<div class="category-details">';
+    echo '<h2 class="category-name">' . htmlspecialchars($item['text']) . '</h2>';
+    echo '</div>';
     echo '</a>';
 }
-ob_end_flush();
-?>
+$output = ob_get_clean();
+echo $output;

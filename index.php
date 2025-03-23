@@ -9,20 +9,10 @@ if (!isset($_SESSION['cart'])) {
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: 'cart=' + encodeURIComponent(localStorage.getItem('cart'))
             })
-            .then(response => {
-                if (!response.ok) throw new Error('Network response was not ok: ' + response.status);
-                return response.text();
-            })
-            .then(text => {
-                console.log('Raw response:', text);
-                const cleanedText = text.replace(/%+$/, '').trim();
-                return JSON.parse(cleanedText);
-            })
-            .then(data => {
-                console.log('Cart restored:', data);
-                updateCartCount();
-            })
-            .catch(error => console.error('Error restoring cart:', error));
+            .then(response => response.text())
+            .then(text => JSON.parse(text.replace(/%+$/, '').trim()))
+            .then(data => updateCartCount())
+            .catch(error => {});
         }
     </script>";
 }
@@ -53,51 +43,75 @@ if (!isset($_SESSION['cart'])) {
         <!-- Skeleton placeholders (12 to match menu items) -->
         <div class="skeleton-item">
             <div class="skeleton-image"></div>
-            <div class="skeleton-text"></div>
+            <div class="skeleton-details">
+                <div class="skeleton-text"></div>
+            </div>
         </div>
         <div class="skeleton-item">
             <div class="skeleton-image"></div>
-            <div class="skeleton-text"></div>
+            <div class="skeleton-details">
+                <div class="skeleton-text"></div>
+            </div>
         </div>
         <div class="skeleton-item">
             <div class="skeleton-image"></div>
-            <div class="skeleton-text"></div>
+            <div class="skeleton-details">
+                <div class="skeleton-text"></div>
+            </div>
         </div>
         <div class="skeleton-item">
             <div class="skeleton-image"></div>
-            <div class="skeleton-text"></div>
+            <div class="skeleton-details">
+                <div class="skeleton-text"></div>
+            </div>
         </div>
         <div class="skeleton-item">
             <div class="skeleton-image"></div>
-            <div class="skeleton-text"></div>
+            <div class="skeleton-details">
+                <div class="skeleton-text"></div>
+            </div>
         </div>
         <div class="skeleton-item">
             <div class="skeleton-image"></div>
-            <div class="skeleton-text"></div>
+            <div class="skeleton-details">
+                <div class="skeleton-text"></div>
+            </div>
         </div>
         <div class="skeleton-item">
             <div class="skeleton-image"></div>
-            <div class="skeleton-text"></div>
+            <div class="skeleton-details">
+                <div class="skeleton-text"></div>
+            </div>
         </div>
         <div class="skeleton-item">
             <div class="skeleton-image"></div>
-            <div class="skeleton-text"></div>
+            <div class="skeleton-details">
+                <div class="skeleton-text"></div>
+            </div>
         </div>
         <div class="skeleton-item">
             <div class="skeleton-image"></div>
-            <div class="skeleton-text"></div>
+            <div class="skeleton-details">
+                <div class="skeleton-text"></div>
+            </div>
         </div>
         <div class="skeleton-item">
             <div class="skeleton-image"></div>
-            <div class="skeleton-text"></div>
+            <div class="skeleton-details">
+                <div class="skeleton-text"></div>
+            </div>
         </div>
         <div class="skeleton-item">
             <div class="skeleton-image"></div>
-            <div class="skeleton-text"></div>
+            <div class="skeleton-details">
+                <div class="skeleton-text"></div>
+            </div>
         </div>
         <div class="skeleton-item">
             <div class="skeleton-image"></div>
-            <div class="skeleton-text"></div>
+            <div class="skeleton-details">
+                <div class="skeleton-text"></div>
+            </div>
         </div>
     </div>
     <noscript>
@@ -119,8 +133,12 @@ if (!isset($_SESSION['cart'])) {
             ];
             foreach ($menu_items as $item) {
                 echo '<a href="' . htmlspecialchars($item['href']) . '" class="grid-item">';
-                echo '<img src="' . htmlspecialchars($item['img']) . '" alt="' . htmlspecialchars($item['alt']) . '" loading="lazy">';
-                echo '<div class="text">' . htmlspecialchars($item['text']) . '</div>';
+                echo '<div class="category-image-container">';
+                echo '<img src="' . htmlspecialchars($item['img']) . '" alt="' . htmlspecialchars($item['alt']) . '" class="category-image" loading="lazy">';
+                echo '</div>';
+                echo '<div class="category-details">';
+                echo '<h2 class="category-name">' . htmlspecialchars($item['text']) . '</h2>';
+                echo '</div>';
                 echo '</a>';
             }
             ?>
@@ -148,7 +166,10 @@ if (!isset($_SESSION['cart'])) {
                 $('#menu-grid').html(cachedMenu);
                 $('#menu-grid .grid-item').each(function(index) {
                     $(this).css('animation-delay', (index * 0.1) + 's');
-                    $(this).attr('aria-label', $(this).find('.text').text());
+                    const categoryName = $(this).find('.category-name').text();
+                    if (categoryName) {
+                        $(this).attr('aria-label', categoryName);
+                    }
                 });
                 $('#menu-grid').removeClass('loading');
                 $('#menu-grid').attr('aria-busy', 'false');
@@ -161,15 +182,17 @@ if (!isset($_SESSION['cart'])) {
                         $('#menu-grid').html(data);
                         $('#menu-grid .grid-item').each(function(index) {
                             $(this).css('animation-delay', (index * 0.1) + 's');
-                            $(this).attr('aria-label', $(this).find('.text').text());
+                            const categoryName = $(this).find('.category-name').text();
+                            if (categoryName) {
+                                $(this).attr('aria-label', categoryName);
+                            }
                         });
                         localStorage.setItem('cachedMenu', data);
                         $('#menu-grid').removeClass('loading');
                         $('#menu-grid').attr('aria-busy', 'false');
                         $('#loading-spinner').hide();
                     },
-                    error: function(xhr, status, error) {
-                        console.error('Error loading menu:', status, error);
+                    error: function() {
                         $('#menu-grid').html('<p>Fehler beim Laden des Menüs. <button id="retry-menu">Erneut versuchen</button></p>');
                         $('#menu-grid').removeClass('loading');
                         $('#menu-grid').attr('aria-busy', 'false');
@@ -180,21 +203,23 @@ if (!isset($_SESSION['cart'])) {
                             $('#menu-grid').attr('aria-busy', 'true');
                             $('#loading-spinner').show();
                             $.ajax({
-                                url: '/load_menu.php',
+                                url: '/config/load_menu.php',
                                 method: 'GET',
                                 success: function(data) {
                                     $('#menu-grid').html(data);
                                     $('#menu-grid .grid-item').each(function(index) {
                                         $(this).css('animation-delay', (index * 0.1) + 's');
-                                        $(this).attr('aria-label', $(this).find('.text').text());
+                                        const categoryName = $(this).find('.category-name').text();
+                                        if (categoryName) {
+                                            $(this).attr('aria-label', categoryName);
+                                        }
                                     });
                                     localStorage.setItem('cachedMenu', data);
                                     $('#menu-grid').removeClass('loading');
                                     $('#menu-grid').attr('aria-busy', 'false');
                                     $('#loading-spinner').hide();
                                 },
-                                error: function(xhr, status, error) {
-                                    console.error('Error loading menu:', status, error);
+                                error: function() {
                                     $('#menu-grid').html('<p>Fehler beim Laden des Menüs. <button id="retry-menu">Erneut versuchen</button></p>');
                                     $('#menu-grid').removeClass('loading');
                                     $('#menu-grid').attr('aria-busy', 'false');
