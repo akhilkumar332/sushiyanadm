@@ -1,10 +1,11 @@
 <?php
-session_start();
+require_once $_SERVER['DOCUMENT_ROOT'] . '/config/config.php';
+
 if (!isset($_SESSION['cart'])) {
     $_SESSION['cart'] = [];
     echo "<script>
         if (localStorage.getItem('cart')) {
-            fetch('restore_cart.php', {
+            fetch('" . URL_RESTORE_CART . "', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: 'cart=' + encodeURIComponent(localStorage.getItem('cart'))
@@ -24,23 +25,20 @@ if (!isset($_SESSION['cart'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <title>Digitale Speisekarte - Warme Küche</title>
-    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="<?php echo ASSETS_CSS; ?>styles.css">
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <!-- Preload logo -->
-    <link rel="preload" href="/bilder/logo.webp" as="image">
-    <!-- jQuery CDN -->
+    <link rel="preload" href="<?php echo ASSETS_IMAGES; ?>logo.webp" as="image">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 </head>
 <body class="navigation">
     <header>
-        <a href="./"><img src="/bilder/logo.webp" alt="Restaurant Logo" class="logo"></a>
+        <a href="<?php echo URL_HOME; ?>"><img src="<?php echo ASSETS_IMAGES; ?>logo.webp" alt="Restaurant Logo" class="logo"></a>
     </header>
     <div>
         <h1 class="page-title">Warme Küche</h1>
     </div>
     <div class="loading-spinner" id="loading-spinner"></div>
     <div class="grid-container" id="menu-grid" aria-busy="true">
-        <!-- Skeleton placeholders (10 to match warmekueche items) -->
         <div class="skeleton-item">
             <div class="skeleton-image"></div>
             <div class="skeleton-details">
@@ -106,16 +104,16 @@ if (!isset($_SESSION['cart'])) {
         <div class="grid-container" id="menu-grid">
             <?php
             $warmekueche_items = [
-                ['href' => 'warmekueche/menu.php?category=nudeln', 'img' => 'bilder/warmekueche/gebratene_nudeln.jpg', 'alt' => 'Gebratene Nudeln', 'text' => 'Gebratene Nudeln'],
-                ['href' => 'warmekueche/menu.php?category=reis', 'img' => 'bilder/warmekueche/gebratener_reis.jpg', 'alt' => 'Gebratener Reis', 'text' => 'Gebratener Reis'],
-                ['href' => 'warmekueche/menu.php?category=gemuese', 'img' => 'bilder/warmekueche/gebratenes_gemuese.jpg', 'alt' => 'Gebratenes Gemüse', 'text' => 'Gebratenes Gemüse'],
-                ['href' => 'warmekueche/menu.php?category=yellowcurry', 'img' => 'bilder/warmekueche/yellow_curry.jpg', 'alt' => 'Yellow Curry', 'text' => 'Yellow Curry'],
-                ['href' => 'warmekueche/menu.php?category=mangochutney', 'img' => 'bilder/warmekueche/mango_chutney.jpg', 'alt' => 'Mango Chutney', 'text' => 'Mango Chutney'],
-                ['href' => 'warmekueche/menu.php?category=erdnussgericht', 'img' => 'bilder/warmekueche/erdnussgericht.jpg', 'alt' => 'Erdnussgericht', 'text' => 'Erdnussgericht'],
-                ['href' => 'warmekueche/menu.php?category=chopsuey', 'img' => 'bilder/warmekueche/chop_suey.jpg', 'alt' => 'Chop Suey', 'text' => 'Chop Suey'],
-                ['href' => 'warmekueche/menu.php?category=redcurry', 'img' => 'bilder/warmekueche/red_curry.jpg', 'alt' => 'Red Curry', 'text' => 'Red Curry'],
-                ['href' => 'warmekueche/menu.php?category=suesssauersauce', 'img' => 'bilder/warmekueche/suess_sauer_sauce.jpg', 'alt' => 'Süss-Sauer Sauce', 'text' => 'Süss-Sauer Sauce'],
-                ['href' => 'warmekueche/menu.php?category=extras', 'img' => 'bilder/warmekueche/Extras.jpg', 'alt' => 'Extras', 'text' => 'Extras'],
+                ['href' => MENU_WARMEKUECHE . '?category=nudeln', 'img' => ASSETS_IMAGES . 'warmekueche/gebratene_nudeln.jpg', 'alt' => 'Gebratene Nudeln', 'text' => 'Gebratene Nudeln'],
+                ['href' => MENU_WARMEKUECHE . '?category=reis', 'img' => ASSETS_IMAGES . 'warmekueche/gebratener_reis.jpg', 'alt' => 'Gebratener Reis', 'text' => 'Gebratener Reis'],
+                ['href' => MENU_WARMEKUECHE . '?category=gemuese', 'img' => ASSETS_IMAGES . 'warmekueche/gebratenes_gemuese.jpg', 'alt' => 'Gebratenes Gemüse', 'text' => 'Gebratenes Gemüse'],
+                ['href' => MENU_WARMEKUECHE . '?category=yellowcurry', 'img' => ASSETS_IMAGES . 'warmekueche/yellow_curry.jpg', 'alt' => 'Yellow Curry', 'text' => 'Yellow Curry'],
+                ['href' => MENU_WARMEKUECHE . '?category=mangochutney', 'img' => ASSETS_IMAGES . 'warmekueche/mango_chutney.jpg', 'alt' => 'Mango Chutney', 'text' => 'Mango Chutney'],
+                ['href' => MENU_WARMEKUECHE . '?category=erdnussgericht', 'img' => ASSETS_IMAGES . 'warmekueche/erdnussgericht.jpg', 'alt' => 'Erdnussgericht', 'text' => 'Erdnussgericht'],
+                ['href' => MENU_WARMEKUECHE . '?category=chopsuey', 'img' => ASSETS_IMAGES . 'warmekueche/chop_suey.jpg', 'alt' => 'Chop Suey', 'text' => 'Chop Suey'],
+                ['href' => MENU_WARMEKUECHE . '?category=redcurry', 'img' => ASSETS_IMAGES . 'warmekueche/red_curry.jpg', 'alt' => 'Red Curry', 'text' => 'Red Curry'],
+                ['href' => MENU_WARMEKUECHE . '?category=suesssauersauce', 'img' => ASSETS_IMAGES . 'warmekueche/suess_sauer_sauce.jpg', 'alt' => 'Süss-Sauer Sauce', 'text' => 'Süss-Sauer Sauce'],
+                ['href' => MENU_WARMEKUECHE . '?category=extras', 'img' => ASSETS_IMAGES . 'warmekueche/Extras.jpg', 'alt' => 'Extras', 'text' => 'Extras'],
             ];
             foreach ($warmekueche_items as $item) {
                 echo '<a href="' . htmlspecialchars($item['href']) . '" class="grid-item">';
@@ -130,9 +128,10 @@ if (!isset($_SESSION['cart'])) {
             ?>
         </div>
     </noscript>
-    <?php include_once './config/floating_bar.php'; ?>
-    <?php include_once './config/footer.php'; ?>
+    <?php include_once $_SERVER['DOCUMENT_ROOT'] . '/config/floating_bar.php'; ?>
+    <?php include_once $_SERVER['DOCUMENT_ROOT'] . '/config/footer.php'; ?>
     <script>
+        const BASE_PATH = '<?php echo BASE_PATH; ?>';
         function updateLocalCart() {
             const cart = <?php echo json_encode($_SESSION['cart']); ?>;
             localStorage.setItem('cart', JSON.stringify(cart));
@@ -143,7 +142,6 @@ if (!isset($_SESSION['cart'])) {
             document.getElementById('cart-count').innerText = Object.values(cart).reduce((a, b) => a + b, 0);
         }
 
-        // Load warmekueche menu asynchronously
         $(document).ready(function() {
             const cachedWarmekuecheMenu = localStorage.getItem('cachedWarmekuecheMenu');
             $('#loading-spinner').show();
@@ -162,7 +160,7 @@ if (!isset($_SESSION['cart'])) {
                 $('#loading-spinner').hide();
             } else {
                 $.ajax({
-                    url: '/config/load_warmekueche_menu.php',
+                    url: BASE_PATH + 'config/load_warmekueche_menu.php',
                     method: 'GET',
                     success: function(data) {
                         $('#menu-grid').html(data);
@@ -189,7 +187,7 @@ if (!isset($_SESSION['cart'])) {
                             $('#menu-grid').attr('aria-busy', 'true');
                             $('#loading-spinner').show();
                             $.ajax({
-                                url: '/config/load_warmekueche_menu.php',
+                                url: BASE_PATH + 'config/load_warmekueche_menu.php',
                                 method: 'GET',
                                 success: function(data) {
                                     $('#menu-grid').html(data);

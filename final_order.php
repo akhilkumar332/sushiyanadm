@@ -1,9 +1,8 @@
 <?php
-session_start();
-include 'config/config.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/config/config.php';
 
 if (!isset($_SESSION['cart']) || empty($_SESSION['cart'])) {
-    header("Location: index.php");
+    header("Location: " . URL_HOME);
     exit;
 }
 
@@ -16,8 +15,8 @@ $tables = [
 ];
 
 // Get current timestamp in German format
-date_default_timezone_set('Europe/Berlin'); // Adjust timezone as needed
-$timestamp = date('d.m.Y H:i:s'); // e.g., "20.03.2025 14:30:45"
+date_default_timezone_set('Europe/Berlin');
+$timestamp = date('d.m.Y H:i:s');
 ?>
 
 <!DOCTYPE html>
@@ -26,13 +25,13 @@ $timestamp = date('d.m.Y H:i:s'); // e.g., "20.03.2025 14:30:45"
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <title>Digitale Speisekarte - Rechnung</title>
-    <link rel="stylesheet" href="./css/styles.css">
+    <link rel="stylesheet" href="<?php echo ASSETS_CSS; ?>styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 </head>
 <body class="navigation">
     <header>
-        <a href="./"><img src="/bilder/logo.webp" alt="Restaurant Logo" class="logo"></a>
+        <a href="<?php echo URL_HOME; ?>"><img src="<?php echo ASSETS_IMAGES; ?>logo.webp" alt="Restaurant Logo" class="logo"></a>
     </header>
     <main>
         <div class="bill-wrapper">
@@ -94,59 +93,46 @@ $timestamp = date('d.m.Y H:i:s'); // e.g., "20.03.2025 14:30:45"
         </div>
     </main>
     <script>
+        const BASE_PATH = '<?php echo BASE_PATH; ?>';
         $(document).ready(function() {
-            const inactivityTimeout = 2 * 60 * 1000; // 2 minutes (for testing; adjust to 5 minutes if needed)
-            const timerThreshold = 1 * 60 * 1000; // 1 minute (for testing; adjust to 4 minutes if needed)
+            const inactivityTimeout = 2 * 60 * 1000; // 2 minutes (adjust to 5 if needed)
+            const timerThreshold = 1 * 60 * 1000; // 1 minute (adjust to 4 if needed)
             const countdownDuration = 60 * 1000; // 1 minute countdown
-            const gracePeriod = 1000; // 1 second grace period to prevent last-second resets
-            let lastActivityTime = Date.now(); // Track the last user activity time
+            const gracePeriod = 1000; // 1 second grace period
+            let lastActivityTime = Date.now();
             let countdownInterval = null;
-            let countdownStartTime = null; // Track when the countdown starts
-            let isRedirecting = false; // Flag to prevent multiple redirects
+            let countdownStartTime = null;
+            let isRedirecting = false;
 
             function resetTimer() {
                 const elapsed = Date.now() - lastActivityTime;
                 const timeUntilTimeout = inactivityTimeout - elapsed;
-
-                // Prevent reset if we're within the grace period before timeout
-                if (timeUntilTimeout <= gracePeriod) {
-                    console.log('Grace period active, ignoring reset');
-                    return;
-                }
-
-                lastActivityTime = Date.now(); // Update the last activity time
-                // Clear any existing countdown
+                if (timeUntilTimeout <= gracePeriod) return;
+                lastActivityTime = Date.now();
                 if (countdownInterval) {
                     clearInterval(countdownInterval);
                     countdownInterval = null;
                 }
                 $('#inactivity-timer').hide().removeClass('visible').removeClass('warning');
-                // Start checking for inactivity
                 checkInactivity();
             }
 
             function checkInactivity() {
-                // Clear any existing interval to prevent overlap
                 if (countdownInterval) {
                     clearInterval(countdownInterval);
                     countdownInterval = null;
                 }
-
                 const elapsed = Date.now() - lastActivityTime;
                 const timeUntilThreshold = timerThreshold - elapsed;
                 const timeUntilTimeout = inactivityTimeout - elapsed;
 
                 if (elapsed >= inactivityTimeout) {
-                    console.log('Inactivity timeout reached, redirecting');
                     clearCartAndRedirect();
                     return;
                 }
-
                 if (elapsed >= timerThreshold && !countdownInterval) {
-                    // Start the countdown if the threshold is reached and no countdown is running
                     startCountdown();
                 } else {
-                    // Schedule the next check
                     setTimeout(checkInactivity, Math.min(timeUntilThreshold, timeUntilTimeout));
                 }
             }
@@ -160,18 +146,13 @@ $timestamp = date('d.m.Y H:i:s'); // e.g., "20.03.2025 14:30:45"
                     const elapsedSinceStart = Date.now() - countdownStartTime;
                     const remainingMs = countdownDuration - elapsedSinceStart;
                     const remainingSeconds = Math.max(0, Math.floor(remainingMs / 1000));
-
                     $countdown.text(remainingSeconds.toString().padStart(2, '0') + ' Sekunden');
-
-                    // Add warning class for the last 10 seconds
                     if (remainingSeconds <= 10) {
                         $('#inactivity-timer').addClass('warning');
                     } else {
                         $('#inactivity-timer').removeClass('warning');
                     }
-
                     if (remainingSeconds <= 0) {
-                        console.log('Countdown reached 0, redirecting');
                         clearInterval(countdownInterval);
                         countdownInterval = null;
                         clearCartAndRedirect();
@@ -180,49 +161,37 @@ $timestamp = date('d.m.Y H:i:s'); // e.g., "20.03.2025 14:30:45"
             }
 
             function clearCartAndRedirect() {
-                if (isRedirecting) {
-                    console.log('Redirect already in progress, skipping');
-                    return;
-                }
+                if (isRedirecting) return;
                 isRedirecting = true;
-
-                console.log('Calling clear_cart.php');
                 $.ajax({
-                    url: 'clear_cart.php',
+                    url: BASE_PATH + 'clear_cart.php',
                     type: 'POST',
-                    dataType: 'json',
+                    dataType: 'json'
                 })
                 .done(function(response) {
-                    console.log('clear_cart.php response:', response);
                     if (response.status === 'success') {
                         localStorage.clear();
-                        window.location.href = 'index.php';
+                        window.location.href = '<?php echo URL_HOME; ?>';
                     } else {
-                        console.error('Clear cart failed:', response.message);
                         localStorage.clear();
-                        window.location.href = 'index.php';
+                        window.location.href = '<?php echo URL_HOME; ?>';
                     }
                 })
-                .fail(function(xhr, status, error) {
-                    console.error('Clear cart AJAX error:', status, error, xhr.responseText);
+                .fail(function() {
                     localStorage.clear();
-                    window.location.href = 'index.php';
+                    window.location.href = '<?php echo URL_HOME; ?>';
                 });
             }
 
             $('#back-to-home').on('click', function() {
-                console.log('Back to home clicked');
                 clearCartAndRedirect();
             });
 
-            // Listen for user activity
             $(document).on('mousemove keydown click', resetTimer);
-
-            // Start the timer on page load
             resetTimer();
         });
     </script>
-    <?php include_once './config/floating_bar.php'; ?>
-    <?php include_once './config/footer.php'; ?>
+    <?php include_once $_SERVER['DOCUMENT_ROOT'] . '/config/floating_bar.php'; ?>
+    <?php include_once $_SERVER['DOCUMENT_ROOT'] . '/config/footer.php'; ?>
 </body>
 </html>

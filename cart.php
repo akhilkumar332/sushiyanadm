@@ -1,7 +1,22 @@
 <?php
-session_set_cookie_params(['path' => '/']);
-session_start();
-include 'config/config.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/config/config.php';
+
+if (!isset($_SESSION['cart'])) {
+    $_SESSION['cart'] = [];
+    echo "<script>
+        if (localStorage.getItem('cart')) {
+            fetch('" . URL_RESTORE_CART . "', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: 'cart=' + encodeURIComponent(localStorage.getItem('cart'))
+            })
+            .then(response => response.text())
+            .then(text => JSON.parse(text.replace(/%+$/, '').trim()))
+            .then(data => updateCartCount())
+            .catch(error => {});
+        }
+    </script>";
+}
 
 // Handle AJAX requests
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
@@ -36,36 +51,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SERVER['HTTP_X_REQUESTED_WI
     exit;
 }
 
-if (!isset($_SESSION['cart'])) {
-    $_SESSION['cart'] = [];
-    echo "<script>
-        if (localStorage.getItem('cart')) {
-            fetch('restore_cart.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: 'cart=' + encodeURIComponent(localStorage.getItem('cart'))
-            })
-            .then(response => {
-                if (!response.ok) throw new Error('Network response was not ok: ' + response.status);
-                return response.text();
-            })
-            .then(text => {
-                const cleanedText = text.replace(/%+$/, '').trim();
-                return JSON.parse(cleanedText);
-            })
-            .then(data => {
-                updateCartCount();
-            })
-            .catch(error => {});
-        }
-    </script>";
-}
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
     if (isset($_POST['remove_from_cart'])) {
         $item_key = $_POST['item_key'];
         unset($_SESSION['cart'][$item_key]);
-        header("Location: cart.php");
+        header("Location: " . URL_CART);
         exit;
     }
 
@@ -77,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_SERVER['HTTP_X_REQUESTED_W
         } else {
             $_SESSION['cart'][$item_key] = $new_quantity;
         }
-        header("Location: cart.php");
+        header("Location: " . URL_CART);
         exit;
     }
 }
@@ -89,12 +79,6 @@ $tables = [
     'sommerrollen', 'specialrolls', 'suesssauersauce', 'suppen', 'temaki', 'warmgetraenke',
     'yanarolls', 'yellowcurry'
 ];
-
-// Database connection
-$conn = new mysqli($servername, $username, $password, $dbname, $port);
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
 ?>
 
 <!DOCTYPE html>
@@ -103,7 +87,7 @@ if ($conn->connect_error) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <title>Digitale Speisekarte - Warenkorb</title>
-    <link rel="stylesheet" href="./css/styles.css">
+    <link rel="stylesheet" href="<?php echo ASSETS_CSS; ?>styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
@@ -111,7 +95,7 @@ if ($conn->connect_error) {
 </head>
 <body class="navigation">
     <header>
-        <a href="./"><img src="/bilder/logo.webp" alt="Restaurant Logo" class="logo"></a>
+        <a href="<?php echo URL_HOME; ?>"><img src="<?php echo ASSETS_IMAGES; ?>logo.webp" alt="Restaurant Logo" class="logo"></a>
     </header>
     <main>
         <div class="cart-wrapper">
@@ -132,9 +116,8 @@ if ($conn->connect_error) {
                         }
                         list($table, $item_id) = explode(':', $item_key);
                         if (!in_array($table, $tables)) continue;
-                        // Use 'id' instead of 'artikelnummer' to match the item_key
                         $stmt = $conn->prepare("SELECT artikelname, preis, image FROM " . mysqli_real_escape_string($conn, $table) . " WHERE id = ?");
-                        $stmt->bind_param("i", $item_id); // Use 'i' since id is an integer
+                        $stmt->bind_param("i", $item_id);
                         $stmt->execute();
                         $result = $stmt->get_result();
                         if ($item = $result->fetch_assoc()) {
@@ -157,7 +140,7 @@ if ($conn->connect_error) {
                                         <button type="button" class="btn-increment">+</button>
                                     </div>
                                     <span class="quantity"><?php echo number_format($subtotal, 2); ?> €</span>
-                                    <form method="POST" action="cart.php" class="remove-form" style="display:inline;">
+                                    <form method="POST" action="<?php echo URL_CART; ?>" class="remove-form" style="display:inline;">
                                         <input type="hidden" name="item_key" value="<?php echo $item_key; ?>">
                                         <button type="submit" name="remove_from_cart" class="btn-remove">
                                             <i class="fas fa-trash"></i>
@@ -178,14 +161,14 @@ if ($conn->connect_error) {
             </div>
             <?php if (!empty($_SESSION['cart'])): ?>
                 <div class="cart-buttons">
-                    <a href="final_order.php" class="btn">Bestätigen</a>
+                    <a href="<?php echo URL_FINAL_ORDER; ?>" class="btn">Bestätigen</a>
                 </div>
             <?php endif; ?>
         </div>
     </main>
     <script>
+        const BASE_PATH = '<?php echo BASE_PATH; ?>';
         $(document).ready(function() {
-            // Reusable toast function
             function showRemoveToast() {
                 Toastify({
                     text: '<i class="fas fa-trash"></i> Artikel entfernt',
@@ -193,15 +176,13 @@ if ($conn->connect_error) {
                     gravity: "top",
                     position: "right",
                     escapeMarkup: false,
-                    style: {
-                        background: "#6A2477",
-                    }
+                    style: { background: "#6A2477" }
                 }).showToast();
             }
 
             function updateCart(itemKey, quantity, element) {
                 $.ajax({
-                    url: 'cart.php',
+                    url: BASE_PATH + 'cart.php',
                     type: 'POST',
                     data: { action: 'update', item_key: itemKey, quantity: quantity },
                     success: function(response) {
@@ -229,7 +210,7 @@ if ($conn->connect_error) {
 
             function removeCartItem(itemKey, element) {
                 $.ajax({
-                    url: 'cart.php',
+                    url: BASE_PATH + 'cart.php',
                     type: 'POST',
                     data: { action: 'remove', item_key: itemKey },
                     success: function(response) {
@@ -288,8 +269,8 @@ if ($conn->connect_error) {
             });
         });
     </script>
-    <?php include_once './config/floating_bar.php'; ?>
-    <?php include_once './config/footer.php'; ?>
+    <?php include_once $_SERVER['DOCUMENT_ROOT'] . '/config/floating_bar.php'; ?>
+    <?php include_once $_SERVER['DOCUMENT_ROOT'] . '/config/footer.php'; ?>
     <?php $conn->close(); ?>
 </body>
 </html>

@@ -1,18 +1,18 @@
 <?php
+require_once $_SERVER['DOCUMENT_ROOT'] . '/config/config.php';
 header('Content-Type: text/html; charset=UTF-8');
 
-// Warme Küche menu data (static array)
 $warmekueche_items = [
-    ['href' => 'warmekueche/menu.php?category=nudeln', 'img' => 'bilder/warmekueche/gebratene_nudeln.jpg', 'alt' => 'Gebratene Nudeln', 'text' => 'Gebratene Nudeln'],
-    ['href' => 'warmekueche/menu.php?category=reis', 'img' => 'bilder/warmekueche/gebratener_reis.jpg', 'alt' => 'Gebratener Reis', 'text' => 'Gebratener Reis'],
-    ['href' => 'warmekueche/menu.php?category=gemuese', 'img' => 'bilder/warmekueche/gebratenes_gemuese.jpg', 'alt' => 'Gebratenes Gemüse', 'text' => 'Gebratenes Gemüse'],
-    ['href' => 'warmekueche/menu.php?category=yellowcurry', 'img' => 'bilder/warmekueche/yellow_curry.jpg', 'alt' => 'Yellow Curry', 'text' => 'Yellow Curry'],
-    ['href' => 'warmekueche/menu.php?category=mangochutney', 'img' => 'bilder/warmekueche/mango_chutney.jpg', 'alt' => 'Mango Chutney', 'text' => 'Mango Chutney'],
-    ['href' => 'warmekueche/menu.php?category=erdnussgericht', 'img' => 'bilder/warmekueche/erdnussgericht.jpg', 'alt' => 'Erdnussgericht', 'text' => 'Erdnussgericht'],
-    ['href' => 'warmekueche/menu.php?category=chopsuey', 'img' => 'bilder/warmekueche/chop_suey.jpg', 'alt' => 'Chop Suey', 'text' => 'Chop Suey'],
-    ['href' => 'warmekueche/menu.php?category=redcurry', 'img' => 'bilder/warmekueche/red_curry.jpg', 'alt' => 'Red Curry', 'text' => 'Red Curry'],
-    ['href' => 'warmekueche/menu.php?category=suesssauersauce', 'img' => 'bilder/warmekueche/suess_sauer_sauce.jpg', 'alt' => 'Süss-Sauer Sauce', 'text' => 'Süss-Sauer Sauce'],
-    ['href' => 'warmekueche/menu.php?category=extras', 'img' => 'bilder/warmekueche/Extras.jpg', 'alt' => 'Extras', 'text' => 'Extras'],
+    ['href' => MENU_WARMEKUECHE . '?category=nudeln', 'img' => ASSETS_IMAGES . 'warmekueche/gebratene_nudeln.jpg', 'alt' => 'Gebratene Nudeln', 'text' => 'Gebratene Nudeln'],
+    ['href' => MENU_WARMEKUECHE . '?category=reis', 'img' => ASSETS_IMAGES . 'warmekueche/gebratener_reis.jpg', 'alt' => 'Gebratener Reis', 'text' => 'Gebratener Reis'],
+    ['href' => MENU_WARMEKUECHE . '?category=gemuese', 'img' => ASSETS_IMAGES . 'warmekueche/gebratenes_gemuese.jpg', 'alt' => 'Gebratenes Gemüse', 'text' => 'Gebratenes Gemüse'],
+    ['href' => MENU_WARMEKUECHE . '?category=yellowcurry', 'img' => ASSETS_IMAGES . 'warmekueche/yellow_curry.jpg', 'alt' => 'Yellow Curry', 'text' => 'Yellow Curry'],
+    ['href' => MENU_WARMEKUECHE . '?category=mangochutney', 'img' => ASSETS_IMAGES . 'warmekueche/mango_chutney.jpg', 'alt' => 'Mango Chutney', 'text' => 'Mango Chutney'],
+    ['href' => MENU_WARMEKUECHE . '?category=erdnussgericht', 'img' => ASSETS_IMAGES . 'warmekueche/erdnussgericht.jpg', 'alt' => 'Erdnussgericht', 'text' => 'Erdnussgericht'],
+    ['href' => MENU_WARMEKUECHE . '?category=chopsuey', 'img' => ASSETS_IMAGES . 'warmekueche/chop_suey.jpg', 'alt' => 'Chop Suey', 'text' => 'Chop Suey'],
+    ['href' => MENU_WARMEKUECHE . '?category=redcurry', 'img' => ASSETS_IMAGES . 'warmekueche/red_curry.jpg', 'alt' => 'Red Curry', 'text' => 'Red Curry'],
+    ['href' => MENU_WARMEKUECHE . '?category=suesssauersauce', 'img' => ASSETS_IMAGES . 'warmekueche/suess_sauer_sauce.jpg', 'alt' => 'Süss-Sauer Sauce', 'text' => 'Süss-Sauer Sauce'],
+    ['href' => MENU_WARMEKUECHE . '?category=extras', 'img' => ASSETS_IMAGES . 'warmekueche/Extras.jpg', 'alt' => 'Extras', 'text' => 'Extras'],
 ];
 
 ob_start();

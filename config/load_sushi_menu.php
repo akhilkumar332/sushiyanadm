@@ -1,18 +1,18 @@
 <?php
+require_once $_SERVER['DOCUMENT_ROOT'] . '/config/config.php';
 header('Content-Type: text/html; charset=UTF-8');
 
-// Sushi menu data (static array)
 $sushi_items = [
-    ['href' => 'sushi/menu.php?category=menues', 'img' => 'bilder/sushi/Ebi_Menu.jpg', 'alt' => 'Menüs', 'text' => 'Menüs'],
-    ['href' => 'sushi/menu.php?category=sashimi', 'img' => 'bilder/sushi/Sashimi_Sake.jpg', 'alt' => 'Sashimi', 'text' => 'Sashimi'],
-    ['href' => 'sushi/menu.php?category=makis', 'img' => 'bilder/sushi/maki.jpg', 'alt' => 'Makis', 'text' => 'Makis'],
-    ['href' => 'sushi/menu.php?category=insideoutrolls', 'img' => 'bilder/sushi/ioroll.jpg', 'alt' => 'Inside Out Rolls', 'text' => 'Inside Out Rolls'],
-    ['href' => 'sushi/menu.php?category=miniyanarolls', 'img' => 'bilder/sushi/miniyanaroll.jpg', 'alt' => 'Mini Yana Rolls', 'text' => 'Mini Yana Rolls'],
-    ['href' => 'sushi/menu.php?category=yanarolls', 'img' => 'bilder/sushi/yanaroll.jpg', 'alt' => 'Yana Rolls', 'text' => 'Yana Rolls'],
-    ['href' => 'sushi/menu.php?category=nigiris', 'img' => 'bilder/sushi/Nigiris_Head.jpg', 'alt' => 'Nigiris', 'text' => 'Nigiris'],
-    ['href' => 'sushi/menu.php?category=specialrolls', 'img' => 'bilder/sushi/special.jpg', 'alt' => 'Special Rolls', 'text' => 'Special Rolls'],
-    ['href' => 'sushi/menu.php?category=temaki', 'img' => 'bilder/sushi/temaki.jpg', 'alt' => 'Temaki', 'text' => 'Temaki'],
-    ['href' => 'sushi/vegetarisch.php', 'img' => 'bilder/sushi/Maki_Wakame.jpg', 'alt' => 'Vegetarisch', 'text' => 'Vegetarisch'],
+    ['href' => MENU_SUSHI . '?category=menues', 'img' => ASSETS_IMAGES . 'sushi/Ebi_Menu.jpg', 'alt' => 'Menüs', 'text' => 'Menüs'],
+    ['href' => MENU_SUSHI . '?category=sashimi', 'img' => ASSETS_IMAGES . 'sushi/Sashimi_Sake.jpg', 'alt' => 'Sashimi', 'text' => 'Sashimi'],
+    ['href' => MENU_SUSHI . '?category=makis', 'img' => ASSETS_IMAGES . 'sushi/maki.jpg', 'alt' => 'Makis', 'text' => 'Makis'],
+    ['href' => MENU_SUSHI . '?category=insideoutrolls', 'img' => ASSETS_IMAGES . 'sushi/ioroll.jpg', 'alt' => 'Inside Out Rolls', 'text' => 'Inside Out Rolls'],
+    ['href' => MENU_SUSHI . '?category=miniyanarolls', 'img' => ASSETS_IMAGES . 'sushi/miniyanaroll.jpg', 'alt' => 'Mini Yana Rolls', 'text' => 'Mini Yana Rolls'],
+    ['href' => MENU_SUSHI . '?category=yanarolls', 'img' => ASSETS_IMAGES . 'sushi/yanaroll.jpg', 'alt' => 'Yana Rolls', 'text' => 'Yana Rolls'],
+    ['href' => MENU_SUSHI . '?category=nigiris', 'img' => ASSETS_IMAGES . 'sushi/Nigiris_Head.jpg', 'alt' => 'Nigiris', 'text' => 'Nigiris'],
+    ['href' => MENU_SUSHI . '?category=specialrolls', 'img' => ASSETS_IMAGES . 'sushi/special.jpg', 'alt' => 'Special Rolls', 'text' => 'Special Rolls'],
+    ['href' => MENU_SUSHI . '?category=temaki', 'img' => ASSETS_IMAGES . 'sushi/temaki.jpg', 'alt' => 'Temaki', 'text' => 'Temaki'],
+    ['href' => URL_SUSHI_VEGETARISCH, 'img' => ASSETS_IMAGES . 'sushi/Maki_Wakame.jpg', 'alt' => 'Vegetarisch', 'text' => 'Vegetarisch'],
 ];
 
 ob_start();

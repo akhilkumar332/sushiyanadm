@@ -1,6 +1,7 @@
 <?php
+require_once $_SERVER['DOCUMENT_ROOT'] . '/config/config.php';
+
 session_start();
-include 'config/config.php';
 
 // Clear the session cart
 $_SESSION['cart'] = [];
@@ -11,7 +12,7 @@ try {
     if ($conn->connect_error) {
         throw new Exception('Database connection failed: ' . $conn->connect_error);
     }
-    // Example: Log the action (optional)
+    // Example: Log the action (optional, uncomment if needed)
     // $conn->query("INSERT INTO logs (action) VALUES ('cart_cleared')");
 } catch (Exception $e) {
     error_log('Clear cart error: ' . $e->getMessage());
@@ -20,4 +21,4 @@ try {
 
 header('Content-Type: application/json');
 echo json_encode($response);
-?>
+exit;

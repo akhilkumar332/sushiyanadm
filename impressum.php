@@ -1,46 +1,36 @@
 <?php
-session_start();
+require_once $_SERVER['DOCUMENT_ROOT'] . '/config/config.php';
+
 if (!isset($_SESSION['cart'])) {
     $_SESSION['cart'] = [];
     echo "<script>
         if (localStorage.getItem('cart')) {
-            fetch('restore_cart.php', {
+            fetch('" . URL_RESTORE_CART . "', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: 'cart=' + encodeURIComponent(localStorage.getItem('cart'))
             })
-            .then(response => {
-                if (!response.ok) throw new Error('Network response was not ok: ' + response.status);
-                return response.text();
-            })
-            .then(text => {
-                console.log('Raw response:', text);
-                const cleanedText = text.replace(/%+$/, '').trim();
-                return JSON.parse(cleanedText);
-            })
-            .then(data => {
-                console.log('Cart restored:', data);
-                updateCartCount();
-            })
-            .catch(error => console.error('Error restoring cart:', error));
+            .then(response => response.text())
+            .then(text => JSON.parse(text.replace(/%+$/, '').trim()))
+            .then(data => updateCartCount())
+            .catch(error => {});
         }
     </script>";
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <title>Impressum</title>
-    <!-- Add Font Awesome CDN -->
+    <link rel="stylesheet" href="<?php echo ASSETS_CSS; ?>styles.css">
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <!-- Link to consolidated stylesheet -->
-    <link rel="stylesheet" href="./css/styles.css">
 </head>
 <body class="navigation">
     <header>
-        <a href="./"><img src="/bilder/logo.webp" alt="Restaurant Logo" class="logo"></a>
+        <a href="<?php echo URL_HOME; ?>"><img src="<?php echo ASSETS_IMAGES; ?>logo.webp" alt="Restaurant Logo" class="logo"></a>
     </header>
     <main>
         <div class="content legal-content">
@@ -56,7 +46,7 @@ if (!isset($_SESSION['cart'])) {
             <p>Unsere Franchisezentrale erreichen Sie über die Mailadresse <a href="mailto:buero@sushi-yana.de" class="email-link">buero@sushi-yana.de</a>. Bitte nutzen Sie diese ausschließlich für allgemeine Anfragen.</p>
         </div>
     </main>
-    <?php include_once './config/floating_bar.php'; ?>
-    <?php include_once './config/footer.php'; ?>
+    <?php include_once $_SERVER['DOCUMENT_ROOT'] . '/config/floating_bar.php'; ?>
+    <?php include_once $_SERVER['DOCUMENT_ROOT'] . '/config/footer.php'; ?>
 </body>
 </html>
