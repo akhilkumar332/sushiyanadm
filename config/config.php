@@ -27,6 +27,7 @@ define('URL_SUSHI', BASE_PATH . 'sushi.php');
 define('URL_WARMEKUECHE', BASE_PATH . 'warmekueche.php');
 define('URL_YANA', BASE_PATH . 'yana.php');
 define('URL_SUSHI_VEGETARISCH', BASE_PATH . 'sushi/vegetarisch.php');
+define('URL_API', BASE_PATH . 'config/api.php');
 
 // Menu URLs for subdirectories
 define('MENU_SUSHI', BASE_PATH . 'sushi/menu.php');

@@ -12,64 +12,6 @@ $tables = [
     'sommerrollen', 'specialrolls', 'suesssauersauce', 'suppen', 'temaki', 'warmgetraenke',
     'yanarolls', 'yellowcurry'
 ];
-
-// Handle AJAX requests
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
-    ob_start();
-    header('Content-Type: application/json');
-
-    if (isset($_POST['action'])) {
-        $item_key = $_POST['item_key'] ?? '';
-
-        if ($_POST['action'] === 'remove') {
-            unset($_SESSION['cart'][$item_key]);
-            session_write_close();
-            ob_end_clean();
-            echo json_encode(['success' => true, 'cart' => $_SESSION['cart']]);
-            exit;
-        }
-
-        if ($_POST['action'] === 'update') {
-            $new_quantity = (int)($_POST['quantity'] ?? 0);
-            if ($new_quantity <= 0) {
-                unset($_SESSION['cart'][$item_key]);
-            } else {
-                $_SESSION['cart'][$item_key] = $new_quantity;
-            }
-            session_write_close();
-            ob_end_clean();
-            echo json_encode(['success' => true, 'cart' => $_SESSION['cart']]);
-            exit;
-        }
-    }
-
-    ob_end_clean();
-    echo json_encode(['success' => false, 'error' => 'Invalid action']);
-    exit;
-}
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
-    if (isset($_POST['remove_from_cart'])) {
-        $item_key = $_POST['item_key'];
-        unset($_SESSION['cart'][$item_key]);
-        session_write_close();
-        header("Location: " . URL_CART);
-        exit;
-    }
-
-    if (isset($_POST['update_quantity'])) {
-        $item_key = $_POST['item_key'];
-        $new_quantity = (int)$_POST['quantity'];
-        if ($new_quantity <= 0) {
-            unset($_SESSION['cart'][$item_key]);
-        } else {
-            $_SESSION['cart'][$item_key] = $new_quantity;
-        }
-        session_write_close();
-        header("Location: " . URL_CART);
-        exit;
-    }
-}
 ?>
 
 <!DOCTYPE html>
@@ -123,21 +65,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_SERVER['HTTP_X_REQUESTED_W
                                      onerror="this.src='https://placehold.co/150';">
                                 <div class="cart-item-details">
                                     <h3><?php echo htmlspecialchars($item['artikelname']); ?></h3>
-                                    <p><?php echo number_format($price, 2); ?> €</p>
+                                    <p><?php echo number_format($price, 2, ',', '.'); ?> €</p>
                                 </div>
                                 <div class="cart-item-actions">
                                     <div class="quantity-controls">
-                                        <button type="button" class="btn-decrement">-</button>
-                                        <input type="number" name="quantity" value="<?php echo $quantity; ?>" min="1" class="quantity-input">
-                                        <button type="button" class="btn-increment">+</button>
+                                        <button type="button" class="btn-decrement" data-item-key="<?php echo htmlspecialchars($item_key); ?>">-</button>
+                                        <input type="number" name="quantity" value="<?php echo $quantity; ?>" min="0" class="quantity-input" data-item-key="<?php echo htmlspecialchars($item_key); ?>">
+                                        <button type="button" class="btn-increment" data-item-key="<?php echo htmlspecialchars($item_key); ?>">+</button>
                                     </div>
-                                    <span class="quantity"><?php echo number_format($subtotal, 2); ?> €</span>
-                                    <form method="POST" action="<?php echo URL_CART; ?>" class="remove-form">
-                                        <input type="hidden" name="item_key" value="<?php echo $item_key; ?>">
-                                        <button type="submit" name="remove_from_cart" class="btn-remove">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </form>
+                                    <span class="quantity"><?php echo number_format($subtotal, 2, ',', '.'); ?> €</span>
+                                    <button type="button" class="btn-remove" data-item-key="<?php echo htmlspecialchars($item_key); ?>">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
                                 </div>
                             </div>
                             <?php
@@ -147,7 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_SERVER['HTTP_X_REQUESTED_W
                     ?>
                     <div class="cart-total">
                         <span>Gesamtbetrag</span>
-                        <span class="total-amount"><?php echo number_format($total, 2); ?> €</span>
+                        <span class="total-amount"><?php echo number_format($total, 2, ',', '.'); ?> €</span>
                     </div>
                 <?php endif; ?>
             </div>
@@ -165,11 +104,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_SERVER['HTTP_X_REQUESTED_W
         const serverCart = <?php echo json_encode($_SESSION['cart']); ?>;
         localStorage.setItem('cart', JSON.stringify(serverCart));
         updateCartCount();
-
-        // Debug redirect
-        window.addEventListener('beforeunload', function(e) {
-            console.log('Leaving cart.php to:', window.location.href);
-        });
     </script>
     <?php $conn->close(); ?>
 </body>

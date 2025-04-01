@@ -2,25 +2,29 @@
 
 // Modal handling
 function openModal(id) {
-    document.getElementById('myModal' + id).style.display = "flex";
+    const modal = document.getElementById('myModal' + id);
+    if (modal) modal.style.display = "flex";
 }
 
 function closeModal(id) {
-    document.getElementById('myModal' + id).style.display = "none";
+    const modal = document.getElementById('myModal' + id);
+    if (modal) modal.style.display = "none";
 }
 
 function openIngredientsModal(id) {
-    document.getElementById('ingredientsModal' + id).style.display = "flex";
+    const modal = document.getElementById('ingredientsModal' + id);
+    if (modal) modal.style.display = "flex";
 }
 
 function closeIngredientsModal(id) {
-    document.getElementById('ingredientsModal' + id).style.display = "none";
+    const modal = document.getElementById('ingredientsModal' + id);
+    if (modal) modal.style.display = "none";
 }
 
 // Close modal when clicking outside
 window.addEventListener('click', function(event) {
-    var modals = document.getElementsByClassName('modal');
-    for (var i = 0; i < modals.length; i++) {
+    const modals = document.getElementsByClassName('modal');
+    for (let i = 0; i < modals.length; i++) {
         if (event.target === modals[i]) {
             modals[i].style.display = "none";
         }
@@ -35,7 +39,7 @@ function updateLocalCart(sessionCart) {
 
 function updateCartCount() {
     const cart = JSON.parse(localStorage.getItem('cart') || '{}');
-    let total = Object.values(cart).reduce((a, b) => a + b, 0);
+    const total = Object.values(cart).reduce((a, b) => a + b, 0);
     const cartCountElement = document.getElementById('cart-count');
     if (cartCountElement) cartCountElement.textContent = total;
     document.querySelectorAll('.product-count').forEach(span => {
@@ -48,6 +52,10 @@ function updateCartCount() {
 
 // Toast notification
 function showToast(message, isError = false) {
+    if (typeof Toastify === 'undefined') {
+        console.error('Toastify not loaded');
+        return;
+    }
     Toastify({
         text: `<i class="${isError ? 'fas fa-exclamation-circle' : 'fas fa-check-circle'}"></i> ${message}`,
         duration: 3000,
@@ -150,11 +158,11 @@ document.addEventListener('DOMContentLoaded', function() {
     if (page === 'cart') {
         function updateCart(itemKey, quantity, element) {
             $.ajax({
-                url: BASE_PATH + 'cart.php',
+                url: BASE_PATH + 'config/api.php',
                 type: 'POST',
                 data: { action: 'update', item_key: itemKey, quantity: quantity },
                 success: function(response) {
-                    if (response.success) {
+                    if (response.status === 'success') {
                         const $item = element.closest('.cart-item');
                         const price = parseFloat($item.find('.cart-item-details p').text().replace(' €', '').replace(',', '.'));
                         const newSubtotal = price * quantity;
@@ -168,21 +176,30 @@ document.addEventListener('DOMContentLoaded', function() {
                             showToast('Artikel entfernt');
                         } else {
                             $item.find('.quantity').text(newSubtotal.toFixed(2).replace('.', ',') + ' €');
+                            $item.find('.quantity-input').val(quantity);
                             updateTotal();
+                            showToast('Menge aktualisiert');
                         }
                         updateLocalCart(response.cart);
+                    } else {
+                        console.error('Update failed:', response);
+                        showToast('Fehler beim Aktualisieren: ' + (response.message || 'Unbekannter Fehler'), true);
                     }
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX error:', status, error);
+                    showToast('Fehler beim Aktualisieren', true);
                 }
             });
         }
 
         function removeCartItem(itemKey, element) {
             $.ajax({
-                url: BASE_PATH + 'cart.php',
+                url: BASE_PATH + 'config/api.php',
                 type: 'POST',
                 data: { action: 'remove', item_key: itemKey },
                 success: function(response) {
-                    if (response.success) {
+                    if (response.status === 'success') {
                         element.closest('.cart-item').remove();
                         updateTotal();
                         if ($('.cart-item').length === 0) {
@@ -191,7 +208,14 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
                         showToast('Artikel entfernt');
                         updateLocalCart(response.cart);
+                    } else {
+                        console.error('Remove failed:', response);
+                        showToast('Fehler beim Entfernen: ' + (response.message || 'Unbekannter Fehler'), true);
                     }
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX error:', status, error);
+                    showToast('Fehler beim Entfernen', true);
                 }
             });
         }
@@ -206,35 +230,35 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         $('.btn-increment').on('click', function() {
+            const itemKey = $(this).data('item-key');
             const $input = $(this).siblings('.quantity-input');
-            const itemKey = $(this).closest('.cart-item').data('item-key');
             let quantity = parseInt($input.val()) + 1;
-            $input.val(quantity);
             updateCart(itemKey, quantity, $(this));
         });
 
         $('.btn-decrement').on('click', function() {
+            const itemKey = $(this).data('item-key');
             const $input = $(this).siblings('.quantity-input');
-            const itemKey = $(this).closest('.cart-item').data('item-key');
             let quantity = parseInt($input.val()) - 1;
             if (quantity < 0) quantity = 0;
-            $input.val(quantity);
             updateCart(itemKey, quantity, $(this));
         });
 
         $('.quantity-input').on('change', function() {
-            const itemKey = $(this).closest('.cart-item').data('item-key');
+            const itemKey = $(this).data('item-key');
             let quantity = parseInt($(this).val());
             if (isNaN(quantity) || quantity < 0) quantity = 0;
-            $(this).val(quantity);
             updateCart(itemKey, quantity, $(this));
         });
 
         $('.btn-remove').on('click', function(e) {
             e.preventDefault();
-            const itemKey = $(this).closest('.cart-item').data('item-key');
+            const itemKey = $(this).data('item-key');
             removeCartItem(itemKey, $(this));
         });
+
+        // Initial total calculation
+        updateTotal();
     }
 
     // Final order page
@@ -348,10 +372,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 e.preventDefault();
                 const itemKey = form.querySelector('input[name="item_key"]').value;
                 const [table, itemId] = itemKey.split(':');
-                fetch(BASE_PATH + 'sushi/vegetarisch.php', {
+                fetch(BASE_PATH + 'config/api.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: `item_id=${encodeURIComponent(itemId)}&table=${encodeURIComponent(table)}`
+                    body: `item_id=${encodeURIComponent(itemId)}&table=${encodeURIComponent(table)}&action=add`
                 })
                 .then(response => response.json())
                 .then(data => {
@@ -359,10 +383,14 @@ document.addEventListener('DOMContentLoaded', function() {
                         updateLocalCart(data.cart);
                         showToast('Artikel hinzugefügt!');
                     } else {
-                        showToast('Fehler beim Hinzufügen.', true);
+                        console.error('Add failed:', data);
+                        showToast('Fehler beim Hinzufügen: ' + (data.message || 'Unbekannter Fehler'), true);
                     }
                 })
-                .catch(() => showToast('Fehler beim Hinzufügen.', true));
+                .catch(error => {
+                    console.error('Fetch error:', error);
+                    showToast('Fehler beim Hinzufügen', true);
+                });
             });
         });
     }

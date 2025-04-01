@@ -1,40 +1,6 @@
 <?php
 require_once $_SERVER['DOCUMENT_ROOT'] . '/config/config.php';
 
-// Handle cart fetching request
-if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'get_cart') {
-    header('Content-Type: application/json');
-    echo json_encode($_SESSION['cart'] ?? []);
-    exit;
-}
-
-// Handle cart addition request
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['item_id']) && isset($_POST['table'])) {
-    ob_start();
-    header('Content-Type: application/json');
-
-    if (!isset($_SESSION['cart'])) {
-        $_SESSION['cart'] = [];
-    }
-
-    $item_id = $_POST['item_id'];
-    $table = $_POST['table'];
-
-    if (!$item_id || !$table) {
-        ob_end_clean();
-        echo json_encode(['status' => 'error', 'message' => 'Missing item_id or table']);
-        exit;
-    }
-
-    $item_key = "$table:$item_id";
-    $_SESSION['cart'][$item_key] = ($_SESSION['cart'][$item_key] ?? 0) + 1;
-    session_write_close();
-
-    ob_end_clean();
-    echo json_encode(['status' => 'success', 'message' => 'Item added to cart', 'cart' => $_SESSION['cart']]);
-    exit;
-}
-
 if (!isset($_SESSION['cart'])) {
     $_SESSION['cart'] = [];
 }
@@ -47,8 +13,11 @@ if (!isset($_SESSION['cart'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <title>Digitale Speisekarte - Vegetarisch</title>
     <link rel="stylesheet" href="<?php echo ASSETS_CSS; ?>styles.css">
+    <link rel="stylesheet" href="<?php echo ASSETS_CSS; ?>style-menu.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script src="<?php echo ASSETS_SCRIPTS; ?>skripte.js"></script>
 </head>
 <body class="artikelliste" data-page="sushi_vegetarisch" data-base-path="<?php echo BASE_PATH; ?>" data-session-cart="<?php echo htmlspecialchars(json_encode($_SESSION['cart'])); ?>">
