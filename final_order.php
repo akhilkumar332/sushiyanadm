@@ -28,8 +28,9 @@ $timestamp = date('d.m.Y H:i:s');
     <link rel="stylesheet" href="<?php echo ASSETS_CSS; ?>styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="/skripte/skripte.js"></script>
 </head>
-<body class="navigation">
+<body class="navigation" data-page="final_order" data-base-path="<?php echo BASE_PATH; ?>" data-session-cart="<?php echo htmlspecialchars(json_encode($_SESSION['cart'])); ?>">
     <header>
         <a href="<?php echo URL_HOME; ?>"><img src="<?php echo ASSETS_IMAGES; ?>logo.webp" alt="Restaurant Logo" class="logo"></a>
     </header>
@@ -92,105 +93,6 @@ $timestamp = date('d.m.Y H:i:s');
             </div>
         </div>
     </main>
-    <script>
-        const BASE_PATH = '<?php echo BASE_PATH; ?>';
-        $(document).ready(function() {
-            const inactivityTimeout = 2 * 60 * 1000; // 2 minutes (adjust to 5 if needed)
-            const timerThreshold = 1 * 60 * 1000; // 1 minute (adjust to 4 if needed)
-            const countdownDuration = 60 * 1000; // 1 minute countdown
-            const gracePeriod = 1000; // 1 second grace period
-            let lastActivityTime = Date.now();
-            let countdownInterval = null;
-            let countdownStartTime = null;
-            let isRedirecting = false;
-
-            function resetTimer() {
-                const elapsed = Date.now() - lastActivityTime;
-                const timeUntilTimeout = inactivityTimeout - elapsed;
-                if (timeUntilTimeout <= gracePeriod) return;
-                lastActivityTime = Date.now();
-                if (countdownInterval) {
-                    clearInterval(countdownInterval);
-                    countdownInterval = null;
-                }
-                $('#inactivity-timer').hide().removeClass('visible').removeClass('warning');
-                checkInactivity();
-            }
-
-            function checkInactivity() {
-                if (countdownInterval) {
-                    clearInterval(countdownInterval);
-                    countdownInterval = null;
-                }
-                const elapsed = Date.now() - lastActivityTime;
-                const timeUntilThreshold = timerThreshold - elapsed;
-                const timeUntilTimeout = inactivityTimeout - elapsed;
-
-                if (elapsed >= inactivityTimeout) {
-                    clearCartAndRedirect();
-                    return;
-                }
-                if (elapsed >= timerThreshold && !countdownInterval) {
-                    startCountdown();
-                } else {
-                    setTimeout(checkInactivity, Math.min(timeUntilThreshold, timeUntilTimeout));
-                }
-            }
-
-            function startCountdown() {
-                countdownStartTime = Date.now();
-                $('#inactivity-timer').show().addClass('visible');
-                const $countdown = $('#timer-countdown');
-
-                countdownInterval = setInterval(function() {
-                    const elapsedSinceStart = Date.now() - countdownStartTime;
-                    const remainingMs = countdownDuration - elapsedSinceStart;
-                    const remainingSeconds = Math.max(0, Math.floor(remainingMs / 1000));
-                    $countdown.text(remainingSeconds.toString().padStart(2, '0') + ' Sekunden');
-                    if (remainingSeconds <= 10) {
-                        $('#inactivity-timer').addClass('warning');
-                    } else {
-                        $('#inactivity-timer').removeClass('warning');
-                    }
-                    if (remainingSeconds <= 0) {
-                        clearInterval(countdownInterval);
-                        countdownInterval = null;
-                        clearCartAndRedirect();
-                    }
-                }, 1000);
-            }
-
-            function clearCartAndRedirect() {
-                if (isRedirecting) return;
-                isRedirecting = true;
-                $.ajax({
-                    url: BASE_PATH + 'clear_cart.php',
-                    type: 'POST',
-                    dataType: 'json'
-                })
-                .done(function(response) {
-                    if (response.status === 'success') {
-                        localStorage.clear();
-                        window.location.href = '<?php echo URL_HOME; ?>';
-                    } else {
-                        localStorage.clear();
-                        window.location.href = '<?php echo URL_HOME; ?>';
-                    }
-                })
-                .fail(function() {
-                    localStorage.clear();
-                    window.location.href = '<?php echo URL_HOME; ?>';
-                });
-            }
-
-            $('#back-to-home').on('click', function() {
-                clearCartAndRedirect();
-            });
-
-            $(document).on('mousemove keydown click', resetTimer);
-            resetTimer();
-        });
-    </script>
     <?php include_once $_SERVER['DOCUMENT_ROOT'] . '/config/floating_bar.php'; ?>
     <?php include_once $_SERVER['DOCUMENT_ROOT'] . '/config/footer.php'; ?>
 </body>

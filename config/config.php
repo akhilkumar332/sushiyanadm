@@ -33,7 +33,7 @@ define('MENU_SUSHI', BASE_PATH . 'sushi/menu.php');
 define('MENU_WARMEKUECHE', BASE_PATH . 'warmekueche/menu.php');
 define('MENU_YANA', BASE_PATH . 'yana/menu.php');
 
-// Database configuration (from your working config.php)
+// Database configuration
 define('DB_SERVER', 'localhost');
 define('DB_USERNAME', 'root');
 define('DB_PASSWORD', '');
@@ -47,4 +47,8 @@ if ($conn->connect_error) {
 }
 
 // Filiale identifier
-$filiale = DB_FILIALE; // Matches your previous config
+$filiale = DB_FILIALE;
+
+// Updated CSP
+header("Content-Security-Policy: style-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; script-src 'self' https://code.jquery.com https://cdn.jsdelivr.net 'unsafe-inline';");
+?>

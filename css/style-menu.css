@@ -157,7 +157,7 @@ body.artikelliste .cart-button-list {
     justify-content: center;
     transition: background-color 0.3s ease, transform 0.3s ease;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-    position: relative; /* Added for positioning the product count */
+    position: relative; /* For positioning the product count */
 }
 
 body.artikelliste .info-button:hover,
@@ -173,6 +173,11 @@ body.artikelliste .cart-button-list i {
     font-size: 16px;
 }
 
+/* Form inline style moved here */
+body.artikelliste .inline-form {
+    display: inline;
+}
+
 /* Product count on the cart button */
 body.artikelliste .product-count {
     position: absolute;
@@ -185,8 +190,12 @@ body.artikelliste .product-count {
     padding: 1px 4px;
     border-radius: 8px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-    display: none;
+    display: none; /* Default hidden */
     line-height: 1;
+}
+
+body.artikelliste .product-count.active {
+    display: inline-block; /* Shown when active */
 }
 
 /* Dish details */

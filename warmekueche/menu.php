@@ -10,19 +10,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
 
 if (!isset($_SESSION['cart'])) {
     $_SESSION['cart'] = [];
-    echo "<script>
-        if (localStorage.getItem('cart')) {
-            fetch('" . URL_RESTORE_CART . "', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: 'cart=' + encodeURIComponent(localStorage.getItem('cart'))
-            })
-            .then(response => response.text())
-            .then(text => JSON.parse(text.replace(/%+$/, '').trim()))
-            .then(data => updateCartCount())
-            .catch(error => console.error('Error restoring cart:', error));
-        }
-    </script>";
 }
 
 // Define allowed categories and their display titles
@@ -51,8 +38,6 @@ if (!array_key_exists($category, $categories)) {
 // Set the table and title
 $table = $category;
 $title = $categories[$category];
-
-// Database connection (assumed to be in config.php as $conn)
 ?>
 
 <!DOCTYPE html>
@@ -62,15 +47,14 @@ $title = $categories[$category];
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <title>Digitale Speisekarte - <?php echo htmlspecialchars($title); ?></title>
     <link rel="stylesheet" href="<?php echo ASSETS_CSS; ?>styles.css">
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-    <script src="<?php echo BASE_PATH; ?>skripte/skripte.js"></script>
+    <script src="/skripte/skripte.js"></script>
 </head>
-<body class="artikelliste">
+<body class="artikelliste" data-page="warmekueche_menu" data-base-path="<?php echo BASE_PATH; ?>" data-session-cart="<?php echo htmlspecialchars(json_encode($_SESSION['cart'])); ?>" data-table="<?php echo htmlspecialchars($table); ?>">
     <header>
         <a href="<?php echo URL_HOME; ?>"><img src="<?php echo ASSETS_IMAGES; ?>logo.webp" alt="Restaurant Logo" class="logo"></a>
     </header>
-
     <div class="content">
         <h1><?php echo htmlspecialchars($title); ?></h1>
         <?php
@@ -79,10 +63,8 @@ $title = $categories[$category];
         include $_SERVER['DOCUMENT_ROOT'] . '/config/artikelliste.php';
         ?>
     </div>
-
     <?php include_once $_SERVER['DOCUMENT_ROOT'] . '/config/floating_bar.php'; ?>
     <?php include_once $_SERVER['DOCUMENT_ROOT'] . '/config/footer.php'; ?>
-
     <?php $conn->close(); ?>
 </body>
 </html>

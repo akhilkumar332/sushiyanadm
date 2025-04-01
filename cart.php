@@ -3,20 +3,15 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/config/config.php';
 
 if (!isset($_SESSION['cart'])) {
     $_SESSION['cart'] = [];
-    echo "<script>
-        if (localStorage.getItem('cart')) {
-            fetch('" . URL_RESTORE_CART . "', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: 'cart=' + encodeURIComponent(localStorage.getItem('cart'))
-            })
-            .then(response => response.text())
-            .then(text => JSON.parse(text.replace(/%+$/, '').trim()))
-            .then(data => updateCartCount())
-            .catch(error => {});
-        }
-    </script>";
 }
+
+$tables = [
+    'bowls', 'chopsuey', 'desserts', 'erdnussgericht', 'extras', 'extrasWarm', 'fingerfood',
+    'gemuese', 'getraenke', 'gyoza', 'insideoutrolls', 'makis', 'mangochutney', 'menues',
+    'miniyanarolls', 'nigiris', 'nudeln', 'redcurry', 'reis', 'salate', 'sashimi',
+    'sommerrollen', 'specialrolls', 'suesssauersauce', 'suppen', 'temaki', 'warmgetraenke',
+    'yanarolls', 'yellowcurry'
+];
 
 // Handle AJAX requests
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
@@ -28,8 +23,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SERVER['HTTP_X_REQUESTED_WI
 
         if ($_POST['action'] === 'remove') {
             unset($_SESSION['cart'][$item_key]);
+            session_write_close();
             ob_end_clean();
-            echo json_encode(['success' => true]);
+            echo json_encode(['success' => true, 'cart' => $_SESSION['cart']]);
             exit;
         }
 
@@ -40,8 +36,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SERVER['HTTP_X_REQUESTED_WI
             } else {
                 $_SESSION['cart'][$item_key] = $new_quantity;
             }
+            session_write_close();
             ob_end_clean();
-            echo json_encode(['success' => true]);
+            echo json_encode(['success' => true, 'cart' => $_SESSION['cart']]);
             exit;
         }
     }
@@ -55,6 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_SERVER['HTTP_X_REQUESTED_W
     if (isset($_POST['remove_from_cart'])) {
         $item_key = $_POST['item_key'];
         unset($_SESSION['cart'][$item_key]);
+        session_write_close();
         header("Location: " . URL_CART);
         exit;
     }
@@ -67,18 +65,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_SERVER['HTTP_X_REQUESTED_W
         } else {
             $_SESSION['cart'][$item_key] = $new_quantity;
         }
+        session_write_close();
         header("Location: " . URL_CART);
         exit;
     }
 }
-
-$tables = [
-    'bowls', 'chopsuey', 'desserts', 'erdnussgericht', 'extras', 'extrasWarm', 'fingerfood',
-    'gemuese', 'getraenke', 'gyoza', 'insideoutrolls', 'makis', 'mangochutney', 'menues',
-    'miniyanarolls', 'nigiris', 'nudeln', 'redcurry', 'reis', 'salate', 'sashimi',
-    'sommerrollen', 'specialrolls', 'suesssauersauce', 'suppen', 'temaki', 'warmgetraenke',
-    'yanarolls', 'yellowcurry'
-];
 ?>
 
 <!DOCTYPE html>
@@ -92,8 +83,9 @@ $tables = [
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script src="<?php echo ASSETS_SCRIPTS; ?>skripte.js"></script>
 </head>
-<body class="navigation">
+<body class="navigation" data-page="cart" data-base-path="<?php echo BASE_PATH; ?>" data-session-cart="<?php echo htmlspecialchars(json_encode($_SESSION['cart'])); ?>">
     <header>
         <a href="<?php echo URL_HOME; ?>"><img src="<?php echo ASSETS_IMAGES; ?>logo.webp" alt="Restaurant Logo" class="logo"></a>
     </header>
@@ -127,8 +119,8 @@ $tables = [
                             ?>
                             <div class="cart-item" data-item-key="<?php echo htmlspecialchars($item_key); ?>">
                                 <img src="<?php echo htmlspecialchars($item['image']); ?>" 
-                                     onerror="this.onerror=null; this.src='https://placehold.co/150';" 
-                                     alt="<?php echo htmlspecialchars($item['artikelname']); ?>">
+                                     alt="<?php echo htmlspecialchars($item['artikelname']); ?>" 
+                                     onerror="this.src='https://placehold.co/150';">
                                 <div class="cart-item-details">
                                     <h3><?php echo htmlspecialchars($item['artikelname']); ?></h3>
                                     <p><?php echo number_format($price, 2); ?> €</p>
@@ -140,7 +132,7 @@ $tables = [
                                         <button type="button" class="btn-increment">+</button>
                                     </div>
                                     <span class="quantity"><?php echo number_format($subtotal, 2); ?> €</span>
-                                    <form method="POST" action="<?php echo URL_CART; ?>" class="remove-form" style="display:inline;">
+                                    <form method="POST" action="<?php echo URL_CART; ?>" class="remove-form">
                                         <input type="hidden" name="item_key" value="<?php echo $item_key; ?>">
                                         <button type="submit" name="remove_from_cart" class="btn-remove">
                                             <i class="fas fa-trash"></i>
@@ -148,7 +140,7 @@ $tables = [
                                     </form>
                                 </div>
                             </div>
-                        <?php
+                            <?php
                         }
                         $stmt->close();
                     }
@@ -166,111 +158,19 @@ $tables = [
             <?php endif; ?>
         </div>
     </main>
-    <script>
-        const BASE_PATH = '<?php echo BASE_PATH; ?>';
-        $(document).ready(function() {
-            function showRemoveToast() {
-                Toastify({
-                    text: '<i class="fas fa-trash"></i> Artikel entfernt',
-                    duration: 3000,
-                    gravity: "top",
-                    position: "right",
-                    escapeMarkup: false,
-                    style: { background: "#6A2477" }
-                }).showToast();
-            }
-
-            function updateCart(itemKey, quantity, element) {
-                $.ajax({
-                    url: BASE_PATH + 'cart.php',
-                    type: 'POST',
-                    data: { action: 'update', item_key: itemKey, quantity: quantity },
-                    success: function(response) {
-                        if (response.success) {
-                            const $item = element.closest('.cart-item');
-                            const price = parseFloat($item.find('.cart-item-details p').text().replace(' €', '').replace(',', '.'));
-                            const newSubtotal = price * quantity;
-                            if (quantity <= 0) {
-                                $item.remove();
-                                updateTotal();
-                                if ($('.cart-item').length === 0) {
-                                    $('.cart-items').html('<div class="cart-empty"><p>Ihr Warenkorb ist leer.</p></div>');
-                                    $('.cart-buttons').remove();
-                                }
-                                showRemoveToast();
-                            } else {
-                                $item.find('.quantity').text(newSubtotal.toFixed(2).replace('.', ',') + ' €');
-                                updateTotal();
-                            }
-                        }
-                    },
-                    error: function(xhr, status, error) {}
-                });
-            }
-
-            function removeCartItem(itemKey, element) {
-                $.ajax({
-                    url: BASE_PATH + 'cart.php',
-                    type: 'POST',
-                    data: { action: 'remove', item_key: itemKey },
-                    success: function(response) {
-                        if (response.success) {
-                            element.closest('.cart-item').remove();
-                            updateTotal();
-                            if ($('.cart-item').length === 0) {
-                                $('.cart-items').html('<div class="cart-empty"><p>Ihr Warenkorb ist leer.</p></div>');
-                                $('.cart-buttons').remove();
-                            }
-                            showRemoveToast();
-                        }
-                    },
-                    error: function(xhr, status, error) {}
-                });
-            }
-
-            function updateTotal() {
-                let total = 0;
-                $('.cart-item').each(function() {
-                    const subtotal = parseFloat($(this).find('.quantity').text().replace(' €', '').replace(',', '.'));
-                    total += subtotal;
-                });
-                $('.total-amount').text(total.toFixed(2).replace('.', ',') + ' €');
-            }
-
-            $('.btn-increment').on('click', function() {
-                const $input = $(this).siblings('.quantity-input');
-                const itemKey = $(this).closest('.cart-item').data('item-key');
-                let quantity = parseInt($input.val()) + 1;
-                $input.val(quantity);
-                updateCart(itemKey, quantity, $(this));
-            });
-
-            $('.btn-decrement').on('click', function() {
-                const $input = $(this).siblings('.quantity-input');
-                const itemKey = $(this).closest('.cart-item').data('item-key');
-                let quantity = parseInt($input.val()) - 1;
-                if (quantity < 0) quantity = 0;
-                $input.val(quantity);
-                updateCart(itemKey, quantity, $(this));
-            });
-
-            $('.quantity-input').on('change', function() {
-                const itemKey = $(this).closest('.cart-item').data('item-key');
-                let quantity = parseInt($(this).val());
-                if (isNaN(quantity) || quantity < 0) quantity = 0;
-                $(this).val(quantity);
-                updateCart(itemKey, quantity, $(this));
-            });
-
-            $('.btn-remove').on('click', function(e) {
-                e.preventDefault();
-                const itemKey = $(this).closest('.cart-item').data('item-key');
-                removeCartItem(itemKey, $(this));
-            });
-        });
-    </script>
     <?php include_once $_SERVER['DOCUMENT_ROOT'] . '/config/floating_bar.php'; ?>
     <?php include_once $_SERVER['DOCUMENT_ROOT'] . '/config/footer.php'; ?>
+    <script>
+        // Sync localStorage with server cart on page load
+        const serverCart = <?php echo json_encode($_SESSION['cart']); ?>;
+        localStorage.setItem('cart', JSON.stringify(serverCart));
+        updateCartCount();
+
+        // Debug redirect
+        window.addEventListener('beforeunload', function(e) {
+            console.log('Leaving cart.php to:', window.location.href);
+        });
+    </script>
     <?php $conn->close(); ?>
 </body>
 </html>
