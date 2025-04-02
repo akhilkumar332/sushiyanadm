@@ -321,8 +321,8 @@ body.artikelliste .price-button {
     color: white;
     border: none;
     border-radius: 8px;
-    padding: 6px 10px;
-    font-size: 14px;
+    padding: 6px 8px;
+    font-size: 13px;
     font-weight: 500;
     cursor: default;
     transition: background-color 0.3s ease;
