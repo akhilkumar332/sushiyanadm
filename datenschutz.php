@@ -1,21 +1,7 @@
 <?php
 require_once $_SERVER['DOCUMENT_ROOT'] . '/config/config.php';
-
 if (!isset($_SESSION['cart'])) {
     $_SESSION['cart'] = [];
-    echo "<script>
-        if (localStorage.getItem('cart')) {
-            fetch('" . URL_RESTORE_CART . "', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: 'cart=' + encodeURIComponent(localStorage.getItem('cart'))
-            })
-            .then(response => response.text())
-            .then(text => JSON.parse(text.replace(/%+$/, '').trim()))
-            .then(data => updateCartCount())
-            .catch(error => {});
-        }
-    </script>";
 }
 ?>
 
@@ -27,6 +13,11 @@ if (!isset($_SESSION['cart'])) {
     <title>Datenschutzerklärung</title>
     <link rel="stylesheet" href="<?php echo ASSETS_CSS; ?>styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="preload" href="<?php echo ASSETS_IMAGES; ?>logo.webp" as="image">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script src="<?php echo ASSETS_SCRIPTS; ?>skripte.js"></script>
 </head>
 <body class="navigation">
     <header>
