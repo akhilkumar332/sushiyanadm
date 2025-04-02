@@ -70,8 +70,11 @@ function showToast(message, isError = false) {
 }
 
 // Update cart quantity function (reused for both cart.php and artikelliste.php)
-function updateCart(itemKey, quantity, element) {
+function updateCart(itemKey, quantity, element, button) {
     const BASE_PATH = document.body.dataset.basePath || '/'; // Fallback to '/' if not set
+    if (button) {
+        $(button).addClass('loading').prop('disabled', true);
+    }
     $.ajax({
         url: BASE_PATH + 'config/api.php',
         type: 'POST',
@@ -92,6 +95,11 @@ function updateCart(itemKey, quantity, element) {
         error: function(xhr, status, error) {
             console.error('AJAX error:', status, error);
             showToast('Fehler beim Aktualisieren', true);
+        },
+        complete: function() {
+            if (button) {
+                $(button).removeClass('loading').prop('disabled', false);
+            }
         }
     });
 }
@@ -226,7 +234,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const itemKey = $(this).data('item-key');
             const $input = $(this).siblings('.quantity-input');
             let quantity = parseInt($input.val()) + 1;
-            updateCart(itemKey, quantity, $input);
+            updateCart(itemKey, quantity, $input, this);
             // Update UI immediately for better UX
             $input.val(quantity);
             const price = parseFloat($(this).closest('.cart-item').find('.cart-item-details p').text().replace(' €', '').replace(',', '.'));
@@ -239,7 +247,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const $input = $(this).siblings('.quantity-input');
             let quantity = parseInt($input.val()) - 1;
             if (quantity < 0) quantity = 0;
-            updateCart(itemKey, quantity, $input);
+            updateCart(itemKey, quantity, $input, this);
             // Update UI immediately for better UX
             if (quantity === 0) {
                 $(this).closest('.cart-item').remove();
@@ -396,7 +404,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const $countSpan = $(this).closest('.grid-item').find('.product-count');
             const currentQuantity = parseInt($countSpan.text() || 0);
             const newQuantity = currentQuantity + 1;
-            updateCart(itemKey, newQuantity, $countSpan);
+            updateCart(itemKey, newQuantity, $countSpan, this);
         });
 
         $('.btn-decrement').on('click', function() {
@@ -404,7 +412,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const $countSpan = $(this).closest('.grid-item').find('.product-count');
             const currentQuantity = parseInt($countSpan.text() || 0);
             const newQuantity = Math.max(0, currentQuantity - 1);
-            updateCart(itemKey, newQuantity, $countSpan);
+            updateCart(itemKey, newQuantity, $countSpan, this);
         });
     }
 

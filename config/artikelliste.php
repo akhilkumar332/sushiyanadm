@@ -60,11 +60,17 @@ if (!isset($result) || !isset($table) || !isset($filiale)) {
                     </div>
                     <div class="price-button-container">
                         <div class="quantity-controls">
-                            <button type="button" class="btn-decrement" data-item-key="<?php echo $item_key; ?>">-</button>
+                            <button type="button" class="btn-decrement" data-item-key="<?php echo $item_key; ?>">
+                                <span>-</span>
+                                <span class="spinner"><i class="fas fa-spinner fa-spin"></i></span>
+                            </button>
                             <button class="price-button" aria-label="Preis: <?php echo htmlspecialchars((string)$row["preis"]); ?>">
                                 <?php echo htmlspecialchars((string)$row["preis"]); ?>
                             </button>
-                            <button type="button" class="btn-increment" data-item-key="<?php echo $item_key; ?>">+</button>
+                            <button type="button" class="btn-increment" data-item-key="<?php echo $item_key; ?>">
+                                <span>+</span>
+                                <span class="spinner"><i class="fas fa-spinner fa-spin"></i></span>
+                            </button>
                         </div>
                     </div>
                 </div>

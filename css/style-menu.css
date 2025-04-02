@@ -283,12 +283,36 @@ body.artikelliste .btn-increment {
     justify-content: center;
     transition: background-color 0.3s ease, transform 0.3s ease;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    position: relative;
 }
 
-body.artikelliste .btn-decrement:hover,
-body.artikelliste .btn-increment:hover {
+body.artikelliste .btn-decrement:hover:not(.loading),
+body.artikelliste .btn-increment:hover:not(.loading) {
     background-color: #4A1A55;
     transform: scale(1.1);
+}
+
+body.artikelliste .btn-decrement:disabled,
+body.artikelliste .btn-increment:disabled {
+    background-color: #4A1A55;
+    cursor: not-allowed;
+}
+
+body.artikelliste .btn-decrement .spinner,
+body.artikelliste .btn-increment .spinner {
+    display: none;
+    position: absolute;
+    font-size: 14px;
+}
+
+body.artikelliste .btn-decrement.loading .spinner,
+body.artikelliste .btn-increment.loading .spinner {
+    display: block;
+}
+
+body.artikelliste .btn-decrement.loading span:not(.spinner),
+body.artikelliste .btn-increment.loading span:not(.spinner) {
+    display: none;
 }
 
 /* Price button */
@@ -497,6 +521,11 @@ body.artikelliste .dish-details {
         width: 24px;
         height: 24px;
         font-size: 14px;
+    }
+
+    body.artikelliste .btn-decrement .spinner,
+    body.artikelliste .btn-increment .spinner {
+        font-size: 12px;
     }
 
     body.artikelliste .price-button {
