@@ -702,6 +702,7 @@ footer::before {
 }
 
 #branch-dropdown {
+    text-align: center;
     background-color: #1a0f1d; /* Match footer gradient */
     color: #fff;
     border: 1px solid #6A2477; /* Match theme */
