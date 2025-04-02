@@ -104,6 +104,68 @@ function updateCart(itemKey, quantity, element, button) {
     });
 }
 
+// Refresh menu content dynamically
+function refreshMenuContent(branch) {
+    const page = document.body.dataset.page;
+    const table = document.body.dataset.table;
+    const BASE_PATH = document.body.dataset.basePath || '/';
+    if (['yana_menu', 'warmekueche_menu', 'sushi_menu', 'sushi_vegetarisch'].includes(page)) {
+        $.ajax({
+            url: BASE_PATH + 'config/artikelliste.php',
+            type: 'POST',
+            data: { table: table, filiale: branch },
+            success: function(data) {
+                $('.content').html(data);
+                // Reattach event listeners after content refresh
+                attachArtikellisteListeners();
+            },
+            error: function() {
+                showToast('Fehler beim Aktualisieren der Menüliste', true);
+            }
+        });
+    }
+}
+
+// Reattach event listeners for artikelliste pages
+function attachArtikellisteListeners() {
+    document.querySelectorAll('.info-button').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.stopPropagation();
+            openModal(this.dataset.id);
+        });
+    });
+
+    document.querySelectorAll('.ingredients-button').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.stopPropagation();
+            openIngredientsModal(this.dataset.id);
+        });
+    });
+
+    document.querySelectorAll('.close').forEach(span => {
+        span.addEventListener('click', function() {
+            closeModal(this.dataset.id);
+            closeIngredientsModal(this.dataset.id);
+        });
+    });
+
+    $('.btn-increment').on('click', function() {
+        const itemKey = $(this).data('item-key');
+        const $countSpan = $(this).closest('.grid-item').find('.product-count');
+        const currentQuantity = parseInt($countSpan.text() || 0);
+        const newQuantity = currentQuantity + 1;
+        updateCart(itemKey, newQuantity, $countSpan, this);
+    });
+
+    $('.btn-decrement').on('click', function() {
+        const itemKey = $(this).data('item-key');
+        const $countSpan = $(this).closest('.grid-item').find('.product-count');
+        const currentQuantity = parseInt($countSpan.text() || 0);
+        const newQuantity = Math.max(0, currentQuantity - 1);
+        updateCart(itemKey, newQuantity, $countSpan, this);
+    });
+}
+
 // Page-specific logic
 document.addEventListener('DOMContentLoaded', function() {
     const body = document.body;
@@ -123,6 +185,33 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(() => updateCartCount())
         .catch(() => {});
     }
+
+    // Branch dropdown change handler
+    $('#branch-dropdown').on('change', function() {
+        const branch = $(this).val();
+        const $spinner = $('#branch-spinner');
+        $spinner.show();
+
+        $.ajax({
+            url: BASE_PATH + 'config/api.php',
+            type: 'POST',
+            data: { action: 'set_branch', branch: branch },
+            success: function(response) {
+                if (response.status === 'success') {
+                    showToast('Filiale geändert zu ' + branch);
+                    refreshMenuContent(branch);
+                } else {
+                    showToast('Fehler beim Ändern der Filiale: ' + response.message, true);
+                }
+            },
+            error: function() {
+                showToast('Fehler beim Ändern der Filiale', true);
+            },
+            complete: function() {
+                $spinner.hide();
+            }
+        });
+    });
 
     // Index, Sushi, Warmekueche menu loading
     if (['index', 'sushi', 'warmekueche'].includes(page)) {
@@ -377,43 +466,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Artikelliste pages (yana/menu.php, warmekueche/menu.php, sushi/menu.php, sushi/vegetarisch.php)
     if (['yana_menu', 'warmekueche_menu', 'sushi_menu', 'sushi_vegetarisch'].includes(page)) {
-        document.querySelectorAll('.info-button').forEach(button => {
-            button.addEventListener('click', function(e) {
-                e.stopPropagation();
-                openModal(this.dataset.id);
-            });
-        });
-
-        document.querySelectorAll('.ingredients-button').forEach(button => {
-            button.addEventListener('click', function(e) {
-                e.stopPropagation();
-                openIngredientsModal(this.dataset.id);
-            });
-        });
-
-        document.querySelectorAll('.close').forEach(span => {
-            span.addEventListener('click', function() {
-                closeModal(this.dataset.id);
-                closeIngredientsModal(this.dataset.id);
-            });
-        });
-
-        // Quantity controls for artikelliste
-        $('.btn-increment').on('click', function() {
-            const itemKey = $(this).data('item-key');
-            const $countSpan = $(this).closest('.grid-item').find('.product-count');
-            const currentQuantity = parseInt($countSpan.text() || 0);
-            const newQuantity = currentQuantity + 1;
-            updateCart(itemKey, newQuantity, $countSpan, this);
-        });
-
-        $('.btn-decrement').on('click', function() {
-            const itemKey = $(this).data('item-key');
-            const $countSpan = $(this).closest('.grid-item').find('.product-count');
-            const currentQuantity = parseInt($countSpan.text() || 0);
-            const newQuantity = Math.max(0, currentQuantity - 1);
-            updateCart(itemKey, newQuantity, $countSpan, this);
-        });
+        attachArtikellisteListeners();
     }
 
     // Initial cart update

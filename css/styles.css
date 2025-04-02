@@ -274,6 +274,22 @@ body.navigation .skeleton-text {
     margin: 10px auto;
 }
 
+/* Branch change spinner */
+#branch-spinner {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50px;
+    height: 50px;
+    border: 6px solid #6A2477;
+    border-top: 6px solid transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    z-index: 1000;
+}
+
 @keyframes spin {
     0% {
         transform: rotate(0deg);
@@ -668,6 +684,45 @@ footer::before {
     color: #fff;
     font-size: 15px;
     font-weight: 500;
+}
+
+/* Branch selector styles */
+.branch-selector {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.branch-label {
+    font-size: 15px;
+    font-weight: 500;
+    color: #D4AF37; /* Match footer links */
+}
+
+#branch-dropdown {
+    background-color: #1a0f1d; /* Match footer gradient */
+    color: #fff;
+    border: 1px solid #6A2477; /* Match theme */
+    border-radius: 5px;
+    padding: 8px 12px;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+#branch-dropdown:hover,
+#branch-dropdown:focus {
+    background-color: #2a1a2f; /* Lighter shade from footer gradient */
+    border-color: #D4AF37; /* Gold accent on hover/focus */
+    outline: none;
+}
+
+#branch-dropdown option {
+    background-color: #1a0f1d;
+    color: #fff;
 }
 
 /* Fade-in animation for footer content */
@@ -1215,6 +1270,16 @@ body.navigation main {
 
     .footer-separator {
         font-size: 14px;
+    }
+
+    .branch-selector {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    #branch-dropdown {
+        width: 100%;
+        max-width: 200px;
     }
 }
 

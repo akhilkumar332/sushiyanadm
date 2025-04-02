@@ -60,6 +60,7 @@ $title = $categories[$category];
     </div>
     <?php include_once $_SERVER['DOCUMENT_ROOT'] . '/config/floating_bar.php'; ?>
     <?php include_once $_SERVER['DOCUMENT_ROOT'] . '/config/footer.php'; ?>
+    <div id="branch-spinner"></div>
     <?php $conn->close(); ?>
 </body>
 </html>

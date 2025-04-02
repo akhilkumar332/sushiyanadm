@@ -105,6 +105,7 @@ $tables = [
         localStorage.setItem('cart', JSON.stringify(serverCart));
         updateCartCount();
     </script>
+    <div id="branch-spinner"></div>
     <?php $conn->close(); ?>
 </body>
 </html>

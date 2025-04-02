@@ -97,5 +97,6 @@ $timestamp = date('d.m.Y H:i:s');
     </main>
     <?php include_once $_SERVER['DOCUMENT_ROOT'] . '/config/floating_bar.php'; ?>
     <?php include_once $_SERVER['DOCUMENT_ROOT'] . '/config/footer.php'; ?>
+    <div id="branch-spinner"></div>
 </body>
 </html>

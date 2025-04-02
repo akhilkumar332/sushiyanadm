@@ -6,9 +6,17 @@ if (!isset($_SESSION['cart'])) {
     $_SESSION['cart'] = [];
 }
 
-// Check if required variables are defined (passed from parent script)
-if (!isset($result) || !isset($table) || !isset($filiale)) {
-    die('Error: Required variables ($result, $table, $filiale) are not defined.');
+// Check if this is an AJAX request
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['table']) && isset($_POST['filiale'])) {
+    $table = $_POST['table'];
+    $filiale = $_POST['filiale'];
+    $sql = "SELECT * FROM " . mysqli_real_escape_string($conn, $table) . " ORDER BY artikelnummer ASC";
+    $result = $conn->query($sql);
+} else {
+    // Check if required variables are defined (passed from parent script)
+    if (!isset($result) || !isset($table) || !isset($filiale)) {
+        die('Error: Required variables ($result, $table, $filiale) are not defined.');
+    }
 }
 ?>
 

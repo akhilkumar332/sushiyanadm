@@ -40,7 +40,9 @@ define('DB_USERNAME', 'root');
 define('DB_PASSWORD', '');
 define('DB_NAME', 'db105950');
 define('DB_PORT', 3306);
-define('DB_FILIALE', 'neukoelln');
+
+// Set DB_FILIALE dynamically from session, default to 'neukoelln'
+define('DB_FILIALE', isset($_SESSION['branch']) ? $_SESSION['branch'] : 'neukoelln');
 
 $conn = new mysqli(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME, DB_PORT);
 if ($conn->connect_error) {

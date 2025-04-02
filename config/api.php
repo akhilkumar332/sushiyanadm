@@ -5,7 +5,7 @@ if (!isset($_SESSION['cart'])) {
     $_SESSION['cart'] = [];
 }
 
-// API Endpoints for Cart Operations
+// API Endpoints for Cart Operations and Branch Selection
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action'])) {
     header('Content-Type: application/json');
     if ($_GET['action'] === 'get_cart') {
@@ -21,6 +21,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header('Content-Type: application/json');
 
     $action = $_POST['action'] ?? 'add';
+
+    if ($action === 'set_branch') {
+        $branch = $_POST['branch'] ?? null;
+        $valid_branches = ['charlottenburg', 'friedrichshain', 'lichtenrade', 'mitte', 'moabit', 
+                           'neukoelln', 'potsdam', 'rudow', 'spandau', 'tegel', 'weissensee', 
+                           'zehlendorf', 'FFO'];
+        if ($branch && in_array($branch, $valid_branches)) {
+            $_SESSION['branch'] = $branch;
+            ob_end_clean();
+            echo json_encode(['status' => 'success', 'message' => 'Branch updated to ' . $branch]);
+            exit;
+        } else {
+            ob_end_clean();
+            echo json_encode(['status' => 'error', 'message' => 'Invalid branch']);
+            exit;
+        }
+    }
+
     $item_id = $_POST['item_id'] ?? null;
     $table = $_POST['table'] ?? null;
     $quantity = isset($_POST['quantity']) ? (int)$_POST['quantity'] : null;
