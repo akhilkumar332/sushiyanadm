@@ -35,16 +35,12 @@ if (!isset($result) || !isset($table) || !isset($filiale)) {
                         <button class="ingredients-button" data-id="<?php echo (int)$row["id"]; ?>" aria-label="Zutaten anzeigen">
                             <i class="fas fa-utensils"></i>
                         </button>
-                        <form action="<?php echo URL_API; ?>" class="inline-form">
-                            <input type="hidden" name="item_key" value="<?php echo $item_key; ?>">
-                            <input type="hidden" name="quantity" value="1">
-                            <button type="submit" name="add_to_cart" class="cart-button-list" aria-label="Zum Warenkorb hinzufügen">
-                                <i class="fas fa-shopping-cart"></i>
-                                <span class="product-count <?php echo $quantity_in_cart > 0 ? 'active' : ''; ?>" data-item-key="<?php echo $item_key; ?>">
-                                    <?php echo $quantity_in_cart; ?>
-                                </span>
-                            </button>
-                        </form>
+                        <div class="cart-display <?php echo $quantity_in_cart > 0 ? 'active' : ''; ?>">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span class="product-count" data-item-key="<?php echo $item_key; ?>">
+                                <?php echo $quantity_in_cart; ?>
+                            </span>
+                        </div>
                     </div>
                     <div class="dish-details">
                         <h3 class="dishname"><?php echo htmlspecialchars((string)$row["artikelnummer"] . " " . (string)$row["artikelname"]); ?></h3>
@@ -63,9 +59,13 @@ if (!isset($result) || !isset($table) || !isset($filiale)) {
                         </div>
                     </div>
                     <div class="price-button-container">
-                        <button class="price-button" aria-label="Preis: <?php echo htmlspecialchars((string)$row["preis"]); ?>">
-                            <?php echo htmlspecialchars((string)$row["preis"]); ?>
-                        </button>
+                        <div class="quantity-controls">
+                            <button type="button" class="btn-decrement" data-item-key="<?php echo $item_key; ?>">-</button>
+                            <button class="price-button" aria-label="Preis: <?php echo htmlspecialchars((string)$row["preis"]); ?>">
+                                <?php echo htmlspecialchars((string)$row["preis"]); ?>
+                            </button>
+                            <button type="button" class="btn-increment" data-item-key="<?php echo $item_key; ?>">+</button>
+                        </div>
                     </div>
                 </div>
                 <?php

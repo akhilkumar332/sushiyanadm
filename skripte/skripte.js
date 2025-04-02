@@ -46,7 +46,10 @@ function updateCartCount() {
         const itemKey = span.dataset.itemKey;
         const quantity = cart[itemKey] || 0;
         span.textContent = quantity;
-        span.classList.toggle('active', quantity > 0);
+        const cartDisplay = span.closest('.cart-display');
+        if (cartDisplay) {
+            cartDisplay.classList.toggle('active', quantity > 0);
+        }
     });
 }
 
@@ -66,11 +69,38 @@ function showToast(message, isError = false) {
     }).showToast();
 }
 
+// Update cart quantity function (reused for both cart.php and artikelliste.php)
+function updateCart(itemKey, quantity, element) {
+    const BASE_PATH = document.body.dataset.basePath || '/'; // Fallback to '/' if not set
+    $.ajax({
+        url: BASE_PATH + 'config/api.php',
+        type: 'POST',
+        data: { action: 'update', item_key: itemKey, quantity: quantity },
+        success: function(response) {
+            if (response.status === 'success') {
+                if (quantity <= 0) {
+                    showToast('Artikel entfernt');
+                } else {
+                    showToast(quantity > (parseInt(element.text()) || 0) ? 'Menge erhöht' : 'Menge reduziert');
+                }
+                updateLocalCart(response.cart);
+            } else {
+                console.error('Update failed:', response);
+                showToast('Fehler beim Aktualisieren: ' + (response.message || 'Unbekannter Fehler'), true);
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('AJAX error:', status, error);
+            showToast('Fehler beim Aktualisieren', true);
+        }
+    });
+}
+
 // Page-specific logic
 document.addEventListener('DOMContentLoaded', function() {
     const body = document.body;
     const page = body.dataset.page;
-    const BASE_PATH = body.dataset.basePath;
+    const BASE_PATH = body.dataset.basePath || '/'; // Define BASE_PATH here with fallback
     const sessionCart = JSON.parse(body.dataset.sessionCart || '{}');
 
     // Restore cart from localStorage if empty session
@@ -156,41 +186,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Cart page
     if (page === 'cart') {
-        function updateCart(itemKey, quantity, element) {
-            $.ajax({
-                url: BASE_PATH + 'config/api.php',
-                type: 'POST',
-                data: { action: 'update', item_key: itemKey, quantity: quantity },
-                success: function(response) {
-                    if (response.status === 'success') {
-                        const $item = element.closest('.cart-item');
-                        const price = parseFloat($item.find('.cart-item-details p').text().replace(' €', '').replace(',', '.'));
-                        const newSubtotal = price * quantity;
-                        if (quantity <= 0) {
-                            $item.remove();
-                            updateTotal();
-                            if ($('.cart-item').length === 0) {
-                                $('.cart-items').html('<div class="cart-empty"><p>Ihr Warenkorb ist leer.</p></div>');
-                                $('.cart-buttons').remove();
-                            }
-                            showToast('Artikel entfernt');
-                        } else {
-                            $item.find('.quantity').text(newSubtotal.toFixed(2).replace('.', ',') + ' €');
-                            $item.find('.quantity-input').val(quantity);
-                            updateTotal();
-                            showToast('Menge aktualisiert');
-                        }
-                        updateLocalCart(response.cart);
-                    } else {
-                        console.error('Update failed:', response);
-                        showToast('Fehler beim Aktualisieren: ' + (response.message || 'Unbekannter Fehler'), true);
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.error('AJAX error:', status, error);
-                    showToast('Fehler beim Aktualisieren', true);
-                }
+        function updateTotal() {
+            let total = 0;
+            $('.cart-item').each(function() {
+                const subtotal = parseFloat($(this).find('.quantity').text().replace(' €', '').replace(',', '.'));
+                total += subtotal;
             });
+            $('.total-amount').text(total.toFixed(2).replace('.', ',') + ' €');
         }
 
         function removeCartItem(itemKey, element) {
@@ -220,20 +222,16 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
 
-        function updateTotal() {
-            let total = 0;
-            $('.cart-item').each(function() {
-                const subtotal = parseFloat($(this).find('.quantity').text().replace(' €', '').replace(',', '.'));
-                total += subtotal;
-            });
-            $('.total-amount').text(total.toFixed(2).replace('.', ',') + ' €');
-        }
-
         $('.btn-increment').on('click', function() {
             const itemKey = $(this).data('item-key');
             const $input = $(this).siblings('.quantity-input');
             let quantity = parseInt($input.val()) + 1;
-            updateCart(itemKey, quantity, $(this));
+            updateCart(itemKey, quantity, $input);
+            // Update UI immediately for better UX
+            $input.val(quantity);
+            const price = parseFloat($(this).closest('.cart-item').find('.cart-item-details p').text().replace(' €', '').replace(',', '.'));
+            $(this).closest('.cart-item').find('.quantity').text((price * quantity).toFixed(2).replace('.', ',') + ' €');
+            updateTotal();
         });
 
         $('.btn-decrement').on('click', function() {
@@ -241,7 +239,20 @@ document.addEventListener('DOMContentLoaded', function() {
             const $input = $(this).siblings('.quantity-input');
             let quantity = parseInt($input.val()) - 1;
             if (quantity < 0) quantity = 0;
-            updateCart(itemKey, quantity, $(this));
+            updateCart(itemKey, quantity, $input);
+            // Update UI immediately for better UX
+            if (quantity === 0) {
+                $(this).closest('.cart-item').remove();
+                if ($('.cart-item').length === 0) {
+                    $('.cart-items').html('<div class="cart-empty"><p>Ihr Warenkorb ist leer.</p></div>');
+                    $('.cart-buttons').remove();
+                }
+            } else {
+                $input.val(quantity);
+                const price = parseFloat($(this).closest('.cart-item').find('.cart-item-details p').text().replace(' €', '').replace(',', '.'));
+                $(this).closest('.cart-item').find('.quantity').text((price * quantity).toFixed(2).replace('.', ',') + ' €');
+            }
+            updateTotal();
         });
 
         $('.quantity-input').on('change', function() {
@@ -249,6 +260,18 @@ document.addEventListener('DOMContentLoaded', function() {
             let quantity = parseInt($(this).val());
             if (isNaN(quantity) || quantity < 0) quantity = 0;
             updateCart(itemKey, quantity, $(this));
+            // Update UI immediately for better UX
+            if (quantity === 0) {
+                $(this).closest('.cart-item').remove();
+                if ($('.cart-item').length === 0) {
+                    $('.cart-items').html('<div class="cart-empty"><p>Ihr Warenkorb ist leer.</p></div>');
+                    $('.cart-buttons').remove();
+                }
+            } else {
+                const price = parseFloat($(this).closest('.cart-item').find('.cart-item-details p').text().replace(' €', '').replace(',', '.'));
+                $(this).closest('.cart-item').find('.quantity').text((price * quantity).toFixed(2).replace('.', ',') + ' €');
+            }
+            updateTotal();
         });
 
         $('.btn-remove').on('click', function(e) {
@@ -367,31 +390,21 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
 
-        document.querySelectorAll('.inline-form').forEach(form => {
-            form.addEventListener('submit', function(e) {
-                e.preventDefault();
-                const itemKey = form.querySelector('input[name="item_key"]').value;
-                const [table, itemId] = itemKey.split(':');
-                fetch(BASE_PATH + 'config/api.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: `item_id=${encodeURIComponent(itemId)}&table=${encodeURIComponent(table)}&action=add`
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        updateLocalCart(data.cart);
-                        showToast('Artikel hinzugefügt!');
-                    } else {
-                        console.error('Add failed:', data);
-                        showToast('Fehler beim Hinzufügen: ' + (data.message || 'Unbekannter Fehler'), true);
-                    }
-                })
-                .catch(error => {
-                    console.error('Fetch error:', error);
-                    showToast('Fehler beim Hinzufügen', true);
-                });
-            });
+        // Quantity controls for artikelliste
+        $('.btn-increment').on('click', function() {
+            const itemKey = $(this).data('item-key');
+            const $countSpan = $(this).closest('.grid-item').find('.product-count');
+            const currentQuantity = parseInt($countSpan.text() || 0);
+            const newQuantity = currentQuantity + 1;
+            updateCart(itemKey, newQuantity, $countSpan);
+        });
+
+        $('.btn-decrement').on('click', function() {
+            const itemKey = $(this).data('item-key');
+            const $countSpan = $(this).closest('.grid-item').find('.product-count');
+            const currentQuantity = parseInt($countSpan.text() || 0);
+            const newQuantity = Math.max(0, currentQuantity - 1);
+            updateCart(itemKey, newQuantity, $countSpan);
         });
     }
 

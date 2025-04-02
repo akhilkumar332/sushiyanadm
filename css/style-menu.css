@@ -141,10 +141,9 @@ body.artikelliste .grid-item:hover .action-buttons {
     opacity: 1;
 }
 
-/* Action buttons (info, ingredients, cart) */
+/* Action buttons (info, ingredients) */
 body.artikelliste .info-button,
-body.artikelliste .ingredients-button,
-body.artikelliste .cart-button-list {
+body.artikelliste .ingredients-button {
     background-color: rgba(106, 36, 119, 0.9);
     color: white;
     border: none;
@@ -157,29 +156,48 @@ body.artikelliste .cart-button-list {
     justify-content: center;
     transition: background-color 0.3s ease, transform 0.3s ease;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-    position: relative; /* For positioning the product count */
 }
 
 body.artikelliste .info-button:hover,
-body.artikelliste .ingredients-button:hover,
-body.artikelliste .cart-button-list:hover {
+body.artikelliste .ingredients-button:hover {
     background-color: #4A1A55;
     transform: scale(1.1);
 }
 
 body.artikelliste .info-button i,
-body.artikelliste .ingredients-button i,
-body.artikelliste .cart-button-list i {
+body.artikelliste .ingredients-button i {
     font-size: 16px;
 }
 
-/* Form inline style moved here */
-body.artikelliste .inline-form {
-    display: inline;
+/* Cart display styling */
+body.artikelliste .cart-display {
+    position: relative;
+    display: none; /* Hidden by default */
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background-color: rgba(106, 36, 119, 0.9);
+    border-radius: 50%;
+    color: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
-/* Product count on the cart button */
-body.artikelliste .product-count {
+body.artikelliste .cart-display.active {
+    display: flex; /* Shown when quantity > 0 */
+}
+
+body.artikelliste .cart-display:hover {
+    background-color: #4A1A55;
+    transform: scale(1.1);
+}
+
+body.artikelliste .cart-display .fa-shopping-cart {
+    font-size: 16px;
+}
+
+body.artikelliste .cart-display .product-count {
     position: absolute;
     top: -6px;
     right: -6px;
@@ -190,12 +208,7 @@ body.artikelliste .product-count {
     padding: 1px 4px;
     border-radius: 8px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-    display: none; /* Default hidden */
     line-height: 1;
-}
-
-body.artikelliste .product-count.active {
-    display: inline-block; /* Shown when active */
 }
 
 /* Dish details */
@@ -237,7 +250,7 @@ body.artikelliste .mini-logo {
     max-height: 14px;
 }
 
-/* Price button container */
+/* Price button container with quantity controls */
 body.artikelliste .price-button-container {
     display: flex;
     align-items: center;
@@ -247,19 +260,49 @@ body.artikelliste .price-button-container {
     margin-bottom: 10px;
 }
 
-/* Price button */
-body.artikelliste .price-button {
+body.artikelliste .quantity-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 80%;
+    max-width: 200px;
+}
+
+body.artikelliste .btn-decrement,
+body.artikelliste .btn-increment {
     background-color: #6A2477;
     color: white;
     border: none;
-    border-radius: 8px 8px 12px 12px;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+body.artikelliste .btn-decrement:hover,
+body.artikelliste .btn-increment:hover {
+    background-color: #4A1A55;
+    transform: scale(1.1);
+}
+
+/* Price button */
+body.artikelliste .price-button {
+    background-color: #6A2477; /* Matching -/+ buttons */
+    color: white;
+    border: none;
+    border-radius: 8px;
     padding: 6px 14px;
     font-size: 15px;
     font-weight: 500;
     cursor: default;
     transition: background-color 0.3s ease;
-    width: 80%;
-    max-width: 200px;
+    flex-grow: 1;
     text-align: center;
 }
 
@@ -362,7 +405,8 @@ footer {
 /* Focus styles for accessibility */
 body.artikelliste .info-button:focus,
 body.artikelliste .ingredients-button:focus,
-body.artikelliste .cart-button-list:focus,
+body.artikelliste .btn-decrement:focus,
+body.artikelliste .btn-increment:focus,
 body.artikelliste .price-button:focus {
     outline: 2px solid #6A2477;
     outline-offset: 2px;
@@ -411,14 +455,14 @@ body.artikelliste .dish-details {
 
     body.artikelliste .info-button,
     body.artikelliste .ingredients-button,
-    body.artikelliste .cart-button-list {
+    body.artikelliste .cart-display {
         width: 32px;
         height: 32px;
     }
 
     body.artikelliste .info-button i,
     body.artikelliste .ingredients-button i,
-    body.artikelliste .cart-button-list i {
+    body.artikelliste .cart-display .fa-shopping-cart {
         font-size: 14px;
     }
 
@@ -442,12 +486,23 @@ body.artikelliste .dish-details {
         max-height: 12px;
     }
 
-    body.artikelliste .price-button {
-        padding: 5px 10px;
-        font-size: 14px;
+    body.artikelliste .quantity-controls {
+        gap: 6px;
         width: 75%;
         max-width: 180px;
-        border-radius: 8px 8px 10px 10px;
+    }
+
+    body.artikelliste .btn-decrement,
+    body.artikelliste .btn-increment {
+        width: 24px;
+        height: 24px;
+        font-size: 14px;
+    }
+
+    body.artikelliste .price-button {
+        padding: 5px 6px;
+        font-size: 12px;
+        border-radius: 8px;
     }
 
     body.artikelliste .modal-content {
@@ -466,7 +521,7 @@ body.artikelliste .dish-details {
         right: 12px;
     }
 
-    body.artikelliste .product-count {
+    body.artikelliste .cart-display .product-count {
         font-size: 8px;
         padding: 0px 3px;
         top: -4px;
