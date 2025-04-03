@@ -2,7 +2,7 @@
 require_once $_SERVER['DOCUMENT_ROOT'] . '/config/config.php';
 
 $current_page = basename($_SERVER['PHP_SELF']);
-$hide_cart_button = in_array($current_page, ['cart.php', 'final_order.php']);
+$hide_cart_button = in_array($current_page, ['cart.php', 'final_order.php', 'online-orders.php']);
 $show_back_button = in_array($current_page, ['cart.php', 'final_order.php']);
 $back_url = ($current_page === 'cart.php') ? URL_HOME : URL_CART;
 ?>
