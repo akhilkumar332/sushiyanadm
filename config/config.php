@@ -13,6 +13,11 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+// Set default branch in session if not already set
+if (!isset($_SESSION['branch'])) {
+    $_SESSION['branch'] = 'neukoelln'; // Default branch
+}
+
 // Define base path as root
 define('BASE_PATH', '/');
 
@@ -47,8 +52,8 @@ define('DB_PASSWORD', '');
 define('DB_NAME', 'db105950');
 define('DB_PORT', 3306);
 
-// Set DB_FILIALE dynamically from session, default to 'neukoelln'
-define('DB_FILIALE', isset($_SESSION['branch']) ? $_SESSION['branch'] : 'neukoelln');
+// Set DB_FILIALE dynamically from session
+define('DB_FILIALE', $_SESSION['branch']);
 
 // Initialize database connection
 $conn = new mysqli(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME, DB_PORT);
