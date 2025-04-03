@@ -622,6 +622,13 @@ body.navigation .grid-item:focus {
     transform: translateY(-2px);
 }
 
+#order-confirmation {
+    display: none;
+    margin-top: 10px;
+    color: #28a745; /* Green for success */
+    font-weight: bold;
+}
+
 /* ==========================================================================
    Online Orders Styles (used in online-orders.php)
    ========================================================================== */

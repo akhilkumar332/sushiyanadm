@@ -21,24 +21,10 @@ function closeIngredientsModal(id) {
     if (modal) modal.style.display = "none";
 }
 
-function openNotifyModal() {
-    const modal = document.getElementById('notify-modal');
-    if (modal) modal.style.display = "flex";
-}
-
-function closeNotifyModal() {
-    const modal = document.getElementById('notify-modal');
-    if (modal) modal.style.display = "none";
-}
-
 // Close modal when clicking outside
 window.addEventListener('click', function(event) {
     const modals = document.getElementsByClassName('modal');
-    const page = document.body.dataset.page;
     for (let i = 0; i < modals.length; i++) {
-        if (page === 'final_order' && modals[i].id === 'notify-modal') {
-            continue;
-        }
         if (event.target === modals[i]) {
             modals[i].style.display = "none";
         }
@@ -549,9 +535,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Final order page
     if (page === 'final_order') {
-        const inactivityTimeout = 2 * 60 * 1000; // 2 minutes
-        const timerThreshold = 1 * 60 * 1000; // 1 minute
-        const countdownDuration = 60 * 1000; // 1 minute countdown
+        const inactivityTimeout = 1 * 60 * 1000; // 1 minutes
+        const timerThreshold = 1 * 30 * 1000; // 30 Seconds
+        const countdownDuration = 30 * 1000; // 30 Seconds countdown
         let lastActivityTime = Date.now();
         let countdownInterval = null;
         let countdownStartTime = null;
@@ -610,6 +596,8 @@ document.addEventListener('DOMContentLoaded', function() {
         function clearCartAndRedirect() {
             if (isRedirecting) return;
             isRedirecting = true;
+            $('#order-confirmation').hide(); // Hide confirmation text
+            $('#notify-staff').prop('disabled', false); // Re-enable Notify Staff button
             $.ajax({
                 url: BASE_PATH + 'clear_cart.php',
                 type: 'POST',
@@ -636,7 +624,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 data: { action: 'submit_order' },
                 success: function(response) {
                     if (response?.status === 'success') {
-                        openNotifyModal();
+                        $('#order-confirmation').show(); // Show confirmation text
+                        $('#notify-staff').prop('disabled', true); // Disable Notify Staff button
                         showToast('Bestellung erfolgreich übermittelt');
                         localStorage.setItem('lastOrderTime', Date.now().toString());
                     } else {
@@ -648,11 +637,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     showToast('Fehler beim Übermitteln: Serverfehler', true);
                 }
             });
-        });
-
-        $('#notify-modal-close').off('click').on('click', function() {
-            closeNotifyModal();
-            clearCartAndRedirect();
         });
 
         $(document).on('mousemove keydown click', resetTimer);

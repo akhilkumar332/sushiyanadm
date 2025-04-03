@@ -93,14 +93,7 @@ $timestamp = date('d.m.Y H:i:s');
             <div class="bill-buttons">
                 <button class="btn" id="back-to-home">Löschen & Zurückgeben</button>
                 <button class="btn" id="notify-staff">Personal benachrichtigen</button>
-            </div>
-        </div>
-        <!-- Modal for Notify Staff -->
-        <div id="notify-modal" class="modal notify-modal">
-            <div class="notify-modal-content">
-                <span class="close" id="notify-modal-close">×</span>
-                <img src="<?php echo ASSETS_IMAGES; ?>icons/cooking.gif" alt="Cooking Animation" class="cooking-gif">
-                <p>Bestellung wird vorbereitet</p>
+                <p id="order-confirmation">Bestellung aufgegeben! Bitte warten Sie, bis ein Mitarbeiter zu Ihnen kommt.</p>
             </div>
         </div>
     </main>
