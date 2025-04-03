@@ -1,6 +1,8 @@
 <?php
+// Include config first (which sets session params, starts session, and defines DB connection)
 require_once $_SERVER['DOCUMENT_ROOT'] . '/config/config.php';
 
+// Check if cart is initialized
 if (!isset($_SESSION['cart'])) {
     $_SESSION['cart'] = [];
 }
@@ -10,19 +12,37 @@ header('Content-Type: application/json');
 ob_start(); // Buffer output to catch any stray errors
 
 try {
+    if ($conn->connect_error) {
+        throw new Exception("Database connection failed: " . $conn->connect_error);
+    }
+
     if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action'])) {
         if ($_GET['action'] === 'get_cart') {
+            ob_end_clean();
             echo json_encode(['status' => 'success', 'cart' => $_SESSION['cart']]);
+            exit;
+        } elseif ($_GET['action'] === 'get_branches') {
+            $query = "SELECT DISTINCT branch FROM orders WHERE branch IS NOT NULL AND branch != '' ORDER BY branch ASC";
+            $result = $conn->query($query);
+            if (!$result) throw new Exception("Query failed: " . $conn->error);
+            $branches = [];
+            while ($row = $result->fetch_assoc()) {
+                $branches[] = $row['branch'];
+            }
+            $result->free();
+            ob_end_clean();
+            echo json_encode(['status' => 'success', 'branches' => $branches]);
             exit;
         } elseif ($_GET['action'] === 'get_active_orders' || $_GET['action'] === 'get_completed_orders') {
             $filter = $_GET['filter'] ?? 'daily';
             $order_by = $_GET['order_by'] ?? 'desc';
             $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-            $per_page = 10;
+            $per_page = 20;
             $offset = ($page - 1) * $per_page;
-            $branch = $_SESSION['branch'] ?? null;
+            $branch = $_GET['branch'] ?? null;
 
             $status = $_GET['action'] === 'get_active_orders' ? 'active' : 'completed';
+            $date_field = $status === 'active' ? 'created_at' : 'updated_at';
             $query = "SELECT * FROM orders WHERE status = ?";
             $count_query = "SELECT COUNT(*) as total FROM orders WHERE status = ?";
             $params = [$status];
@@ -37,32 +57,32 @@ try {
 
             switch ($filter) {
                 case 'daily':
-                    $query .= " AND DATE(created_at) = CURDATE()";
-                    $count_query .= " AND DATE(created_at) = CURDATE()";
+                    $query .= " AND DATE($date_field) = CURDATE()";
+                    $count_query .= " AND DATE($date_field) = CURDATE()";
                     break;
                 case 'weekly':
-                    $query .= " AND created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)";
-                    $count_query .= " AND created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)";
+                    $query .= " AND $date_field >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)";
+                    $count_query .= " AND $date_field >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)";
                     break;
                 case 'monthly':
-                    $query .= " AND created_at >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)";
-                    $count_query .= " AND created_at >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)";
+                    $query .= " AND $date_field >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)";
+                    $count_query .= " AND $date_field >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)";
                     break;
                 case 'quarterly':
-                    $query .= " AND created_at >= DATE_SUB(CURDATE(), INTERVAL 3 MONTH)";
-                    $count_query .= " AND created_at >= DATE_SUB(CURDATE(), INTERVAL 3 MONTH)";
+                    $query .= " AND $date_field >= DATE_SUB(CURDATE(), INTERVAL 3 MONTH)";
+                    $count_query .= " AND $date_field >= DATE_SUB(CURDATE(), INTERVAL 3 MONTH)";
                     break;
                 case 'semi-annually':
-                    $query .= " AND created_at >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)";
-                    $count_query .= " AND created_at >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)";
+                    $query .= " AND $date_field >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)";
+                    $count_query .= " AND $date_field >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)";
                     break;
                 case 'annually':
-                    $query .= " AND created_at >= DATE_SUB(CURDATE(), INTERVAL 1 YEAR)";
-                    $count_query .= " AND created_at >= DATE_SUB(CURDATE(), INTERVAL 1 YEAR)";
+                    $query .= " AND $date_field >= DATE_SUB(CURDATE(), INTERVAL 1 YEAR)";
+                    $count_query .= " AND $date_field >= DATE_SUB(CURDATE(), INTERVAL 1 YEAR)";
                     break;
             }
 
-            $query .= " ORDER BY created_at " . ($order_by === 'asc' ? 'ASC' : 'DESC') . " LIMIT ?, ?";
+            $query .= " ORDER BY $date_field " . ($order_by === 'asc' ? 'ASC' : 'DESC') . " LIMIT ?, ?";
             $params[] = $offset;
             $params[] = $per_page;
             $types .= "ii";
@@ -82,7 +102,7 @@ try {
 
             while ($row = $result->fetch_assoc()) {
                 $items = json_decode($row['order_details'], true);
-                if (!is_array($items)) continue; // Skip invalid order_details
+                if (!is_array($items)) continue;
                 $detailed_items = [];
                 $total = 0;
                 foreach ($items as $item_key => $quantity) {
@@ -242,4 +262,7 @@ try {
     echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
     exit;
 }
+
+// Ensure no output after this point
+exit;
 ?>

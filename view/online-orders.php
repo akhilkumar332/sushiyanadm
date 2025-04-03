@@ -26,6 +26,13 @@ date_default_timezone_set('Europe/Berlin');
                 <h1>Online-Bestellungen</h1>
             </div>
             <div class="orders-filters">
+                <div class="branch-filter">
+                    <label for="branch-filter">Filiale:</label>
+                    <select id="branch-filter">
+                        <option value="">Alle Filialen</option>
+                        <!-- Branches will be populated dynamically via JavaScript -->
+                    </select>
+                </div>
                 <div class="date-filter">
                     <label for="date-filter">Zeitraum:</label>
                     <select id="date-filter">

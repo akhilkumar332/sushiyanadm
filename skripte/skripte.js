@@ -96,7 +96,7 @@ function updateCart(itemKey, quantity, element, button) {
     $.ajax({
         url: BASE_PATH + 'config/api.php',
         type: 'POST',
-        dataType: 'json', // Enforce JSON response
+        dataType: 'json',
         data: { action: 'update', item_key: itemKey, quantity: quantity },
         success: function(response) {
             if (response && response.status === 'success') {
@@ -185,11 +185,39 @@ function attachArtikellisteListeners() {
     });
 }
 
-// Load orders for online-orders.php with enhanced functionality
-function loadOrders(filter = 'daily', order_by = 'desc', page = 1) {
+// Load branches dynamically for online-orders.php
+function loadBranches() {
     const BASE_PATH = document.body.dataset.basePath || '/';
-    const activeUrl = `${BASE_PATH}config/api.php?action=get_active_orders&filter=${filter}&order_by=${order_by}&page=${page}`;
-    const completedUrl = `${BASE_PATH}config/api.php?action=get_completed_orders&filter=${filter}&order_by=${order_by}&page=${page}`;
+    $.ajax({
+        url: BASE_PATH + 'config/api.php?action=get_branches',
+        type: 'GET',
+        dataType: 'json',
+        success: function(response) {
+            if (response && response.status === 'success' && response.branches) {
+                const branchFilter = $('#branch-filter');
+                branchFilter.empty();
+                branchFilter.append('<option value="">Alle Filialen</option>');
+                response.branches.forEach(branch => {
+                    branchFilter.append(`<option value="${branch}">${branch}</option>`);
+                });
+            } else {
+                console.error('Failed to load branches:', response);
+                showToast('Fehler beim Laden der Filialen', true);
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('AJAX error:', status, error, 'Response:', xhr.responseText);
+            showToast('Fehler beim Laden der Filialen: Serverfehler', true);
+        }
+    });
+}
+
+// Load orders for online-orders.php with enhanced functionality
+function loadOrders(filter = 'daily', order_by = 'desc', page = 1, branch = '') {
+    const BASE_PATH = document.body.dataset.basePath || '/';
+    const per_page = 20;
+    const activeUrl = `${BASE_PATH}config/api.php?action=get_active_orders&filter=${filter}&order_by=${order_by}&page=${page}&per_page=${per_page}&branch=${encodeURIComponent(branch)}`;
+    const completedUrl = `${BASE_PATH}config/api.php?action=get_completed_orders&filter=${filter}&order_by=${order_by}&page=${page}&per_page=${per_page}&branch=${encodeURIComponent(branch)}`;
 
     function renderOrders(listId, paginationId, data, type) {
         const list = $(`#${listId}`);
@@ -222,6 +250,7 @@ function loadOrders(filter = 'daily', order_by = 'desc', page = 1) {
                 list.append(`
                     <div class="order-card" data-order-id="${order.id}">
                         <h3>Bestellung #${order.id}</h3>
+                        <p>Filiale: ${order.branch || 'Nicht angegeben'}</p>
                         <p>${label}: ${new Date(timestamp).toLocaleString('de-DE')}</p>
                         ${itemsHtml}
                         <div class="order-total">
@@ -235,7 +264,7 @@ function loadOrders(filter = 'daily', order_by = 'desc', page = 1) {
         }
 
         // Pagination controls
-        const totalPages = Math.ceil((data && data.total) ? data.total / data.per_page : 0);
+        const totalPages = Math.ceil((data && data.total) ? data.total / per_page : 0);
         pagination.empty();
         if (totalPages > 1) {
             pagination.append(`
@@ -243,8 +272,8 @@ function loadOrders(filter = 'daily', order_by = 'desc', page = 1) {
                 <span>Seite ${page} von ${totalPages}</span>
                 <button class="next-page" ${page === totalPages ? 'disabled' : ''}>Nächste</button>
             `);
-            pagination.find('.prev-page').off('click').on('click', () => loadOrders(filter, order_by, page - 1));
-            pagination.find('.next-page').off('click').on('click', () => loadOrders(filter, order_by, page + 1));
+            pagination.find('.prev-page').off('click').on('click', () => loadOrders(filter, order_by, page - 1, branch));
+            pagination.find('.next-page').off('click').on('click', () => loadOrders(filter, order_by, page + 1, branch));
         }
     }
 
@@ -325,7 +354,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     showToast('Filiale geändert zu ' + branch);
                     refreshMenuContent(branch);
                     if (page === 'online_orders') {
-                        loadOrders($('#date-filter').val(), $('#order-filter').val());
+                        loadOrders($('#date-filter').val(), $('#order-filter').val(), 1, $('#branch-filter').val());
                     }
                 } else {
                     showToast('Fehler beim Ändern der Filiale: ' + (response && response.message ? response.message : 'Unbekannter Fehler'), true);
@@ -626,19 +655,27 @@ document.addEventListener('DOMContentLoaded', function() {
         let currentFilter = 'daily';
         let currentOrderBy = 'desc';
         let currentPage = 1;
+        let currentBranch = '';
 
-        loadOrders(currentFilter, currentOrderBy, currentPage);
+        loadBranches();
+        loadOrders(currentFilter, currentOrderBy, currentPage, currentBranch);
+
+        $('#branch-filter').off('change').on('change', function() {
+            currentBranch = $(this).val();
+            currentPage = 1;
+            loadOrders(currentFilter, currentOrderBy, currentPage, currentBranch);
+        });
 
         $('#date-filter').off('change').on('change', function() {
             currentFilter = $(this).val();
             currentPage = 1;
-            loadOrders(currentFilter, currentOrderBy, currentPage);
+            loadOrders(currentFilter, currentOrderBy, currentPage, currentBranch);
         });
 
         $('#order-filter').off('change').on('change', function() {
             currentOrderBy = $(this).val();
             currentPage = 1;
-            loadOrders(currentFilter, currentOrderBy, currentPage);
+            loadOrders(currentFilter, currentOrderBy, currentPage, currentBranch);
         });
 
         $('.tab-btn').off('click').on('click', function() {
@@ -660,7 +697,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     success: function(response) {
                         if (response && response.status === 'success') {
                             showToast('Bestellung abgeschlossen');
-                            loadOrders(currentFilter, currentOrderBy, currentPage);
+                            loadOrders(currentFilter, currentOrderBy, currentPage, currentBranch);
                         } else {
                             console.error('Complete order failed:', response);
                             showToast('Fehler beim Abschließen: ' + (response && response.message ? response.message : 'Unbekannter Fehler'), true);
@@ -680,7 +717,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     success: function(response) {
                         if (response && response.status === 'success') {
                             showToast('Bestellung gelöscht');
-                            loadOrders(currentFilter, currentOrderBy, currentPage);
+                            loadOrders(currentFilter, currentOrderBy, currentPage, currentBranch);
                         } else {
                             console.error('Delete order failed:', response);
                             showToast('Fehler beim Löschen: ' + (response && response.message ? response.message : 'Unbekannter Fehler'), true);

@@ -1,8 +1,14 @@
 <?php
 // Set session cookie parameters before starting the session
-session_set_cookie_params(['path' => '/']);
+session_set_cookie_params([
+    'path' => '/',
+    'lifetime' => 0, // Session lasts until browser closes (optional, adjust as needed)
+    'secure' => false, // Set to true if using HTTPS
+    'httponly' => true,
+    'samesite' => 'Lax'
+]);
 
-// Centralize session start
+// Centralize session start, ensuring it only starts if not already active
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -44,6 +50,7 @@ define('DB_PORT', 3306);
 // Set DB_FILIALE dynamically from session, default to 'neukoelln'
 define('DB_FILIALE', isset($_SESSION['branch']) ? $_SESSION['branch'] : 'neukoelln');
 
+// Initialize database connection
 $conn = new mysqli(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME, DB_PORT);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);

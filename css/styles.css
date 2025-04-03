@@ -660,18 +660,18 @@ body.navigation .grid-item:focus {
     flex-wrap: wrap;
 }
 
-.date-filter, .order-filter {
+.branch-filter, .date-filter, .order-filter {
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
-.date-filter label, .order-filter label {
+.branch-filter label, .date-filter label, .order-filter label {
     font-size: 16px;
     color: #333;
 }
 
-.date-filter select, .order-filter select {
+.branch-filter select, .date-filter select, .order-filter select {
     padding: 8px;
     border: 1px solid #6A2477;
     border-radius: 5px;
@@ -776,7 +776,7 @@ body.navigation .grid-item:focus {
 .order-card .order-table .price,
 .order-card .order-table .subtotal {
     text-align: right;
-    color: #000!important;
+    color: #000 !important;
 }
 
 .order-card .order-total {
@@ -1451,7 +1451,12 @@ body.navigation main {
         align-items: flex-start;
     }
 
-    .date-filter select, .order-filter select {
+    .branch-filter, .date-filter, .order-filter {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .branch-filter select, .date-filter select, .order-filter select {
         width: 100%;
         max-width: 200px;
     }
@@ -1466,7 +1471,7 @@ body.navigation main {
     }
 
     .orders-list {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr; /* 1 column on mobile */
     }
 
     .order-card {
