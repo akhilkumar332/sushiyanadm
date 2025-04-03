@@ -1,6 +1,8 @@
 <?php
 require_once $_SERVER['DOCUMENT_ROOT'] . '/config/config.php';
 date_default_timezone_set('Europe/Berlin');
+
+$page_title = 'Online-Bestellungen';
 ?>
 
 <!DOCTYPE html>
@@ -8,15 +10,15 @@ date_default_timezone_set('Europe/Berlin');
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>Online-Bestellungen</title>
-    <link rel="stylesheet" href="<?php echo ASSETS_CSS; ?>styles.css">
+    <title><?php echo $page_title; ?></title>
+    <link rel="stylesheet" href="<?php echo ASSETS_CSS; ?>styles.css?v=<?php echo time(); ?>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-    <script src="<?php echo ASSETS_SCRIPTS; ?>skripte.js"></script>
+    <script src="<?php echo ASSETS_SCRIPTS; ?>skripte.js?v=<?php echo time(); ?>"></script>
 </head>
-<body class="navigation" data-page="online_orders" data-base-path="<?php echo BASE_PATH; ?>">
+<body class="navigation" data-page="online_orders" data-base-path="<?php echo BASE_PATH; ?>" data-session-cart='<?php echo json_encode($_SESSION['cart'] ?? []); ?>'>
     <header>
         <a href="<?php echo URL_HOME; ?>"><img src="<?php echo ASSETS_IMAGES; ?>logo.webp" alt="Restaurant Logo" class="logo"></a>
     </header>
@@ -30,7 +32,7 @@ date_default_timezone_set('Europe/Berlin');
                     <label for="branch-filter">Filiale:</label>
                     <select id="branch-filter">
                         <option value="">Alle Filialen</option>
-                        <!-- Branches will be populated dynamically via JavaScript -->
+                        <!-- Branches populated dynamically via JavaScript -->
                     </select>
                 </div>
                 <div class="date-filter">
@@ -54,8 +56,8 @@ date_default_timezone_set('Europe/Berlin');
             </div>
             <div class="orders-tabs">
                 <div class="tab-buttons">
-                    <button class="tab-btn active" data-tab="active-orders">Aktive Bestellungen</button>
-                    <button class="tab-btn" data-tab="completed-orders">Abgeschlossene Bestellungen</button>
+                    <button class="tab-btn active" data-tab="active">Aktive Bestellungen</button>
+                    <button class="tab-btn" data-tab="completed">Abgeschlossene Bestellungen</button>
                 </div>
                 <div class="tab-content active" id="active-orders">
                     <div class="orders-list" id="active-orders-list"></div>
@@ -70,6 +72,6 @@ date_default_timezone_set('Europe/Berlin');
     </main>
     <?php include_once $_SERVER['DOCUMENT_ROOT'] . '/config/floating_bar.php'; ?>
     <?php include_once $_SERVER['DOCUMENT_ROOT'] . '/config/footer.php'; ?>
-    <div id="branch-spinner"></div>
+    <div id="branch-spinner" class="loading-spinner"></div>
 </body>
 </html>

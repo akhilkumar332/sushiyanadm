@@ -36,7 +36,6 @@ window.addEventListener('click', function(event) {
     const modals = document.getElementsByClassName('modal');
     const page = document.body.dataset.page;
     for (let i = 0; i < modals.length; i++) {
-        // Skip notify-modal on final_order page
         if (page === 'final_order' && modals[i].id === 'notify-modal') {
             continue;
         }
@@ -87,7 +86,7 @@ function showToast(message, isError = false) {
     }).showToast();
 }
 
-// Update cart quantity function (reused for cart.php and artikelliste.php)
+// Update cart quantity function
 function updateCart(itemKey, quantity, element, button) {
     const BASE_PATH = document.body.dataset.basePath || '/';
     if (button) {
@@ -99,7 +98,7 @@ function updateCart(itemKey, quantity, element, button) {
         dataType: 'json',
         data: { action: 'update', item_key: itemKey, quantity: quantity },
         success: function(response) {
-            if (response && response.status === 'success') {
+            if (response?.status === 'success') {
                 if (quantity <= 0) {
                     showToast('Artikel entfernt');
                 } else {
@@ -107,8 +106,7 @@ function updateCart(itemKey, quantity, element, button) {
                 }
                 updateLocalCart(response.cart);
             } else {
-                console.error('Update failed:', response);
-                showToast('Fehler beim Aktualisieren: ' + (response && response.message ? response.message : 'Unbekannter Fehler'), true);
+                showToast('Fehler beim Aktualisieren: ' + (response?.message || 'Unbekannter Fehler'), true);
             }
         },
         error: function(xhr, status, error) {
@@ -185,7 +183,7 @@ function attachArtikellisteListeners() {
     });
 }
 
-// Load branches dynamically for online-orders.php
+// Load branches dynamically
 function loadBranches() {
     const BASE_PATH = document.body.dataset.basePath || '/';
     $.ajax({
@@ -193,7 +191,7 @@ function loadBranches() {
         type: 'GET',
         dataType: 'json',
         success: function(response) {
-            if (response && response.status === 'success' && response.branches) {
+            if (response?.status === 'success' && response.branches) {
                 const branchFilter = $('#branch-filter');
                 branchFilter.empty();
                 branchFilter.append('<option value="">Alle Filialen</option>');
@@ -201,8 +199,7 @@ function loadBranches() {
                     branchFilter.append(`<option value="${branch}">${branch}</option>`);
                 });
             } else {
-                console.error('Failed to load branches:', response);
-                showToast('Fehler beim Laden der Filialen', true);
+                showToast('Fehler beim Laden der Filialen: ' + (response?.message || 'Unbekannter Fehler'), true);
             }
         },
         error: function(xhr, status, error) {
@@ -212,8 +209,8 @@ function loadBranches() {
     });
 }
 
-// Load orders for online-orders.php with enhanced functionality
-function loadOrders(filter = 'daily', order_by = 'desc', page = 1, branch = '') {
+// Load orders with polling support
+function loadOrders(filter = 'daily', order_by = 'desc', page = 1, branch = '', isPolling = false) {
     const BASE_PATH = document.body.dataset.basePath || '/';
     const per_page = 20;
     const activeUrl = `${BASE_PATH}config/api.php?action=get_active_orders&filter=${filter}&order_by=${order_by}&page=${page}&per_page=${per_page}&branch=${encodeURIComponent(branch)}`;
@@ -222,11 +219,15 @@ function loadOrders(filter = 'daily', order_by = 'desc', page = 1, branch = '') 
     function renderOrders(listId, paginationId, data, type) {
         const list = $(`#${listId}`);
         const pagination = $(`#${paginationId}`);
-        list.empty();
-        if (!data || !data.orders || data.orders.length === 0) {
-            list.html('<p>Keine Bestellungen vorhanden.</p>');
+        const existingOrderIds = new Set([...list.find('.order-card')].map(card => parseInt($(card).data('order-id'))));
+
+        if (!isPolling) list.empty(); // Clear list unless polling
+
+        if (!data?.orders || data.orders.length === 0) {
+            if (!isPolling) list.html('<p>Keine Bestellungen vorhanden.</p>');
         } else {
             data.orders.forEach(order => {
+                if (isPolling && existingOrderIds.has(order.id)) return; // Skip existing orders during polling
                 let itemsHtml = '<table class="order-table"><thead><tr><th>Nummer</th><th>Artikel</th><th class="quantity">Menge</th><th class="price">Einzelpreis</th><th class="subtotal">Gesamt</th></tr></thead><tbody>';
                 order.items.forEach(item => {
                     itemsHtml += `<tr>
@@ -247,7 +248,7 @@ function loadOrders(filter = 'daily', order_by = 'desc', page = 1, branch = '') 
                         <option value="delete">Bestellung löschen</option>
                     </select>`
                     : `<p>Abgeschlossen</p>`;
-                list.append(`
+                const orderHtml = `
                     <div class="order-card" data-order-id="${order.id}">
                         <h3>Bestellung #${order.id}</h3>
                         <p>Filiale: ${order.branch || 'Nicht angegeben'}</p>
@@ -259,21 +260,28 @@ function loadOrders(filter = 'daily', order_by = 'desc', page = 1, branch = '') 
                         </div>
                         <div class="order-actions">${actions}</div>
                     </div>
-                `);
+                `;
+                if (isPolling && type === 'active') {
+                    list.prepend(orderHtml); // Add new orders to top during polling
+                    showToast(`Neue Bestellung #${order.id} eingegangen`);
+                } else {
+                    list.append(orderHtml); // Append during initial load or filter change
+                }
             });
         }
 
-        // Pagination controls
-        const totalPages = Math.ceil((data && data.total) ? data.total / per_page : 0);
-        pagination.empty();
-        if (totalPages > 1) {
-            pagination.append(`
-                <button class="prev-page" ${page === 1 ? 'disabled' : ''}>Vorherige</button>
-                <span>Seite ${page} von ${totalPages}</span>
-                <button class="next-page" ${page === totalPages ? 'disabled' : ''}>Nächste</button>
-            `);
-            pagination.find('.prev-page').off('click').on('click', () => loadOrders(filter, order_by, page - 1, branch));
-            pagination.find('.next-page').off('click').on('click', () => loadOrders(filter, order_by, page + 1, branch));
+        if (!isPolling) {
+            const totalPages = Math.ceil((data?.total || 0) / per_page);
+            pagination.empty();
+            if (totalPages > 1) {
+                pagination.append(`
+                    <button class="prev-page" ${page === 1 ? 'disabled' : ''}>Vorherige</button>
+                    <span>Seite ${page} von ${totalPages}</span>
+                    <button class="next-page" ${page === totalPages ? 'disabled' : ''}>Nächste</button>
+                `);
+                pagination.find('.prev-page').off('click').on('click', () => loadOrders(filter, order_by, page - 1, branch));
+                pagination.find('.next-page').off('click').on('click', () => loadOrders(filter, order_by, page + 1, branch));
+            }
         }
     }
 
@@ -282,26 +290,38 @@ function loadOrders(filter = 'daily', order_by = 'desc', page = 1, branch = '') 
         type: 'GET',
         dataType: 'json',
         success: function(data) {
-            renderOrders('active-orders-list', 'active-pagination', data, 'active');
+            if (data?.status === 'success') {
+                renderOrders('active-orders-list', 'active-pagination', data, 'active');
+            } else {
+                console.error('API error for active orders:', data?.message);
+                if (!isPolling) showToast('Fehler beim Laden aktiver Bestellungen: ' + (data?.message || 'Unbekannter Fehler'), true);
+            }
         },
         error: function(xhr, status, error) {
-            console.error('Error loading active orders:', status, error, 'Response:', xhr.responseText);
-            showToast('Fehler beim Laden aktiver Bestellungen: ' + (xhr.responseText.includes('Fatal error') ? 'Serverfehler' : 'Ungültige Antwort'), true);
+            console.error('AJAX error for active orders:', status, error, 'Response:', xhr.responseText);
+            if (!isPolling) showToast('Fehler beim Laden aktiver Bestellungen: Serverfehler', true);
         }
     });
 
-    $.ajax({
-        url: completedUrl,
-        type: 'GET',
-        dataType: 'json',
-        success: function(data) {
-            renderOrders('completed-orders-list', 'completed-pagination', data, 'completed');
-        },
-        error: function(xhr, status, error) {
-            console.error('Error loading completed orders:', status, error, 'Response:', xhr.responseText);
-            showToast('Fehler beim Laden abgeschlossener Bestellungen: ' + (xhr.responseText.includes('Fatal error') ? 'Serverfehler' : 'Ungültige Antwort'), true);
-        }
-    });
+    if (!isPolling) {
+        $.ajax({
+            url: completedUrl,
+            type: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                if (data?.status === 'success') {
+                    renderOrders('completed-orders-list', 'completed-pagination', data, 'completed');
+                } else {
+                    console.error('API error for completed orders:', data?.message);
+                    showToast('Fehler beim Laden abgeschlossener Bestellungen: ' + (data?.message || 'Unbekannter Fehler'), true);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX error for completed orders:', status, error, 'Response:', xhr.responseText);
+                showToast('Fehler beim Laden abgeschlossener Bestellungen: Serverfehler', true);
+            }
+        });
+    }
 }
 
 // Page-specific logic
@@ -320,18 +340,9 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(response => response.text())
         .then(text => {
-            try {
-                const data = JSON.parse(text.trim());
-                if (data.status === 'success') {
-                    updateLocalCart(data.cart);
-                } else {
-                    console.warn('Cart restore failed:', data.message);
-                }
-                return data;
-            } catch (e) {
-                console.error('Invalid JSON response from restore_cart.php:', text);
-                throw new Error('Cart restore failed: Invalid JSON');
-            }
+            const data = JSON.parse(text.trim());
+            if (data.status === 'success') updateLocalCart(data.cart);
+            else console.warn('Cart restore failed:', data.message);
         })
         .catch(error => {
             console.error('Cart restore error:', error);
@@ -350,14 +361,14 @@ document.addEventListener('DOMContentLoaded', function() {
             dataType: 'json',
             data: { action: 'set_branch', branch: branch },
             success: function(response) {
-                if (response && response.status === 'success') {
+                if (response?.status === 'success') {
                     showToast('Filiale geändert zu ' + branch);
                     refreshMenuContent(branch);
                     if (page === 'online_orders') {
                         loadOrders($('#date-filter').val(), $('#order-filter').val(), 1, $('#branch-filter').val());
                     }
                 } else {
-                    showToast('Fehler beim Ändern der Filiale: ' + (response && response.message ? response.message : 'Unbekannter Fehler'), true);
+                    showToast('Fehler beim Ändern der Filiale: ' + (response?.message || 'Unbekannter Fehler'), true);
                 }
             },
             error: function(xhr, status, error) {
@@ -458,7 +469,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 dataType: 'json',
                 data: { action: 'remove', item_key: itemKey },
                 success: function(response) {
-                    if (response && response.status === 'success') {
+                    if (response?.status === 'success') {
                         element.closest('.cart-item').remove();
                         updateTotal();
                         if ($('.cart-item').length === 0) {
@@ -468,8 +479,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         showToast('Artikel entfernt');
                         updateLocalCart(response.cart);
                     } else {
-                        console.error('Remove failed:', response);
-                        showToast('Fehler beim Entfernen: ' + (response && response.message ? response.message : 'Unbekannter Fehler'), true);
+                        showToast('Fehler beim Entfernen: ' + (response?.message || 'Unbekannter Fehler'), true);
                     }
                 },
                 error: function(xhr, status, error) {
@@ -607,7 +617,6 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .done(function(response) {
                 localStorage.clear();
-                $_SESSION['cart'] = [];
                 window.location.href = BASE_PATH + 'index.php';
             })
             .fail(function(xhr, status, error) {
@@ -626,17 +635,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 dataType: 'json',
                 data: { action: 'submit_order' },
                 success: function(response) {
-                    if (response && response.status === 'success') {
+                    if (response?.status === 'success') {
                         openNotifyModal();
                         showToast('Bestellung erfolgreich übermittelt');
+                        localStorage.setItem('lastOrderTime', Date.now().toString());
                     } else {
-                        console.error('Submit order failed:', response);
-                        showToast('Fehler beim Übermitteln der Bestellung: ' + (response && response.message ? response.message : 'Unbekannter Fehler'), true);
+                        showToast('Fehler beim Übermitteln: ' + (response?.message || 'Unbekannter Fehler'), true);
                     }
                 },
                 error: function(xhr, status, error) {
                     console.error('AJAX error:', status, error, 'Response:', xhr.responseText);
-                    showToast('Fehler beim Übermitteln der Bestellung: ' + (xhr.responseText.includes('Fatal error') ? 'Serverfehler' : 'Ungültige Antwort'), true);
+                    showToast('Fehler beim Übermitteln: Serverfehler', true);
                 }
             });
         });
@@ -656,6 +665,7 @@ document.addEventListener('DOMContentLoaded', function() {
         let currentOrderBy = 'desc';
         let currentPage = 1;
         let currentBranch = '';
+        let lastOrderTime = localStorage.getItem('lastOrderTime') || Date.now();
 
         loadBranches();
         loadOrders(currentFilter, currentOrderBy, currentPage, currentBranch);
@@ -682,7 +692,7 @@ document.addEventListener('DOMContentLoaded', function() {
             $('.tab-btn').removeClass('active');
             $(this).addClass('active');
             $('.tab-content').removeClass('active');
-            $('#' + $(this).data('tab')).addClass('active');
+            $('#' + $(this).data('tab') + '-orders').addClass('active');
         });
 
         $(document).off('change', '.order-action').on('change', '.order-action', function() {
@@ -695,17 +705,16 @@ document.addEventListener('DOMContentLoaded', function() {
                     dataType: 'json',
                     data: { action: 'complete_order', order_id: orderId },
                     success: function(response) {
-                        if (response && response.status === 'success') {
+                        if (response?.status === 'success') {
                             showToast('Bestellung abgeschlossen');
                             loadOrders(currentFilter, currentOrderBy, currentPage, currentBranch);
                         } else {
-                            console.error('Complete order failed:', response);
-                            showToast('Fehler beim Abschließen: ' + (response && response.message ? response.message : 'Unbekannter Fehler'), true);
+                            showToast('Fehler beim Abschließen: ' + (response?.message || 'Unbekannter Fehler'), true);
                         }
                     },
                     error: function(xhr, status, error) {
                         console.error('AJAX error:', status, error, 'Response:', xhr.responseText);
-                        showToast('Fehler beim Abschließen der Bestellung: Serverfehler', true);
+                        showToast('Fehler beim Abschließen: Serverfehler', true);
                     }
                 });
             } else if (action === 'delete') {
@@ -715,25 +724,35 @@ document.addEventListener('DOMContentLoaded', function() {
                     dataType: 'json',
                     data: { action: 'delete_order', order_id: orderId },
                     success: function(response) {
-                        if (response && response.status === 'success') {
+                        if (response?.status === 'success') {
                             showToast('Bestellung gelöscht');
                             loadOrders(currentFilter, currentOrderBy, currentPage, currentBranch);
                         } else {
-                            console.error('Delete order failed:', response);
-                            showToast('Fehler beim Löschen: ' + (response && response.message ? response.message : 'Unbekannter Fehler'), true);
+                            showToast('Fehler beim Löschen: ' + (response?.message || 'Unbekannter Fehler'), true);
                         }
                     },
                     error: function(xhr, status, error) {
                         console.error('AJAX error:', status, error, 'Response:', xhr.responseText);
-                        showToast('Fehler beim Löschen der Bestellung: Serverfehler', true);
+                        showToast('Fehler beim Löschen: Serverfehler', true);
                     }
                 });
             }
             $(this).val(''); // Reset dropdown
         });
+
+        // Polling for new orders every 10 seconds
+        setInterval(() => {
+            const newOrderTime = localStorage.getItem('lastOrderTime');
+            if (newOrderTime && newOrderTime > lastOrderTime) {
+                lastOrderTime = newOrderTime;
+                loadOrders(currentFilter, currentOrderBy, currentPage, currentBranch, true);
+            } else {
+                loadOrders(currentFilter, currentOrderBy, currentPage, currentBranch, true);
+            }
+        }, 10000);
     }
 
-    // Artikelliste pages (yana/menu.php, warmekueche/menu.php, sushi/menu.php, sushi/vegetarisch.php)
+    // Artikelliste pages
     if (['yana_menu', 'warmekueche_menu', 'sushi_menu', 'sushi_vegetarisch'].includes(page)) {
         attachArtikellisteListeners();
     }

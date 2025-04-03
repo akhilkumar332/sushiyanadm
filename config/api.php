@@ -1,5 +1,4 @@
 <?php
-// Include config first (which sets session params, starts session, and defines DB connection)
 require_once $_SERVER['DOCUMENT_ROOT'] . '/config/config.php';
 
 // Check if cart is initialized
@@ -9,7 +8,7 @@ if (!isset($_SESSION['cart'])) {
 
 // API Endpoints
 header('Content-Type: application/json');
-ob_start(); // Buffer output to catch any stray errors
+ob_start();
 
 try {
     if ($conn->connect_error) {
@@ -36,7 +35,7 @@ try {
         } elseif ($_GET['action'] === 'get_active_orders' || $_GET['action'] === 'get_completed_orders') {
             $filter = $_GET['filter'] ?? 'daily';
             $order_by = $_GET['order_by'] ?? 'desc';
-            $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+            $page = max(1, (int)($_GET['page'] ?? 1));
             $per_page = 20;
             $offset = ($page - 1) * $per_page;
             $branch = $_GET['branch'] ?? null;
@@ -174,31 +173,32 @@ try {
             }
             $stmt->close();
             exit;
-        } elseif ($action === 'complete_order') {
-            $order_id = $_POST['order_id'] ?? null;
-            if (!$order_id) throw new Exception('Missing order_id');
-            $stmt = $conn->prepare("UPDATE orders SET status = 'completed', updated_at = NOW() WHERE id = ?");
-            if (!$stmt) throw new Exception("Prepare failed: " . $conn->error);
-            $stmt->bind_param("i", $order_id);
-            if ($stmt->execute()) {
-                ob_end_clean();
-                echo json_encode(['status' => 'success', 'message' => 'Order completed']);
+        } elseif ($action === 'complete_order' || $action === 'delete_order') {
+            $order_id = (int)($_POST['order_id'] ?? 0);
+            if ($order_id <= 0) throw new Exception('Invalid or missing order_id');
+
+            if ($action === 'complete_order') {
+                $stmt = $conn->prepare("UPDATE orders SET status = 'completed', updated_at = NOW() WHERE id = ? AND status = 'active'");
+                if (!$stmt) throw new Exception("Prepare failed: " . $conn->error);
+                $stmt->bind_param("i", $order_id);
+                if ($stmt->execute()) {
+                    if ($stmt->affected_rows === 0) throw new Exception('Order not found or already completed');
+                    ob_end_clean();
+                    echo json_encode(['status' => 'success', 'message' => 'Order completed']);
+                } else {
+                    throw new Exception("Execute failed: " . $stmt->error);
+                }
             } else {
-                throw new Exception("Execute failed: " . $stmt->error);
-            }
-            $stmt->close();
-            exit;
-        } elseif ($action === 'delete_order') {
-            $order_id = $_POST['order_id'] ?? null;
-            if (!$order_id) throw new Exception('Missing order_id');
-            $stmt = $conn->prepare("DELETE FROM orders WHERE id = ?");
-            if (!$stmt) throw new Exception("Prepare failed: " . $conn->error);
-            $stmt->bind_param("i", $order_id);
-            if ($stmt->execute()) {
-                ob_end_clean();
-                echo json_encode(['status' => 'success', 'message' => 'Order deleted']);
-            } else {
-                throw new Exception("Execute failed: " . $stmt->error);
+                $stmt = $conn->prepare("DELETE FROM orders WHERE id = ?");
+                if (!$stmt) throw new Exception("Prepare failed: " . $conn->error);
+                $stmt->bind_param("i", $order_id);
+                if ($stmt->execute()) {
+                    if ($stmt->affected_rows === 0) throw new Exception('Order not found');
+                    ob_end_clean();
+                    echo json_encode(['status' => 'success', 'message' => 'Order deleted']);
+                } else {
+                    throw new Exception("Execute failed: " . $stmt->error);
+                }
             }
             $stmt->close();
             exit;
@@ -263,6 +263,5 @@ try {
     exit;
 }
 
-// Ensure no output after this point
 exit;
 ?>

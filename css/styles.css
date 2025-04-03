@@ -627,6 +627,7 @@ body.navigation .grid-item:focus {
    ========================================================================== */
 
 .orders-wrapper {
+    width: 1200px;
     max-width: 1200px;
     margin: 20px auto;
     padding: 0 15px;
@@ -726,8 +727,9 @@ body.navigation .grid-item:focus {
 
 .orders-list {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 15px;
+    grid-template-columns: 1fr 1fr; /* Two columns by default */
+    gap: 20px; /* Increased gap for better spacing */
+    width: 100%;
 }
 
 .order-card {
@@ -736,6 +738,8 @@ body.navigation .grid-item:focus {
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     position: relative;
+    min-width: 0; /* Allow shrinking below content width */
+    word-wrap: break-word; /* Ensure text wraps */
 }
 
 .order-card h3 {
@@ -1471,7 +1475,8 @@ body.navigation main {
     }
 
     .orders-list {
-        grid-template-columns: 1fr; /* 1 column on mobile */
+        grid-template-columns: 1fr 1fr; /* Maintain 2 columns on mobile */
+        gap: 10px; /* Smaller gap for mobile */
     }
 
     .order-card {
@@ -1480,7 +1485,7 @@ body.navigation main {
 
     .order-card .order-table th,
     .order-card .order-table td {
-        font-size: 14px;
+        font-size: 12px; /* Slightly smaller font for mobile */
         padding: 6px;
     }
 
