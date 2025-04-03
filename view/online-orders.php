@@ -2,7 +2,7 @@
 require_once $_SERVER['DOCUMENT_ROOT'] . '/config/config.php';
 date_default_timezone_set('Europe/Berlin');
 
-$page_title = 'Online-Bestellungen';
+$page_title = 'Bestellungen';
 ?>
 
 <!DOCTYPE html>
