@@ -1,32 +1,47 @@
 <?php
 require_once $_SERVER['DOCUMENT_ROOT'] . '/config/config.php';
-session_start();
 
-ob_start();
-error_reporting(0);
-ini_set('display_errors', 0);
-
-if (!isset($_SESSION['cart'])) {
-    $_SESSION['cart'] = [];
+// Start session if not already started
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cart'])) {
-    $restored_cart = json_decode($_POST['cart'], true);
-    $response = ['status' => 'error', 'message' => 'Invalid cart data'];
+// Ensure JSON response
+header('Content-Type: application/json; charset=utf-8');
+ob_start(); // Buffer output to catch stray errors
 
-    if (is_array($restored_cart)) {
-        $_SESSION['cart'] = $restored_cart;
-        $response = ['status' => 'success', 'cart' => $_SESSION['cart']];
+try {
+    // Initialize cart if not set
+    if (!isset($_SESSION['cart'])) {
+        $_SESSION['cart'] = [];
     }
 
+    // Handle POST request
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (!isset($_POST['cart'])) {
+            throw new Exception('No cart data provided');
+        }
+
+        // Decode the cart data from the POST request
+        $restored_cart = json_decode($_POST['cart'], true);
+        if (json_last_error() !== JSON_ERROR_NONE || !is_array($restored_cart)) {
+            throw new Exception('Invalid cart data: ' . json_last_error_msg());
+        }
+
+        // Restore the cart to the session
+        $_SESSION['cart'] = $restored_cart;
+        $response = ['status' => 'success', 'message' => 'Cart restored', 'cart' => $_SESSION['cart']];
+    } else {
+        throw new Exception('Invalid request method');
+    }
+
+    // Clean buffer and send response
     ob_end_clean();
-    header('Content-Type: application/json; charset=utf-8');
-    header('Content-Length: ' . strlen(json_encode($response)));
     echo json_encode($response);
-    flush();
-    exit;
+} catch (Exception $e) {
+    ob_end_clean();
+    echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
 }
 
-ob_end_clean();
-header("Location: " . (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : URL_HOME));
 exit;
+?>

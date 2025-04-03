@@ -21,10 +21,25 @@ function closeIngredientsModal(id) {
     if (modal) modal.style.display = "none";
 }
 
+function openNotifyModal() {
+    const modal = document.getElementById('notify-modal');
+    if (modal) modal.style.display = "flex";
+}
+
+function closeNotifyModal() {
+    const modal = document.getElementById('notify-modal');
+    if (modal) modal.style.display = "none";
+}
+
 // Close modal when clicking outside
 window.addEventListener('click', function(event) {
     const modals = document.getElementsByClassName('modal');
+    const page = document.body.dataset.page;
     for (let i = 0; i < modals.length; i++) {
+        // Skip notify-modal on final_order page
+        if (page === 'final_order' && modals[i].id === 'notify-modal') {
+            continue;
+        }
         if (event.target === modals[i]) {
             modals[i].style.display = "none";
         }
@@ -41,7 +56,10 @@ function updateCartCount() {
     const cart = JSON.parse(localStorage.getItem('cart') || '{}');
     const total = Object.values(cart).reduce((a, b) => a + b, 0);
     const cartCountElement = document.getElementById('cart-count');
-    if (cartCountElement) cartCountElement.textContent = total;
+    if (cartCountElement) {
+        cartCountElement.textContent = total;
+        cartCountElement.style.display = total > 0 ? 'block' : 'none';
+    }
     document.querySelectorAll('.product-count').forEach(span => {
         const itemKey = span.dataset.itemKey;
         const quantity = cart[itemKey] || 0;
@@ -69,18 +87,19 @@ function showToast(message, isError = false) {
     }).showToast();
 }
 
-// Update cart quantity function (reused for both cart.php and artikelliste.php)
+// Update cart quantity function (reused for cart.php and artikelliste.php)
 function updateCart(itemKey, quantity, element, button) {
-    const BASE_PATH = document.body.dataset.basePath || '/'; // Fallback to '/' if not set
+    const BASE_PATH = document.body.dataset.basePath || '/';
     if (button) {
         $(button).addClass('loading').prop('disabled', true);
     }
     $.ajax({
         url: BASE_PATH + 'config/api.php',
         type: 'POST',
+        dataType: 'json', // Enforce JSON response
         data: { action: 'update', item_key: itemKey, quantity: quantity },
         success: function(response) {
-            if (response.status === 'success') {
+            if (response && response.status === 'success') {
                 if (quantity <= 0) {
                     showToast('Artikel entfernt');
                 } else {
@@ -89,12 +108,12 @@ function updateCart(itemKey, quantity, element, button) {
                 updateLocalCart(response.cart);
             } else {
                 console.error('Update failed:', response);
-                showToast('Fehler beim Aktualisieren: ' + (response.message || 'Unbekannter Fehler'), true);
+                showToast('Fehler beim Aktualisieren: ' + (response && response.message ? response.message : 'Unbekannter Fehler'), true);
             }
         },
         error: function(xhr, status, error) {
-            console.error('AJAX error:', status, error);
-            showToast('Fehler beim Aktualisieren', true);
+            console.error('AJAX error:', status, error, 'Response:', xhr.responseText);
+            showToast('Fehler beim Aktualisieren: Serverfehler', true);
         },
         complete: function() {
             if (button) {
@@ -116,10 +135,10 @@ function refreshMenuContent(branch) {
             data: { table: table, filiale: branch },
             success: function(data) {
                 $('.content').html(data);
-                // Reattach event listeners after content refresh
                 attachArtikellisteListeners();
             },
-            error: function() {
+            error: function(xhr, status, error) {
+                console.error('AJAX error:', status, error, 'Response:', xhr.responseText);
                 showToast('Fehler beim Aktualisieren der Menüliste', true);
             }
         });
@@ -149,7 +168,7 @@ function attachArtikellisteListeners() {
         });
     });
 
-    $('.btn-increment').on('click', function() {
+    $('.btn-increment').off('click').on('click', function() {
         const itemKey = $(this).data('item-key');
         const $countSpan = $(this).closest('.grid-item').find('.product-count');
         const currentQuantity = parseInt($countSpan.text() || 0);
@@ -157,7 +176,7 @@ function attachArtikellisteListeners() {
         updateCart(itemKey, newQuantity, $countSpan, this);
     });
 
-    $('.btn-decrement').on('click', function() {
+    $('.btn-decrement').off('click').on('click', function() {
         const itemKey = $(this).data('item-key');
         const $countSpan = $(this).closest('.grid-item').find('.product-count');
         const currentQuantity = parseInt($countSpan.text() || 0);
@@ -166,11 +185,101 @@ function attachArtikellisteListeners() {
     });
 }
 
+// Load orders for online-orders.php with enhanced functionality
+function loadOrders(filter = 'daily', order_by = 'desc', page = 1) {
+    const BASE_PATH = document.body.dataset.basePath || '/';
+    const activeUrl = `${BASE_PATH}config/api.php?action=get_active_orders&filter=${filter}&order_by=${order_by}&page=${page}`;
+    const completedUrl = `${BASE_PATH}config/api.php?action=get_completed_orders&filter=${filter}&order_by=${order_by}&page=${page}`;
+
+    function renderOrders(listId, paginationId, data, type) {
+        const list = $(`#${listId}`);
+        const pagination = $(`#${paginationId}`);
+        list.empty();
+        if (!data || !data.orders || data.orders.length === 0) {
+            list.html('<p>Keine Bestellungen vorhanden.</p>');
+        } else {
+            data.orders.forEach(order => {
+                let itemsHtml = '<table class="order-table"><thead><tr><th>Nummer</th><th>Artikel</th><th class="quantity">Menge</th><th class="price">Einzelpreis</th><th class="subtotal">Gesamt</th></tr></thead><tbody>';
+                order.items.forEach(item => {
+                    itemsHtml += `<tr>
+                        <td>${item.artikelnummer || 'N/A'}</td>
+                        <td>${item.artikelname || 'Unbekannt'}</td>
+                        <td class="quantity">${item.quantity || 0}</td>
+                        <td class="price">${(item.price || 0).toFixed(2)} €</td>
+                        <td class="subtotal">${(item.subtotal || 0).toFixed(2)} €</td>
+                    </tr>`;
+                });
+                itemsHtml += '</tbody></table>';
+                const timestamp = order.status === 'active' ? order.created_at : order.updated_at;
+                const label = order.status === 'active' ? 'Erstellt' : 'Abgeschlossen';
+                const actions = type === 'active'
+                    ? `<select class="order-action" data-order-id="${order.id}">
+                        <option value="">Aktion wählen</option>
+                        <option value="complete">Bestellung abschließen</option>
+                        <option value="delete">Bestellung löschen</option>
+                    </select>`
+                    : `<p>Abgeschlossen</p>`;
+                list.append(`
+                    <div class="order-card" data-order-id="${order.id}">
+                        <h3>Bestellung #${order.id}</h3>
+                        <p>${label}: ${new Date(timestamp).toLocaleString('de-DE')}</p>
+                        ${itemsHtml}
+                        <div class="order-total">
+                            <span>Gesamtbetrag</span>
+                            <span>${(order.total || 0).toFixed(2)} €</span>
+                        </div>
+                        <div class="order-actions">${actions}</div>
+                    </div>
+                `);
+            });
+        }
+
+        // Pagination controls
+        const totalPages = Math.ceil((data && data.total) ? data.total / data.per_page : 0);
+        pagination.empty();
+        if (totalPages > 1) {
+            pagination.append(`
+                <button class="prev-page" ${page === 1 ? 'disabled' : ''}>Vorherige</button>
+                <span>Seite ${page} von ${totalPages}</span>
+                <button class="next-page" ${page === totalPages ? 'disabled' : ''}>Nächste</button>
+            `);
+            pagination.find('.prev-page').off('click').on('click', () => loadOrders(filter, order_by, page - 1));
+            pagination.find('.next-page').off('click').on('click', () => loadOrders(filter, order_by, page + 1));
+        }
+    }
+
+    $.ajax({
+        url: activeUrl,
+        type: 'GET',
+        dataType: 'json',
+        success: function(data) {
+            renderOrders('active-orders-list', 'active-pagination', data, 'active');
+        },
+        error: function(xhr, status, error) {
+            console.error('Error loading active orders:', status, error, 'Response:', xhr.responseText);
+            showToast('Fehler beim Laden aktiver Bestellungen: ' + (xhr.responseText.includes('Fatal error') ? 'Serverfehler' : 'Ungültige Antwort'), true);
+        }
+    });
+
+    $.ajax({
+        url: completedUrl,
+        type: 'GET',
+        dataType: 'json',
+        success: function(data) {
+            renderOrders('completed-orders-list', 'completed-pagination', data, 'completed');
+        },
+        error: function(xhr, status, error) {
+            console.error('Error loading completed orders:', status, error, 'Response:', xhr.responseText);
+            showToast('Fehler beim Laden abgeschlossener Bestellungen: ' + (xhr.responseText.includes('Fatal error') ? 'Serverfehler' : 'Ungültige Antwort'), true);
+        }
+    });
+}
+
 // Page-specific logic
 document.addEventListener('DOMContentLoaded', function() {
     const body = document.body;
     const page = body.dataset.page;
-    const BASE_PATH = body.dataset.basePath || '/'; // Define BASE_PATH here with fallback
+    const BASE_PATH = body.dataset.basePath || '/';
     const sessionCart = JSON.parse(body.dataset.sessionCart || '{}');
 
     // Restore cart from localStorage if empty session
@@ -181,31 +290,50 @@ document.addEventListener('DOMContentLoaded', function() {
             body: 'cart=' + encodeURIComponent(localStorage.getItem('cart'))
         })
         .then(response => response.text())
-        .then(text => JSON.parse(text.replace(/%+$/, '').trim()))
-        .then(() => updateCartCount())
-        .catch(() => {});
+        .then(text => {
+            try {
+                const data = JSON.parse(text.trim());
+                if (data.status === 'success') {
+                    updateLocalCart(data.cart);
+                } else {
+                    console.warn('Cart restore failed:', data.message);
+                }
+                return data;
+            } catch (e) {
+                console.error('Invalid JSON response from restore_cart.php:', text);
+                throw new Error('Cart restore failed: Invalid JSON');
+            }
+        })
+        .catch(error => {
+            console.error('Cart restore error:', error);
+            showToast('Fehler beim Wiederherstellen des Warenkorbs', true);
+        });
     }
 
     // Branch dropdown change handler
-    $('#branch-dropdown').on('change', function() {
+    $('#branch-dropdown').off('change').on('change', function() {
         const branch = $(this).val();
         const $spinner = $('#branch-spinner');
         $spinner.show();
-
         $.ajax({
             url: BASE_PATH + 'config/api.php',
             type: 'POST',
+            dataType: 'json',
             data: { action: 'set_branch', branch: branch },
             success: function(response) {
-                if (response.status === 'success') {
+                if (response && response.status === 'success') {
                     showToast('Filiale geändert zu ' + branch);
                     refreshMenuContent(branch);
+                    if (page === 'online_orders') {
+                        loadOrders($('#date-filter').val(), $('#order-filter').val());
+                    }
                 } else {
-                    showToast('Fehler beim Ändern der Filiale: ' + response.message, true);
+                    showToast('Fehler beim Ändern der Filiale: ' + (response && response.message ? response.message : 'Unbekannter Fehler'), true);
                 }
             },
-            error: function() {
-                showToast('Fehler beim Ändern der Filiale', true);
+            error: function(xhr, status, error) {
+                console.error('AJAX error:', status, error, 'Response:', xhr.responseText);
+                showToast('Fehler beim Ändern der Filiale: Serverfehler', true);
             },
             complete: function() {
                 $spinner.hide();
@@ -248,11 +376,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     $menuGrid.removeClass('loading').attr('aria-busy', 'false');
                     $loadingSpinner.hide();
                 },
-                error: function() {
+                error: function(xhr, status, error) {
+                    console.error('AJAX error:', status, error, 'Response:', xhr.responseText);
                     $menuGrid.html('<p>Fehler beim Laden des Menüs. <button id="retry-menu">Erneut versuchen</button></p>');
                     $menuGrid.removeClass('loading').attr('aria-busy', 'false');
                     $loadingSpinner.hide();
-                    $('#retry-menu').on('click', function() {
+                    $('#retry-menu').off('click').on('click', function() {
                         $menuGrid.html('').addClass('loading').attr('aria-busy', 'true');
                         $loadingSpinner.show();
                         $.ajax({
@@ -269,7 +398,8 @@ document.addEventListener('DOMContentLoaded', function() {
                                 $menuGrid.removeClass('loading').attr('aria-busy', 'false');
                                 $loadingSpinner.hide();
                             },
-                            error: function() {
+                            error: function(xhr, status, error) {
+                                console.error('AJAX error:', status, error, 'Response:', xhr.responseText);
                                 $menuGrid.html('<p>Fehler beim Laden des Menüs. <button id="retry-menu">Erneut versuchen</button></p>');
                                 $menuGrid.removeClass('loading').attr('aria-busy', 'false');
                                 $loadingSpinner.hide();
@@ -296,9 +426,10 @@ document.addEventListener('DOMContentLoaded', function() {
             $.ajax({
                 url: BASE_PATH + 'config/api.php',
                 type: 'POST',
+                dataType: 'json',
                 data: { action: 'remove', item_key: itemKey },
                 success: function(response) {
-                    if (response.status === 'success') {
+                    if (response && response.status === 'success') {
                         element.closest('.cart-item').remove();
                         updateTotal();
                         if ($('.cart-item').length === 0) {
@@ -309,35 +440,33 @@ document.addEventListener('DOMContentLoaded', function() {
                         updateLocalCart(response.cart);
                     } else {
                         console.error('Remove failed:', response);
-                        showToast('Fehler beim Entfernen: ' + (response.message || 'Unbekannter Fehler'), true);
+                        showToast('Fehler beim Entfernen: ' + (response && response.message ? response.message : 'Unbekannter Fehler'), true);
                     }
                 },
                 error: function(xhr, status, error) {
-                    console.error('AJAX error:', status, error);
-                    showToast('Fehler beim Entfernen', true);
+                    console.error('AJAX error:', status, error, 'Response:', xhr.responseText);
+                    showToast('Fehler beim Entfernen: Serverfehler', true);
                 }
             });
         }
 
-        $('.btn-increment').on('click', function() {
+        $('.btn-increment').off('click').on('click', function() {
             const itemKey = $(this).data('item-key');
             const $input = $(this).siblings('.quantity-input');
             let quantity = parseInt($input.val()) + 1;
             updateCart(itemKey, quantity, $input, this);
-            // Update UI immediately for better UX
             $input.val(quantity);
             const price = parseFloat($(this).closest('.cart-item').find('.cart-item-details p').text().replace(' €', '').replace(',', '.'));
             $(this).closest('.cart-item').find('.quantity').text((price * quantity).toFixed(2).replace('.', ',') + ' €');
             updateTotal();
         });
 
-        $('.btn-decrement').on('click', function() {
+        $('.btn-decrement').off('click').on('click', function() {
             const itemKey = $(this).data('item-key');
             const $input = $(this).siblings('.quantity-input');
             let quantity = parseInt($input.val()) - 1;
             if (quantity < 0) quantity = 0;
             updateCart(itemKey, quantity, $input, this);
-            // Update UI immediately for better UX
             if (quantity === 0) {
                 $(this).closest('.cart-item').remove();
                 if ($('.cart-item').length === 0) {
@@ -352,12 +481,11 @@ document.addEventListener('DOMContentLoaded', function() {
             updateTotal();
         });
 
-        $('.quantity-input').on('change', function() {
+        $('.quantity-input').off('change').on('change', function() {
             const itemKey = $(this).data('item-key');
             let quantity = parseInt($(this).val());
             if (isNaN(quantity) || quantity < 0) quantity = 0;
             updateCart(itemKey, quantity, $(this));
-            // Update UI immediately for better UX
             if (quantity === 0) {
                 $(this).closest('.cart-item').remove();
                 if ($('.cart-item').length === 0) {
@@ -371,13 +499,12 @@ document.addEventListener('DOMContentLoaded', function() {
             updateTotal();
         });
 
-        $('.btn-remove').on('click', function(e) {
+        $('.btn-remove').off('click').on('click', function(e) {
             e.preventDefault();
             const itemKey = $(this).data('item-key');
             removeCartItem(itemKey, $(this));
         });
 
-        // Initial total calculation
         updateTotal();
     }
 
@@ -451,17 +578,122 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .done(function(response) {
                 localStorage.clear();
+                $_SESSION['cart'] = [];
                 window.location.href = BASE_PATH + 'index.php';
             })
-            .fail(function() {
+            .fail(function(xhr, status, error) {
+                console.error('Clear cart error:', status, error, 'Response:', xhr.responseText);
                 localStorage.clear();
                 window.location.href = BASE_PATH + 'index.php';
             });
         }
 
-        $('#back-to-home').on('click', clearCartAndRedirect);
+        $('#back-to-home').off('click').on('click', clearCartAndRedirect);
+
+        $('#notify-staff').off('click').on('click', function() {
+            $.ajax({
+                url: BASE_PATH + 'config/api.php',
+                type: 'POST',
+                dataType: 'json',
+                data: { action: 'submit_order' },
+                success: function(response) {
+                    if (response && response.status === 'success') {
+                        openNotifyModal();
+                        showToast('Bestellung erfolgreich übermittelt');
+                    } else {
+                        console.error('Submit order failed:', response);
+                        showToast('Fehler beim Übermitteln der Bestellung: ' + (response && response.message ? response.message : 'Unbekannter Fehler'), true);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX error:', status, error, 'Response:', xhr.responseText);
+                    showToast('Fehler beim Übermitteln der Bestellung: ' + (xhr.responseText.includes('Fatal error') ? 'Serverfehler' : 'Ungültige Antwort'), true);
+                }
+            });
+        });
+
+        $('#notify-modal-close').off('click').on('click', function() {
+            closeNotifyModal();
+            clearCartAndRedirect();
+        });
+
         $(document).on('mousemove keydown click', resetTimer);
         resetTimer();
+    }
+
+    // Online orders page
+    if (page === 'online_orders') {
+        let currentFilter = 'daily';
+        let currentOrderBy = 'desc';
+        let currentPage = 1;
+
+        loadOrders(currentFilter, currentOrderBy, currentPage);
+
+        $('#date-filter').off('change').on('change', function() {
+            currentFilter = $(this).val();
+            currentPage = 1;
+            loadOrders(currentFilter, currentOrderBy, currentPage);
+        });
+
+        $('#order-filter').off('change').on('change', function() {
+            currentOrderBy = $(this).val();
+            currentPage = 1;
+            loadOrders(currentFilter, currentOrderBy, currentPage);
+        });
+
+        $('.tab-btn').off('click').on('click', function() {
+            $('.tab-btn').removeClass('active');
+            $(this).addClass('active');
+            $('.tab-content').removeClass('active');
+            $('#' + $(this).data('tab')).addClass('active');
+        });
+
+        $(document).off('change', '.order-action').on('change', '.order-action', function() {
+            const orderId = $(this).data('order-id');
+            const action = $(this).val();
+            if (action === 'complete') {
+                $.ajax({
+                    url: BASE_PATH + 'config/api.php',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: { action: 'complete_order', order_id: orderId },
+                    success: function(response) {
+                        if (response && response.status === 'success') {
+                            showToast('Bestellung abgeschlossen');
+                            loadOrders(currentFilter, currentOrderBy, currentPage);
+                        } else {
+                            console.error('Complete order failed:', response);
+                            showToast('Fehler beim Abschließen: ' + (response && response.message ? response.message : 'Unbekannter Fehler'), true);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('AJAX error:', status, error, 'Response:', xhr.responseText);
+                        showToast('Fehler beim Abschließen der Bestellung: Serverfehler', true);
+                    }
+                });
+            } else if (action === 'delete') {
+                $.ajax({
+                    url: BASE_PATH + 'config/api.php',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: { action: 'delete_order', order_id: orderId },
+                    success: function(response) {
+                        if (response && response.status === 'success') {
+                            showToast('Bestellung gelöscht');
+                            loadOrders(currentFilter, currentOrderBy, currentPage);
+                        } else {
+                            console.error('Delete order failed:', response);
+                            showToast('Fehler beim Löschen: ' + (response && response.message ? response.message : 'Unbekannter Fehler'), true);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('AJAX error:', status, error, 'Response:', xhr.responseText);
+                        showToast('Fehler beim Löschen der Bestellung: Serverfehler', true);
+                    }
+                });
+            }
+            $(this).val(''); // Reset dropdown
+        });
     }
 
     // Artikelliste pages (yana/menu.php, warmekueche/menu.php, sushi/menu.php, sushi/vegetarisch.php)
