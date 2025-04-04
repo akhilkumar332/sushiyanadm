@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['table']) && isset($_P
                 <div class="grid-item">
                     <div class="dish-image-container">
                         <img src="<?php echo htmlspecialchars(ASSETS_IMAGES . substr((string)$row['image'], 7)); ?>" 
-                             onerror="this.src='https://placehold.co/150';" 
+                             onerror="this.src='<?php echo ASSETS_IMAGES; ?>/deafult.jpg';" 
                              alt="<?php echo htmlspecialchars((string)$row["artikelname"]); ?>" 
                              class="dish-image">
                     </div>
