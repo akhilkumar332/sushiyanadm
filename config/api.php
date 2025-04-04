@@ -42,7 +42,7 @@ try {
 
             $status = $_GET['action'] === 'get_active_orders' ? 'active' : 'completed';
             $date_field = $status === 'active' ? 'created_at' : 'updated_at';
-            $query = "SELECT * FROM orders WHERE status = ?";
+            $query = "SELECT id, order_details, status, branch, created_at, updated_at, table_number FROM orders WHERE status = ?";
             $count_query = "SELECT COUNT(*) as total FROM orders WHERE status = ?";
             $params = [$status];
             $types = "s";
@@ -161,9 +161,10 @@ try {
         if ($action === 'submit_order') {
             $order_details = json_encode($_SESSION['cart']);
             $branch = $_SESSION['branch'] ?? null;
-            $stmt = $conn->prepare("INSERT INTO orders (order_details, status, branch, created_at) VALUES (?, 'active', ?, NOW())");
+            $table_number = isset($_POST['table_number']) ? (int)$_POST['table_number'] : null;
+            $stmt = $conn->prepare("INSERT INTO orders (order_details, status, branch, table_number, created_at) VALUES (?, 'active', ?, ?, NOW())");
             if (!$stmt) throw new Exception("Prepare failed: " . $conn->error);
-            $stmt->bind_param("ss", $order_details, $branch);
+            $stmt->bind_param("ssi", $order_details, $branch, $table_number);
             if ($stmt->execute()) {
                 $_SESSION['cart'] = [];
                 ob_end_clean();

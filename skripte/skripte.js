@@ -21,6 +21,16 @@ function closeIngredientsModal(id) {
     if (modal) modal.style.display = "none";
 }
 
+function openTableModal() {
+    const modal = document.getElementById('table-modal-backdrop');
+    if (modal) modal.style.display = "flex";
+}
+
+function closeTableModal() {
+    const modal = document.getElementById('table-modal-backdrop');
+    if (modal) modal.style.display = "none";
+}
+
 // Close modal when clicking outside
 window.addEventListener('click', function(event) {
     const modals = document.getElementsByClassName('modal');
@@ -207,13 +217,13 @@ function loadOrders(filter = 'daily', order_by = 'desc', page = 1, branch = '', 
         const pagination = $(`#${paginationId}`);
         const existingOrderIds = new Set([...list.find('.order-card')].map(card => parseInt($(card).data('order-id'))));
 
-        if (!isPolling) list.empty(); // Clear list unless polling
+        if (!isPolling) list.empty();
 
         if (!data?.orders || data.orders.length === 0) {
             if (!isPolling) list.html('<p>Keine Bestellungen vorhanden.</p>');
         } else {
             data.orders.forEach(order => {
-                if (isPolling && existingOrderIds.has(order.id)) return; // Skip existing orders during polling
+                if (isPolling && existingOrderIds.has(order.id)) return;
                 let itemsHtml = '<table class="order-table"><thead><tr><th>Nummer</th><th>Artikel</th><th class="quantity">Menge</th><th class="price">Einzelpreis</th><th class="subtotal">Gesamt</th></tr></thead><tbody>';
                 order.items.forEach(item => {
                     itemsHtml += `<tr>
@@ -234,10 +244,12 @@ function loadOrders(filter = 'daily', order_by = 'desc', page = 1, branch = '', 
                         <option value="delete">Bestellung löschen</option>
                     </select>`
                     : `<p>Abgeschlossen</p>`;
+                const tableNumber = order.table_number ? `Tisch: ${order.table_number}` : 'Tisch: Nicht angegeben';
                 const orderHtml = `
                     <div class="order-card" data-order-id="${order.id}">
                         <h3>Bestellung #${order.id}</h3>
                         <p>Filiale: ${order.branch || 'Nicht angegeben'}</p>
+                        <p>${tableNumber}</p>
                         <p>${label}: ${new Date(timestamp).toLocaleString('de-DE')}</p>
                         ${itemsHtml}
                         <div class="order-total">
@@ -248,10 +260,10 @@ function loadOrders(filter = 'daily', order_by = 'desc', page = 1, branch = '', 
                     </div>
                 `;
                 if (isPolling && type === 'active') {
-                    list.prepend(orderHtml); // Add new orders to top during polling
+                    list.prepend(orderHtml);
                     showToast(`Neue Bestellung #${order.id} eingegangen`);
                 } else {
-                    list.append(orderHtml); // Append during initial load or filter change
+                    list.append(orderHtml);
                 }
             });
         }
@@ -535,9 +547,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Final order page
     if (page === 'final_order') {
-        const inactivityTimeout = 1 * 60 * 1000; // 1 minutes
-        const timerThreshold = 1 * 30 * 1000; // 30 Seconds
-        const countdownDuration = 30 * 1000; // 30 Seconds countdown
+        const inactivityTimeout = 1 * 60 * 1000; // 1 minute
+        const timerThreshold = 1 * 30 * 1000; // 30 seconds
+        const countdownDuration = 30 * 1000; // 30 seconds countdown
         let lastActivityTime = Date.now();
         let countdownInterval = null;
         let countdownStartTime = null;
@@ -596,8 +608,8 @@ document.addEventListener('DOMContentLoaded', function() {
         function clearCartAndRedirect() {
             if (isRedirecting) return;
             isRedirecting = true;
-            $('#order-confirmation').hide(); // Hide confirmation text
-            $('#notify-staff').prop('disabled', false); // Re-enable Notify Staff button
+            $('#order-confirmation').hide();
+            $('#notify-staff').prop('disabled', false);
             $.ajax({
                 url: BASE_PATH + 'clear_cart.php',
                 type: 'POST',
@@ -617,15 +629,29 @@ document.addEventListener('DOMContentLoaded', function() {
         $('#back-to-home').off('click').on('click', clearCartAndRedirect);
 
         $('#notify-staff').off('click').on('click', function() {
+            openTableModal();
+        });
+
+        $('#close-table-modal').off('click').on('click', function() {
+            closeTableModal();
+        });
+
+        $('#submit-table').off('click').on('click', function() {
+            const tableNumber = $('#table-number').val();
+            if (!tableNumber) {
+                showToast('Bitte wählen Sie einen Tisch aus.', true);
+                return;
+            }
             $.ajax({
                 url: BASE_PATH + 'config/api.php',
                 type: 'POST',
                 dataType: 'json',
-                data: { action: 'submit_order' },
+                data: { action: 'submit_order', table_number: tableNumber },
                 success: function(response) {
                     if (response?.status === 'success') {
-                        $('#order-confirmation').show(); // Show confirmation text
-                        $('#notify-staff').prop('disabled', true); // Disable Notify Staff button
+                        $('#order-confirmation').show();
+                        $('#notify-staff').prop('disabled', true);
+                        closeTableModal();
                         showToast('Bestellung erfolgreich übermittelt');
                         localStorage.setItem('lastOrderTime', Date.now().toString());
                     } else {
@@ -721,7 +747,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 });
             }
-            $(this).val(''); // Reset dropdown
+            $(this).val('');
         });
 
         // Polling for new orders every 10 seconds

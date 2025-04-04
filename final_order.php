@@ -96,6 +96,20 @@ $timestamp = date('d.m.Y H:i:s');
                 <p id="order-confirmation">Bestellung aufgegeben! Bitte warten Sie, bis ein Mitarbeiter zu Ihnen kommt.</p>
             </div>
         </div>
+        <!-- Table Number Modal -->
+        <div id="table-modal-backdrop" class="modal notify-modal" style="display: none;">
+            <div class="notify-modal-content">
+                <span class="close" id="close-table-modal">&times;</span>
+                <p>Wählen Sie Ihren Tisch aus:</p>
+                <select id="table-number" class="table-dropdown">
+                    <option value="">Tisch auswählen</option>
+                    <?php for ($i = 1; $i <= 20; $i++): ?>
+                        <option value="<?php echo $i; ?>">Tisch <?php echo $i; ?></option>
+                    <?php endfor; ?>
+                </select>
+                <button class="btn" id="submit-table">Bestätigen</button>
+            </div>
+        </div>
     </main>
     <?php include_once $_SERVER['DOCUMENT_ROOT'] . '/config/floating_bar.php'; ?>
     <?php include_once $_SERVER['DOCUMENT_ROOT'] . '/config/footer.php'; ?>

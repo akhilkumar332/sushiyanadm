@@ -65,5 +65,5 @@ if ($conn->connect_error) {
 $filiale = DB_FILIALE;
 
 // Updated CSP
-header("Content-Security-Policy: style-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; script-src 'self' https://code.jquery.com https://cdn.jsdelivr.net 'unsafe-inline';");
+header("Content-Security-Policy: style-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'unsafe-inline'; script-src 'self' https://code.jquery.com https://cdn.jsdelivr.net 'unsafe-inline';");
 ?>

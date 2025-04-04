@@ -479,6 +479,44 @@ body.navigation .grid-item:focus {
     text-decoration: none;
 }
 
+.table-dropdown {
+    padding: 8px;
+    border: 1px solid #6A2477;
+    border-radius: 5px;
+    font-size: 14px;
+    background-color: #1a1a1a;
+    color: #fff;
+    cursor: pointer;
+    width: 100%;
+    max-width: 200px;
+    margin: 10px 0;
+}
+
+/* New styles for the Confirm button in the modal */
+.notify-modal .notify-modal-content #submit-table {
+    background-color: #6A2477; /* Base theme color */
+    color: #fff; /* White text for contrast */
+    border: 2px solid #D4AF37; /* Gold border to tie in with footer links */
+    padding: 10px 20px;
+    border-radius: 50px;
+    font-size: 16px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    width: 100%;
+    max-width: 200px;
+    margin-top: 10px;
+}
+
+.notify-modal .notify-modal-content #submit-table:hover {
+    background-color: #D4AF37; /* Gold on hover for contrast */
+    color: #1a1a1a; /* Dark text for readability against gold */
+    border-color: #6A2477; /* Purple border on hover */
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
 /* ==========================================================================
    Final Order Styles (used in final_order.php)
    ========================================================================== */
@@ -734,7 +772,7 @@ body.navigation .grid-item:focus {
 
 .orders-list {
     display: grid;
-    grid-template-columns: 1fr 1fr; /* Two columns by default */
+    grid-template-columns: 1fr 1fr; /* Two columns on desktop */
     gap: 20px; /* Increased gap for better spacing */
     width: 100%;
 }
@@ -1460,30 +1498,34 @@ body.navigation main {
     .orders-filters {
         flex-direction: column;
         align-items: flex-start;
+        padding: 10px;
     }
 
     .branch-filter, .date-filter, .order-filter {
         width: 100%;
         justify-content: space-between;
+        margin-bottom: 10px;
     }
 
     .branch-filter select, .date-filter select, .order-filter select {
         width: 100%;
-        max-width: 200px;
+        max-width: none;
     }
 
     .tab-buttons {
-        flex-direction: column;
+        flex-direction: row;
+        flex-wrap: wrap;
     }
 
     .tab-btn {
+        flex: 1 1 50%;
         padding: 10px;
         font-size: 14px;
     }
 
     .orders-list {
-        grid-template-columns: 1fr 1fr; /* Maintain 2 columns on mobile */
-        gap: 10px; /* Smaller gap for mobile */
+        grid-template-columns: 1fr; /* Single column on mobile */
+        gap: 15px;
     }
 
     .order-card {
@@ -1492,7 +1534,7 @@ body.navigation main {
 
     .order-card .order-table th,
     .order-card .order-table td {
-        font-size: 12px; /* Slightly smaller font for mobile */
+        font-size: 12px;
         padding: 6px;
     }
 
