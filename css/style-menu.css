@@ -79,6 +79,7 @@ body.artikelliste .grid-container {
 /* Product card */
 body.artikelliste .grid-item {
     background: linear-gradient(180deg, #1a1a1a 70%, #2a2a2a 100%);
+    border: 2px solid #6A2477;
     border-radius: 12px;
     overflow: hidden;
     position: relative;
