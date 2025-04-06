@@ -216,6 +216,17 @@ try {
                 throw new Exception('Invalid branch');
             }
             exit;
+        } elseif ($action === 'set_language') {
+            $language = $_POST['language'] ?? null;
+            $valid_languages = ['de', 'en', 'fr', 'pl', 'it', 'ru', 'tr', 'es', 'ar'];
+            if ($language && in_array($language, $valid_languages)) {
+                $_SESSION['language'] = $language;
+                ob_end_clean();
+                echo json_encode(['status' => 'success', 'message' => 'Language set to ' . $language]);
+            } else {
+                throw new Exception('Invalid language');
+            }
+            exit;
         }
 
         $item_id = $_POST['item_id'] ?? null;

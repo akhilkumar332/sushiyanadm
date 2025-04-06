@@ -2,29 +2,27 @@
    Global Styles
    ========================================================================== */
 
-/* Reset default styles to avoid conflicts */
+/* Reset default styles for consistency across browsers */
 * {
     box-sizing: border-box;
-}
-
-/* Base styles for body with navigation class (used in warmekueche.php, final_order.php, impressum.php, datenschutz.php, cart.php, etc.) */
-body.navigation {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
     margin: 0;
     padding: 0;
+}
+
+/* Base styles for body with navigation class (used in warmekueche.php, final_order.php, etc.) */
+body.navigation {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
     display: flex;
     flex-direction: column;
     align-items: center;
     background-color: #000;
     min-height: 100vh;
-    overflow-x: hidden; /* Ensure no horizontal overflow */
+    overflow-x: hidden; /* Prevent horizontal overflow */
 }
 
-/* Base styles for body with artikelliste class */
+/* Base styles for body with artikelliste class (used in artikelliste pages) */
 body.artikelliste {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
-    margin: 0;
-    padding: 0;
     background-color: #000;
     color: #fff;
     display: flex;
@@ -32,7 +30,7 @@ body.artikelliste {
     align-items: center;
 }
 
-/* Header styles (used across all pages) */
+/* Header styles (shared across all pages) */
 header {
     width: 100%;
     background-color: #000;
@@ -41,7 +39,7 @@ header {
     text-align: center;
 }
 
-/* Typography */
+/* Typography styles */
 h1 {
     color: #6A2477;
     font-size: clamp(30px, 4vw, 40px);
@@ -56,21 +54,47 @@ h2 {
     font-size: clamp(18px, 4vw, 22px);
 }
 
-/* Logo styles (used in header) */
+/* Logo styles in header */
 .logo {
     max-width: 50%;
     height: auto;
 }
 
-/* Page title (used in warmekueche.php) */
+/* Page title styles (e.g., warmekueche.php) */
 .page-title {
     color: white;
     text-align: center;
 }
 
-/* Smooth scrolling for mobile */
+/* Enable smooth scrolling for better mobile experience */
 html {
     scroll-behavior: smooth;
+}
+
+/* Direction and alignment for RTL languages (e.g., Arabic) */
+body {
+    direction: ltr;
+    text-align: left;
+}
+
+html[dir="rtl"] body {
+    direction: rtl;
+    text-align: right;
+}
+
+html[dir="rtl"] .footer-links,
+html[dir="rtl"] .branch-selector,
+html[dir="rtl"] .language-selector {
+    flex-direction: row-reverse;
+}
+
+html[dir="rtl"] .footer-separator {
+    margin: 0 10px; /* Consistent spacing in RTL */
+}
+
+html[dir="rtl"] .toastify {
+    right: auto;
+    left: 20px; /* Adjust toast position for RTL */
 }
 
 /* ==========================================================================
@@ -95,23 +119,23 @@ html {
 }
 
 .grid-item .text {
-    display: none; /* Hide old .text element */
+    display: none; /* Hide legacy .text element */
 }
 
 /* Grid container for menu categories */
 body.navigation .grid-container {
     display: grid;
-    grid-template-columns: 1fr 1fr; /* Strict 2-column layout */
+    grid-template-columns: 1fr 1fr; /* Two-column layout */
     gap: 20px;
     padding: 24px 12px;
     width: 100%;
-    max-width: 600px; /* Constrain width */
+    max-width: 600px;
     margin: 0 auto;
     box-sizing: border-box;
     padding-bottom: 60px;
 }
 
-/* Menu category card */
+/* Menu category card styles */
 body.navigation .grid-item {
     background: linear-gradient(180deg, #1a1a1a 70%, #2a2a2a 100%);
     border: 2px solid #6A2477;
@@ -128,17 +152,17 @@ body.navigation .grid-item {
     min-height: 200px;
     opacity: 0;
     animation: fadeIn 0.5s ease forwards;
-    text-decoration: none; /* Remove underline */
-    color: inherit; /* Prevent default blue link color */
+    text-decoration: none;
+    color: inherit;
 }
 
 body.navigation .grid-item:hover {
     transform: translateY(-4px);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-    text-decoration: none; /* Ensure no underline on hover */
+    text-decoration: none;
 }
 
-/* Image container */
+/* Category image container */
 body.navigation .category-image-container {
     width: 100%;
     height: 150px;
@@ -158,7 +182,7 @@ body.navigation .grid-item:hover .category-image {
     transform: scale(1.05);
 }
 
-/* Category details */
+/* Category details section */
 body.navigation .category-details {
     display: flex;
     flex-direction: column;
@@ -180,7 +204,7 @@ body.navigation .category-name {
     word-wrap: break-word;
 }
 
-/* Animations for menu grid */
+/* Loading and animation styles for menu grid */
 #menu-grid {
     opacity: 1;
     transition: opacity 0.3s ease;
@@ -205,7 +229,7 @@ body.navigation .category-name {
     }
 }
 
-/* Skeleton styles for menu grid */
+/* Skeleton loading styles for menu grid */
 body.navigation .skeleton-item {
     background: linear-gradient(180deg, #1a1a1a 70%, #2a2a2a 100%);
     border: 2px solid #6A2477;
@@ -218,7 +242,7 @@ body.navigation .skeleton-item {
     align-items: center;
     width: 100%;
     max-width: 100%;
-    min-height: 200px;
+    min-height: 200abortpx;
 }
 
 body.navigation .skeleton-image {
@@ -248,12 +272,8 @@ body.navigation .skeleton-text {
 }
 
 @keyframes shimmer {
-    0% {
-        background-position: -200% 0;
-    }
-    100% {
-        background-position: 200% 0;
-    }
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
 }
 
 body.navigation .skeleton-image,
@@ -262,7 +282,7 @@ body.navigation .skeleton-text {
     background-size: 200% 100%;
 }
 
-/* Loading spinner */
+/* Loading spinner styles */
 .loading-spinner {
     display: none;
     width: 30px;
@@ -291,15 +311,11 @@ body.navigation .skeleton-text {
 }
 
 @keyframes spin {
-    0% {
-        transform: rotate(0deg);
-    }
-    100% {
-        transform: rotate(360deg);
-    }
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
-/* Retry button */
+/* Retry button styles */
 #retry-menu {
     background-color: #6A2477;
     color: white;
@@ -313,7 +329,7 @@ body.navigation .skeleton-text {
     background-color: #551e61;
 }
 
-/* Focus styles for accessibility */
+/* Accessibility focus styles */
 body.navigation .grid-item:focus {
     outline: 3px solid #6A2477;
     outline-offset: 2px;
@@ -328,7 +344,7 @@ body.navigation .grid-item:focus {
     max-width: 600px;
     background-color: #000;
     color: #fff;
-    border: 1px;
+    border: 1px solid transparent;
     border-radius: 8px;
     padding: 20px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -430,7 +446,7 @@ body.navigation .grid-item:focus {
     position: relative;
 }
 
-/* Notify Modal Specific Styles */
+/* Notify modal specific styles (used in final_order.php) */
 .notify-modal .notify-modal-content {
     background-color: #1a1a1a;
     width: 100%;
@@ -492,11 +508,11 @@ body.navigation .grid-item:focus {
     margin: 10px 0;
 }
 
-/* New styles for the Confirm button in the modal */
+/* Confirm button styles in notify modal */
 .notify-modal .notify-modal-content #submit-table {
-    background-color: #6A2477; /* Base theme color */
-    color: #fff; /* White text for contrast */
-    border: 2px solid #D4AF37; /* Gold border to tie in with footer links */
+    background-color: #6A2477;
+    color: #fff;
+    border: 2px solid #D4AF37;
     padding: 10px 20px;
     border-radius: 50px;
     font-size: 16px;
@@ -510,9 +526,9 @@ body.navigation .grid-item:focus {
 }
 
 .notify-modal .notify-modal-content #submit-table:hover {
-    background-color: #D4AF37; /* Gold on hover for contrast */
-    color: #1a1a1a; /* Dark text for readability against gold */
-    border-color: #6A2477; /* Purple border on hover */
+    background-color: #D4AF37;
+    color: #1a1a1a;
+    border-color: #6A2477;
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
 }
@@ -526,6 +542,8 @@ body.navigation .grid-item:focus {
     margin: 20px auto;
     padding: 0 15px;
     font-family: 'Arial', sans-serif;
+    width: 100%; /* Default for desktop */
+    overflow-x: hidden; /* Prevent horizontal overflow */
 }
 
 .bill-header {
@@ -535,6 +553,8 @@ body.navigation .grid-item:focus {
     background: #6A2477;
     border-radius: 10px 10px 0 0;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    overflow-wrap: break-word; /* Handle long titles */
+    word-wrap: break-word;
 }
 
 .bill-header h1 {
@@ -543,6 +563,8 @@ body.navigation .grid-item:focus {
     font-weight: 600;
     letter-spacing: 1px;
     color: #fff;
+    overflow-wrap: break-word; /* Wrap long titles */
+    word-wrap: break-word;
 }
 
 .bill-header p {
@@ -563,6 +585,7 @@ body.navigation .grid-item:focus {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 20px;
+    table-layout: auto; /* Default for desktop */
 }
 
 .bill-table th,
@@ -570,6 +593,8 @@ body.navigation .grid-item:focus {
     padding: 10px;
     text-align: left;
     border-bottom: 1px solid #eee;
+    overflow-wrap: break-word; /* Wrap long text */
+    word-wrap: break-word;
 }
 
 .bill-table th {
@@ -622,7 +647,7 @@ body.navigation .grid-item:focus {
     display: inline-block;
     min-width: 100px; /* Fixed width to prevent shaking */
     text-align: center;
-    font-family: monospace; /* Monospace font for consistent digit width */
+    font-family: monospace; /* Consistent digit width */
 }
 
 .timer.warning {
@@ -663,7 +688,7 @@ body.navigation .grid-item:focus {
 #order-confirmation {
     display: none;
     margin-top: 10px;
-    color: #28a745; /* Green for success */
+    color: #28a745;
     font-weight: bold;
 }
 
@@ -772,8 +797,8 @@ body.navigation .grid-item:focus {
 
 .orders-list {
     display: grid;
-    grid-template-columns: 1fr 1fr; /* Two columns on desktop */
-    gap: 20px; /* Increased gap for better spacing */
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
     width: 100%;
 }
 
@@ -783,8 +808,8 @@ body.navigation .grid-item:focus {
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     position: relative;
-    min-width: 0; /* Allow shrinking below content width */
-    word-wrap: break-word; /* Ensure text wraps */
+    min-width: 0;
+    word-wrap: break-word;
 }
 
 .order-card h3 {
@@ -990,6 +1015,7 @@ footer::before {
     font-weight: 500;
 }
 
+/* Branch selector styles */
 .branch-selector {
     margin-top: 20px;
     display: flex;
@@ -1029,6 +1055,46 @@ footer::before {
     color: #fff;
 }
 
+/* Language selector styles (matched to branch selector) */
+.language-selector {
+    margin-top: 20px; /* Aligned with branch-selector */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.language-label {
+    font-size: 15px; /* Match branch-label */
+    font-weight: 500; /* Match branch-label */
+    color: #D4AF37; /* Match branch-label */
+}
+
+#language-dropdown {
+    text-align: center; /* Match branch-dropdown */
+    background-color: #1a0f1d; /* Match branch-dropdown */
+    color: #fff; /* Match branch-dropdown */
+    border: 1px solid #6A2477; /* Match branch-dropdown */
+    border-radius: 5px; /* Match branch-dropdown */
+    padding: 8px 12px; /* Match branch-dropdown */
+    font-size: 14px; /* Match branch-dropdown */
+    font-family: 'Inter', sans-serif; /* Match branch-dropdown */
+    cursor: pointer; /* Match branch-dropdown */
+    transition: background-color 0.3s ease, border-color 0.3s ease; /* Match branch-dropdown */
+}
+
+#language-dropdown:hover,
+#language-dropdown:focus {
+    background-color: #2a1a2f; /* Match branch-dropdown */
+    border-color: #D4AF37; /* Match branch-dropdown */
+    outline: none; /* Match branch-dropdown */
+}
+
+#language-dropdown option {
+    background-color: #1a0f1d; /* Match branch-dropdown */
+    color: #fff; /* Match branch-dropdown */
+}
+
 @keyframes fadeInFooter {
     from {
         opacity: 0;
@@ -1041,14 +1107,8 @@ footer::before {
 }
 
 @keyframes glow {
-    0% {
-        transform: scale(1);
-        opacity: 0.5;
-    }
-    100% {
-        transform: scale(1.03);
-        opacity: 0.8;
-    }
+    0% { transform: scale(1); opacity: 0.5; }
+    100% { transform: scale(1.03); opacity: 0.8; }
 }
 
 /* ==========================================================================
@@ -1316,7 +1376,7 @@ body.navigation main {
     transform: translateY(-2px);
 }
 
-/* Toastify styles for cart notifications */
+/* Toast notification styles */
 .toastify {
     background: #6A2477;
     color: #fff;
@@ -1339,7 +1399,7 @@ body.navigation main {
    Responsive Adjustments
    ========================================================================== */
 
-/* Responsive adjustments for menu grid (warmekueche.php, sushi.php, etc.) */
+/* Menu grid responsive adjustments */
 @media (max-width: 768px) {
     body.navigation .grid-container {
         grid-template-columns: 1fr 1fr;
@@ -1389,14 +1449,14 @@ body.navigation main {
     }
 }
 
-/* Responsive adjustments for dish list */
+/* Dish list responsive adjustments */
 @media only screen and (max-width: 600px) {
     .dish h3 {
         font-size: 12px;
     }
 }
 
-/* Responsive adjustments for notify modal */
+/* Notify modal responsive adjustments */
 @media (max-width: 768px) {
     .notify-modal .notify-modal-content {
         width: 100%;
@@ -1420,13 +1480,13 @@ body.navigation main {
     }
 }
 
-/* Responsive adjustments for final order (final_order.php) */
+/* Final order responsive adjustments for mobile devices */
 @media (max-width: 768px) {
     .bill-wrapper {
-        margin: 10px;
-        padding: 0;
-        width: auto;
-        max-width: 100%;
+        width: 410px; /* Fixed width for mobile */
+        margin: 10px auto; /* Centered with reduced margin */
+        padding: 0 5px; /* Reduced padding */
+        max-width: 100%; /* Ensure it fits smaller screens */
     }
 
     .bill-header {
@@ -1435,7 +1495,10 @@ body.navigation main {
     }
 
     .bill-header h1 {
-        font-size: 24px;
+        font-size: 22px; /* Slightly smaller for mobile */
+        max-width: 100%;
+        overflow-wrap: break-word;
+        word-wrap: break-word;
     }
 
     .bill-header p {
@@ -1443,22 +1506,63 @@ body.navigation main {
     }
 
     .bill-details {
-        padding: 15px;
+        padding: 10px; /* Reduced padding for compactness */
+    }
+
+    .bill-table {
+        table-layout: auto; /* Fixed layout for compact columns */
+        font-size: 13px; /* Smaller font for mobile */
+        width: 100%;
     }
 
     .bill-table th,
     .bill-table td {
-        font-size: 14px;
-        padding: 8px;
+        padding: 6px; /* Reduced padding */
+        font-size: 13px; /* Match table font size */
+        overflow-wrap: break-word;
+        word-wrap: break-word;
+    }
+
+    /* Define column widths to fit within 360px */
+    .bill-table th:nth-child(1),
+    .bill-table td:nth-child(1) { /* Item column */
+        width: 50%; /* Largest portion for item names */
+    }
+
+    .bill-table th:nth-child(2),
+    .bill-table td:nth-child(2) { /* Quantity column */
+        width: 20%;
+    }
+
+    .bill-table th:nth-child(3),
+    .bill-table td:nth-child(3) { /* Price column */
+        width: 15%;
+    }
+
+    .bill-table th:nth-child(4),
+    .bill-table td:nth-child(4) { /* Subtotal column */
+        width: 15%;
+    }
+
+    .bill-table .quantity {
+        text-align: center;
+    }
+
+    .bill-table .price,
+    .bill-table .subtotal {
+        text-align: right;
     }
 
     .bill-total {
-        font-size: 16px;
+        font-size: 15px; /* Slightly smaller */
         padding: 10px;
+        justify-content: space-between;
     }
 
     .timer {
-        font-size: 14px;
+        font-size: 13px; /* Match table font size */
+        margin-top: 15px;
+        padding: 8px;
     }
 
     #timer-countdown {
@@ -1467,18 +1571,81 @@ body.navigation main {
 
     .bill-buttons {
         padding: 15px 0;
+        gap: 10px;
     }
 
     .bill-buttons .btn {
         display: block;
-        width: 90%;
-        max-width: 400px;
-        margin: 10px auto;
-        padding: 12px 20px;
+        width: 100%; /* Full width within 360px */
+        max-width: 300px; /* Cap for readability */
+        margin: 5px auto; /* Reduced margin */
+        padding: 10px 15px; /* Slightly smaller padding */
+        font-size: 14px; /* Slightly smaller text */
     }
 }
 
-/* Responsive adjustments for online orders (online-orders.php) */
+/* Adjustments for smaller mobile screens (e.g., 320px) */
+@media (max-width: 360px) {
+    .bill-wrapper {
+        width: 100%; /* Full width for very small screens */
+        padding: 0 5px;
+        margin: 5px auto;
+    }
+
+    .bill-header {
+        padding: 12px;
+    }
+
+    .bill-header h1 {
+        font-size: 20px;
+    }
+
+    .bill-header p {
+        font-size: 12px;
+    }
+
+    .bill-details {
+        padding: 8px;
+    }
+
+    .bill-table {
+        font-size: 12px;
+    }
+
+    .bill-table th,
+    .bill-table td {
+        padding: 5px;
+        font-size: 12px;
+    }
+
+    .bill-total {
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    .timer {
+        font-size: 12px;
+        margin-top: 10px;
+        padding: 6px;
+    }
+
+    #timer-countdown {
+        min-width: 70px;
+    }
+
+    .bill-buttons {
+        padding: 10px 0;
+        gap: 5px;
+    }
+
+    .bill-buttons .btn {
+        max-width: 280px; /* Slightly smaller cap */
+        padding: 8px 12px;
+        font-size: 13px;
+    }
+}
+
+/* Online orders responsive adjustments */
 @media (max-width: 768px) {
     .orders-wrapper {
         margin: 10px;
@@ -1524,7 +1691,7 @@ body.navigation main {
     }
 
     .orders-list {
-        grid-template-columns: 1fr; /* Single column on mobile */
+        grid-template-columns: 1fr;
         gap: 15px;
     }
 
@@ -1553,7 +1720,7 @@ body.navigation main {
     }
 }
 
-/* Responsive adjustments for cart page (cart.php) */
+/* Cart page responsive adjustments */
 @media (max-width: 768px) {
     .cart-wrapper {
         margin: 10px;
@@ -1632,7 +1799,7 @@ body.navigation main {
     }
 }
 
-/* Responsive adjustments for cart item details (larger screens) */
+/* Larger screen adjustments for cart item details */
 @media (min-width: 769px) {
     .cart-item-details h3 {
         font-size: 18px;
@@ -1643,7 +1810,7 @@ body.navigation main {
     }
 }
 
-/* Responsive adjustments for footer (footer.php) */
+/* Footer responsive adjustments */
 @media (max-width: 768px) {
     footer {
         padding: 30px 15px;
@@ -1669,18 +1836,20 @@ body.navigation main {
         font-size: 14px;
     }
 
-    .branch-selector {
+    .branch-selector,
+    .language-selector {
         flex-direction: column;
         gap: 5px;
     }
 
-    #branch-dropdown {
+    #branch-dropdown,
+    #language-dropdown {
         width: 100%;
         max-width: 200px;
     }
 }
 
-/* Responsive adjustments for floating bar (floating_bar.php) */
+/* Floating bar responsive adjustments */
 @media (max-width: 768px) {
     .floating-bar-wrapper {
         bottom: 60px;

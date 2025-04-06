@@ -1,3 +1,4 @@
+// /skripte/skripte.js
 // Consolidated JavaScript for all pages with CSP compliance (no nonce required)
 
 // Modal handling
@@ -66,12 +67,14 @@ function updateCartCount() {
     });
 }
 
-// Toast notification
-function showToast(message, isError = false) {
+// Toast notification with language support
+function showToast(messageKey, isError = false, additionalText = '') {
     if (typeof Toastify === 'undefined') {
         console.error('Toastify not loaded');
         return;
     }
+    const lang = document.getElementById('language-dropdown')?.value || 'de';
+    const message = (typeof getTranslation === 'function' ? getTranslation(messageKey, lang) : messageKey) + additionalText;
     Toastify({
         text: `<i class="${isError ? 'fas fa-exclamation-circle' : 'fas fa-check-circle'}"></i> ${message}`,
         duration: 3000,
@@ -96,18 +99,18 @@ function updateCart(itemKey, quantity, element, button) {
         success: function(response) {
             if (response?.status === 'success') {
                 if (quantity <= 0) {
-                    showToast('Artikel entfernt');
+                    showToast('item_removed');
                 } else {
-                    showToast(quantity > (parseInt(element.text()) || 0) ? 'Menge erhöht' : 'Menge reduziert');
+                    showToast(quantity > (parseInt(element.text()) || 0) ? 'quantity_increased' : 'quantity_decreased');
                 }
                 updateLocalCart(response.cart);
             } else {
-                showToast('Fehler beim Aktualisieren: ' + (response?.message || 'Unbekannter Fehler'), true);
+                showToast('update_error', true, response?.message || 'Unbekannter Fehler');
             }
         },
         error: function(xhr, status, error) {
             console.error('AJAX error:', status, error, 'Response:', xhr.responseText);
-            showToast('Fehler beim Aktualisieren: Serverfehler', true);
+            showToast('update_error', true, getTranslation('server_error', document.getElementById('language-dropdown')?.value || 'de'));
         },
         complete: function() {
             if (button) {
@@ -133,7 +136,7 @@ function refreshMenuContent(branch) {
             },
             error: function(xhr, status, error) {
                 console.error('AJAX error:', status, error, 'Response:', xhr.responseText);
-                showToast('Fehler beim Aktualisieren der Menüliste', true);
+                showToast('menu_update_error', true);
             }
         });
     }
@@ -195,12 +198,12 @@ function loadBranches() {
                     branchFilter.append(`<option value="${branch}">${branch}</option>`);
                 });
             } else {
-                showToast('Fehler beim Laden der Filialen: ' + (response?.message || 'Unbekannter Fehler'), true);
+                showToast('branch_load_error', true, response?.message || 'Unbekannter Fehler');
             }
         },
         error: function(xhr, status, error) {
             console.error('AJAX error:', status, error, 'Response:', xhr.responseText);
-            showToast('Fehler beim Laden der Filialen: Serverfehler', true);
+            showToast('branch_load_server_error', true);
         }
     });
 }
@@ -236,7 +239,7 @@ function loadOrders(filter = 'daily', order_by = 'desc', page = 1, branch = '', 
                 });
                 itemsHtml += '</tbody></table>';
                 const timestamp = order.status === 'active' ? order.created_at : order.updated_at;
-                const label = order.status === 'active' ? 'Erstellt' : 'Abgeschlossen';
+                const label = order.status === 'active' ? 'Erstellt' : 'Abgeschlossen'; // Could be translated if needed
                 const actions = type === 'active'
                     ? `<select class="order-action" data-order-id="${order.id}">
                         <option value="">Aktion wählen</option>
@@ -261,7 +264,7 @@ function loadOrders(filter = 'daily', order_by = 'desc', page = 1, branch = '', 
                 `;
                 if (isPolling && type === 'active') {
                     list.prepend(orderHtml);
-                    showToast(`Neue Bestellung #${order.id} eingegangen`);
+                    showToast('new_order_received', false, order.id);
                 } else {
                     list.append(orderHtml);
                 }
@@ -292,12 +295,12 @@ function loadOrders(filter = 'daily', order_by = 'desc', page = 1, branch = '', 
                 renderOrders('active-orders-list', 'active-pagination', data, 'active');
             } else {
                 console.error('API error for active orders:', data?.message);
-                if (!isPolling) showToast('Fehler beim Laden aktiver Bestellungen: ' + (data?.message || 'Unbekannter Fehler'), true);
+                if (!isPolling) showToast('active_orders_error', true, data?.message || 'Unbekannter Fehler');
             }
         },
         error: function(xhr, status, error) {
             console.error('AJAX error for active orders:', status, error, 'Response:', xhr.responseText);
-            if (!isPolling) showToast('Fehler beim Laden aktiver Bestellungen: Serverfehler', true);
+            if (!isPolling) showToast('active_orders_error', true, getTranslation('server_error', document.getElementById('language-dropdown')?.value || 'de'));
         }
     });
 
@@ -311,12 +314,12 @@ function loadOrders(filter = 'daily', order_by = 'desc', page = 1, branch = '', 
                     renderOrders('completed-orders-list', 'completed-pagination', data, 'completed');
                 } else {
                     console.error('API error for completed orders:', data?.message);
-                    showToast('Fehler beim Laden abgeschlossener Bestellungen: ' + (data?.message || 'Unbekannter Fehler'), true);
+                    showToast('completed_orders_error', true, data?.message || 'Unbekannter Fehler');
                 }
             },
             error: function(xhr, status, error) {
                 console.error('AJAX error for completed orders:', status, error, 'Response:', xhr.responseText);
-                showToast('Fehler beim Laden abgeschlossener Bestellungen: Serverfehler', true);
+                showToast('completed_orders_error', true, getTranslation('server_error', document.getElementById('language-dropdown')?.value || 'de'));
             }
         });
     }
@@ -344,7 +347,7 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .catch(error => {
             console.error('Cart restore error:', error);
-            showToast('Fehler beim Wiederherstellen des Warenkorbs', true);
+            showToast('cart_restore_error', true);
         });
     }
 
@@ -360,18 +363,18 @@ document.addEventListener('DOMContentLoaded', function() {
             data: { action: 'set_branch', branch: branch },
             success: function(response) {
                 if (response?.status === 'success') {
-                    showToast('Filiale geändert zu ' + branch);
+                    showToast('branch_changed', false, branch);
                     refreshMenuContent(branch);
                     if (page === 'online_orders') {
                         loadOrders($('#date-filter').val(), $('#order-filter').val(), 1, $('#branch-filter').val());
                     }
                 } else {
-                    showToast('Fehler beim Ändern der Filiale: ' + (response?.message || 'Unbekannter Fehler'), true);
+                    showToast('branch_change_error', true, response?.message || 'Unbekannter Fehler');
                 }
             },
             error: function(xhr, status, error) {
                 console.error('AJAX error:', status, error, 'Response:', xhr.responseText);
-                showToast('Fehler beim Ändern der Filiale: Serverfehler', true);
+                showToast('branch_change_error', true, getTranslation('server_error', document.getElementById('language-dropdown')?.value || 'de'));
             },
             complete: function() {
                 $spinner.hide();
@@ -474,15 +477,15 @@ document.addEventListener('DOMContentLoaded', function() {
                             $('.cart-items').html('<div class="cart-empty"><p>Ihr Warenkorb ist leer.</p></div>');
                             $('.cart-buttons').remove();
                         }
-                        showToast('Artikel entfernt');
+                        showToast('item_removed');
                         updateLocalCart(response.cart);
                     } else {
-                        showToast('Fehler beim Entfernen: ' + (response?.message || 'Unbekannter Fehler'), true);
+                        showToast('remove_error', true, response?.message || 'Unbekannter Fehler');
                     }
                 },
                 error: function(xhr, status, error) {
                     console.error('AJAX error:', status, error, 'Response:', xhr.responseText);
-                    showToast('Fehler beim Entfernen: Serverfehler', true);
+                    showToast('remove_error', true, getTranslation('server_error', document.getElementById('language-dropdown')?.value || 'de'));
                 }
             });
         }
@@ -587,12 +590,14 @@ document.addEventListener('DOMContentLoaded', function() {
             countdownStartTime = Date.now();
             $('#inactivity-timer').show().addClass('visible');
             const $countdown = $('#timer-countdown');
+            const lang = document.getElementById('language-dropdown')?.value || document.body.dataset.lang || 'de'; // Get current language
+            const secondsText = getTranslation('seconds', lang); // Fetch translated "seconds"
 
             countdownInterval = setInterval(function() {
                 const elapsedSinceStart = Date.now() - countdownStartTime;
                 const remainingMs = countdownDuration - elapsedSinceStart;
                 const remainingSeconds = Math.max(0, Math.floor(remainingMs / 1000));
-                $countdown.text(remainingSeconds.toString().padStart(2, '0') + ' Sekunden');
+                $countdown.text(remainingSeconds.toString().padStart(2, '0') + ' ' + secondsText); // Use translated text
                 if (remainingSeconds <= 10) {
                     $('#inactivity-timer').addClass('warning');
                 } else {
@@ -639,7 +644,7 @@ document.addEventListener('DOMContentLoaded', function() {
         $('#submit-table').off('click').on('click', function() {
             const tableNumber = $('#table-number').val();
             if (!tableNumber) {
-                showToast('Bitte wählen Sie einen Tisch aus.', true);
+                showToast('table_select_error', true);
                 return;
             }
             $.ajax({
@@ -652,15 +657,15 @@ document.addEventListener('DOMContentLoaded', function() {
                         $('#order-confirmation').show();
                         $('#notify-staff').prop('disabled', true);
                         closeTableModal();
-                        showToast('Bestellung erfolgreich übermittelt');
+                        showToast('order_submit_success');
                         localStorage.setItem('lastOrderTime', Date.now().toString());
                     } else {
-                        showToast('Fehler beim Übermitteln: ' + (response?.message || 'Unbekannter Fehler'), true);
+                        showToast('order_submit_error', true, response?.message || 'Unbekannter Fehler');
                     }
                 },
                 error: function(xhr, status, error) {
                     console.error('AJAX error:', status, error, 'Response:', xhr.responseText);
-                    showToast('Fehler beim Übermitteln: Serverfehler', true);
+                    showToast('order_submit_error', true, getTranslation('server_error', document.getElementById('language-dropdown')?.value || 'de'));
                 }
             });
         });
@@ -716,15 +721,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     data: { action: 'complete_order', order_id: orderId },
                     success: function(response) {
                         if (response?.status === 'success') {
-                            showToast('Bestellung abgeschlossen');
+                            showToast('order_completed');
                             loadOrders(currentFilter, currentOrderBy, currentPage, currentBranch);
                         } else {
-                            showToast('Fehler beim Abschließen: ' + (response?.message || 'Unbekannter Fehler'), true);
+                            showToast('order_complete_error', true, response?.message || 'Unbekannter Fehler');
                         }
                     },
                     error: function(xhr, status, error) {
                         console.error('AJAX error:', status, error, 'Response:', xhr.responseText);
-                        showToast('Fehler beim Abschließen: Serverfehler', true);
+                        showToast('order_complete_error', true, getTranslation('server_error', document.getElementById('language-dropdown')?.value || 'de'));
                     }
                 });
             } else if (action === 'delete') {
@@ -735,15 +740,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     data: { action: 'delete_order', order_id: orderId },
                     success: function(response) {
                         if (response?.status === 'success') {
-                            showToast('Bestellung gelöscht');
+                            showToast('order_deleted');
                             loadOrders(currentFilter, currentOrderBy, currentPage, currentBranch);
                         } else {
-                            showToast('Fehler beim Löschen: ' + (response?.message || 'Unbekannter Fehler'), true);
+                            showToast('order_delete_error', true, response?.message || 'Unbekannter Fehler');
                         }
                     },
                     error: function(xhr, status, error) {
                         console.error('AJAX error:', status, error, 'Response:', xhr.responseText);
-                        showToast('Fehler beim Löschen: Serverfehler', true);
+                        showToast('order_delete_error', true, getTranslation('server_error', document.getElementById('language-dropdown')?.value || 'de'));
                     }
                 });
             }

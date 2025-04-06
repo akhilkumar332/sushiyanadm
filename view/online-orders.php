@@ -16,6 +16,7 @@ $page_title = 'Bestellungen';
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script src="<?php echo ASSETS_SCRIPTS; ?>translate.js"></script>
     <script src="<?php echo ASSETS_SCRIPTS; ?>skripte.js?v=<?php echo time(); ?>"></script>
 </head>
 <body class="navigation" data-page="online_orders" data-base-path="<?php echo BASE_PATH; ?>" data-session-cart='<?php echo json_encode($_SESSION['cart'] ?? []); ?>'>
