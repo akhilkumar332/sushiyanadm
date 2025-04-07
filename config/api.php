@@ -151,6 +151,110 @@ try {
                 'per_page' => $per_page
             ]);
             exit;
+        } elseif ($_GET['action'] === 'get_branch_impressum') {
+            $branch = $_GET['branch'] ?? $_SESSION['branch'] ?? 'neukoelln';
+            $branches_data = [
+                'neukoelln' => [
+                    'name' => 'Sushi Yana Neukölln',
+                    'address' => "Flughafenstraße 76\n12049 Berlin",
+                    'email' => 'neukoelln@sushi-yana.de',
+                    'manager' => 'Hussein Hamid',
+                    'tax_number' => '16/329/04249'
+                ],
+                'charlottenburg' => [
+                    'name' => 'Sushi Yana Charlottenburg',
+                    'address' => "Lietzenburger Straße 29\n10789 Berlin",
+                    'email' => 'Charlottenburg@sushi-yana.de',
+                    'manager' => 'Giorgos Mavridis',
+                    'tax_number' => '24/437/02213'
+                ],
+                'friedrichshain' => [
+                    'name' => 'Sushi Yana Friedrichshain',
+                    'address' => "Karl-Marx-Allee 140\n10243 Berlin",
+                    'email' => 'sushiyana.friedrichshain@web.de',
+                    'manager' => 'Aydin Irendeli',
+                    'tax_number' => '14/359/02065'
+                ],
+                'lichtenrade' => [
+                    'name' => 'Sushi Yana Lichtenrade',
+                    'address' => "Bahnhoffstraße 29\n12305 Berlin",
+                    'email' => 'lichtenrade@sushi-yana.de',
+                    'manager' => 'Pablo Gonzales',
+                    'tax_number' => '2'
+                ],
+                'mitte' => [
+                    'name' => 'Sushi Yana Mall of Berlin GmbH',
+                    'address' => "Leipziger Platz 12\n10117 Berlin",
+                    'email' => 'buero@sushi-yana.de',
+                    'manager' => 'Hussein Hamid',
+                    'court' => 'Amtsgericht Charlottenburg',
+                    'register' => 'HRB 235940 B',
+                    'tax_number' => '1130/553/51695'
+                ],
+                'moabit' => [
+                    'name' => 'Sushi Yana Moabit',
+                    'address' => "Gotzkowskystraße 26\n10555 Berlin",
+                    'email' => 'moabit@sushi-yana.de',
+                    'manager' => 'Hani El-Jamal',
+                    'tax_number' => '034/275/02211'
+                ],
+                'potsdam' => [
+                    'name' => 'Sushi Yana Potsdam',
+                    'address' => "Kastanienallee 17\n14471 Potsdam",
+                    'email' => 'potsdam@sushi-yana.de',
+                    'manager' => 'Despoina Pappa',
+                    'tax_number' => '046/255/11807'
+                ],
+                'rudow' => [
+                    'name' => 'Sushi Yana GmbH',
+                    'address' => "Flughafenstraße 76\n12049 Berlin",
+                    'email' => 'buero@sushi-yana.de',
+                    'manager' => 'Wesam El-Saadi',
+                    'court' => 'Amtsgericht Charlottenburg',
+                    'register' => 'HRB 233774 B',
+                    'tax_number' => '29/553/32890',
+                    'vat' => 'DE347204498'
+                ],
+                'spandau' => [
+                    'name' => 'Sushi Yana Spandau',
+                    'address' => "Pichelsdorferstraße 120\n13595 Berlin",
+                    'email' => 'spandau@sushi-yana.de',
+                    'manager' => 'Ibrahim Hamade',
+                    'tax_number' => '19/929/00826'
+                ],
+                'tegel' => [
+                    'name' => 'Sushi Yana Tegel',
+                    'address' => "Medebacher Weg 12\n13507 Berlin",
+                    'email' => 'tegel@sushi-yana.de',
+                    'manager' => 'Nagy Varga',
+                    'tax_number' => 'xx/xxx/xxxxx'
+                ],
+                'weissensee' => [
+                    'name' => 'Sushi Yana Weißensee',
+                    'address' => "Liebermannstraße 95\n13088 Berlin",
+                    'email' => 'buero@sushi-yana.de',
+                    'manager' => 'Tolga Cildasi',
+                    'tax_number' => 'xx/xxx/xxxxx'
+                ],
+                'zehlendorf' => [
+                    'name' => 'Sushi Yana Zehlendorf',
+                    'address' => "Berlinerstraße 67\n14169 Berlin",
+                    'email' => 'steglitz@sushi-yana.de',
+                    'manager' => 'Mohamed Berjaoui',
+                    'tax_number' => 'xx/xxx/xxx'
+                ],
+                'FFO' => [
+                    'name' => 'Sushi Yana Frankfurt Oder',
+                    'address' => "Dresdener Platz 9\n15232 Frankfurt (Oder)-Güldendorf",
+                    'email' => 'sushi-yana-ff@outlook.de',
+                    'manager' => 'Fadi Khachab',
+                    'tax_number' => 'xx/xxx/xxx'
+                ]
+            ];
+            $branch_info = $branches_data[$branch] ?? $branches_data['neukoelln'];
+            ob_end_clean();
+            echo json_encode(['status' => 'success', 'branch_info' => $branch_info]);
+            exit;
         }
         throw new Exception('Invalid GET action');
     }
@@ -293,6 +397,162 @@ try {
                     <li data-translate="section3_sub11_li4"><?php echo htmlspecialchars($translated_texts['section3_sub11_li4']); ?></li>
                 </ul>
                 <p data-translate="section3_sub11_p2"><?php echo htmlspecialchars($translated_texts['section3_sub11_p2']); ?></p>
+                <?php
+                $html = ob_get_clean();
+                ob_end_clean();
+                echo $html;
+                exit;
+            } elseif ($page === 'impressum') {
+                $branch = $_POST['branch'] ?? $_SESSION['branch'] ?? 'neukoelln';
+                $branches_data = [
+                    'neukoelln' => [
+                        'name' => 'Sushi Yana Neukölln',
+                        'address' => "Flughafenstraße 76\n12049 Berlin",
+                        'email' => 'neukoelln@sushi-yana.de',
+                        'manager' => 'Hussein Hamid',
+                        'tax_number' => '16/329/04249'
+                    ],
+                    'charlottenburg' => [
+                        'name' => 'Sushi Yana Charlottenburg',
+                        'address' => "Lietzenburger Straße 29\n10789 Berlin",
+                        'email' => 'Charlottenburg@sushi-yana.de',
+                        'manager' => 'Giorgos Mavridis',
+                        'tax_number' => '24/437/02213'
+                    ],
+                    'friedrichshain' => [
+                        'name' => 'Sushi Yana Friedrichshain',
+                        'address' => "Karl-Marx-Allee 140\n10243 Berlin",
+                        'email' => 'sushiyana.friedrichshain@web.de',
+                        'manager' => 'Aydin Irendeli',
+                        'tax_number' => '14/359/02065'
+                    ],
+                    'lichtenrade' => [
+                        'name' => 'Sushi Yana Lichtenrade',
+                        'address' => "Bahnhoffstraße 29\n12305 Berlin",
+                        'email' => 'lichtenrade@sushi-yana.de',
+                        'manager' => 'Pablo Gonzales',
+                        'tax_number' => '2'
+                    ],
+                    'mitte' => [
+                        'name' => 'Sushi Yana Mall of Berlin GmbH',
+                        'address' => "Leipziger Platz 12\n10117 Berlin",
+                        'email' => 'buero@sushi-yana.de',
+                        'manager' => 'Hussein Hamid',
+                        'court' => 'Amtsgericht Charlottenburg',
+                        'register' => 'HRB 235940 B',
+                        'tax_number' => '1130/553/51695'
+                    ],
+                    'moabit' => [
+                        'name' => 'Sushi Yana Moabit',
+                        'address' => "Gotzkowskystraße 26\n10555 Berlin",
+                        'email' => 'moabit@sushi-yana.de',
+                        'manager' => 'Hani El-Jamal',
+                        'tax_number' => '034/275/02211'
+                    ],
+                    'potsdam' => [
+                        'name' => 'Sushi Yana Potsdam',
+                        'address' => "Kastanienallee 17\n14471 Potsdam",
+                        'email' => 'potsdam@sushi-yana.de',
+                        'manager' => 'Despoina Pappa',
+                        'tax_number' => '046/255/11807'
+                    ],
+                    'rudow' => [
+                        'name' => 'Sushi Yana GmbH',
+                        'address' => "Flughafenstraße 76\n12049 Berlin",
+                        'email' => 'buero@sushi-yana.de',
+                        'manager' => 'Wesam El-Saadi',
+                        'court' => 'Amtsgericht Charlottenburg',
+                        'register' => 'HRB 233774 B',
+                        'tax_number' => '29/553/32890',
+                        'vat' => 'DE347204498'
+                    ],
+                    'spandau' => [
+                        'name' => 'Sushi Yana Spandau',
+                        'address' => "Pichelsdorferstraße 120\n13595 Berlin",
+                        'email' => 'spandau@sushi-yana.de',
+                        'manager' => 'Ibrahim Hamade',
+                        'tax_number' => '19/929/00826'
+                    ],
+                    'tegel' => [
+                        'name' => 'Sushi Yana Tegel',
+                        'address' => "Medebacher Weg 12\n13507 Berlin",
+                        'email' => 'tegel@sushi-yana.de',
+                        'manager' => 'Nagy Varga',
+                        'tax_number' => 'xx/xxx/xxxxx'
+                    ],
+                    'weissensee' => [
+                        'name' => 'Sushi Yana Weißensee',
+                        'address' => "Liebermannstraße 95\n13088 Berlin",
+                        'email' => 'buero@sushi-yana.de',
+                        'manager' => 'Tolga Cildasi',
+                        'tax_number' => 'xx/xxx/xxxxx'
+                    ],
+                    'zehlendorf' => [
+                        'name' => 'Sushi Yana Zehlendorf',
+                        'address' => "Berlinerstraße 67\n14169 Berlin",
+                        'email' => 'steglitz@sushi-yana.de',
+                        'manager' => 'Mohamed Berjaoui',
+                        'tax_number' => 'xx/xxx/xxx'
+                    ],
+                    'FFO' => [
+                        'name' => 'Sushi Yana Frankfurt Oder',
+                        'address' => "Dresdener Platz 9\n15232 Frankfurt (Oder)-Güldendorf",
+                        'email' => 'sushi-yana-ff@outlook.de',
+                        'manager' => 'Fadi Khachab',
+                        'tax_number' => 'xx/xxx/xxx'
+                    ]
+                ];
+                $branch_info = $branches_data[$branch] ?? $branches_data['neukoelln'];
+
+                $texts_to_translate = [
+                    'title' => 'Impressum',
+                    'responsible_text' => 'Verantwortlich für die Startseite und die weiteren Informationsseiten (ohne Onlineshops) dieser Webseite ist:',
+                    'name_label' => $branch_info['name'],
+                    'address_label' => $branch_info['address'],
+                    'email_label' => $branch_info['email'],
+                    'manager_label' => 'Geschäftsführer: ' . $branch_info['manager'],
+                    'tax_label' => 'Steuernummer: ' . $branch_info['tax_number'],
+                    'court_label' => isset($branch_info['court']) ? 'Zuständiges Gericht: ' . $branch_info['court'] : '',
+                    'register_label' => isset($branch_info['register']) ? 'Handelsregister: ' . $branch_info['register'] : '',
+                    'vat_label' => isset($branch_info['vat']) ? 'Ust.: ' . $branch_info['vat'] : '',
+                    'franchise_note' => 'Jede Sushi Yana Filiale wird von einem selbstständig tätigen Gewerbetreibenden als Franchisenehmer bewirtschaftet. Dieser organisiert Produktion und Auslieferung seiner Produkte für seinen Betrieb in eigener Verantwortung. Wenn du Fragen oder Anliegen zu deiner Lieferung hast, wende dich bitte an den Verantwortlichen des jeweiligen Betriebes, den du in vorstehender Liste finden kannst.',
+                    'contact_note' => 'Unsere Franchisezentrale erreichen Sie über die Mailadresse',
+                    'contact_email' => 'buero@sushi-yana.de',
+                    'contact_instruction' => 'Bitte nutzen Sie diese ausschließlich für allgemeine Anfragen.'
+                ];
+
+                $translated_texts = [];
+                foreach ($texts_to_translate as $key => $text) {
+                    if ($key === 'address_label') {
+                        $lines = explode("\n", $text);
+                        $translated_lines = translateText($lines, 'de', $lang, $conn);
+                        $translated_texts[$key] = implode("\n", $translated_lines);
+                    } else {
+                        $translated_texts[$key] = translateText($text, 'de', $lang, $conn)[0];
+                    }
+                }
+
+                header('Content-Type: text/html');
+                ob_start();
+                ?>
+                <h1 data-translate="title"><?php echo htmlspecialchars($translated_texts['title']); ?></h1>
+                <p data-translate="responsible_text"><strong><?php echo htmlspecialchars($translated_texts['responsible_text']); ?></strong></p>
+                <p class="address-block" data-translate="name_label"><?php echo htmlspecialchars($translated_texts['name_label']); ?></p>
+                <p class="address-block" data-translate="address_label"><?php echo htmlspecialchars($translated_texts['address_label']); ?></p>
+                <p><a href="mailto:<?php echo htmlspecialchars($branch_info['email']); ?>" class="email-link" data-translate="email_label"><?php echo htmlspecialchars($translated_texts['email_label']); ?></a></p>
+                <p data-translate="manager_label"><?php echo htmlspecialchars($translated_texts['manager_label']); ?></p>
+                <p data-translate="tax_label"><?php echo htmlspecialchars($translated_texts['tax_label']); ?></p>
+                <?php if (!empty($translated_texts['court_label'])): ?>
+                    <p data-translate="court_label"><?php echo htmlspecialchars($translated_texts['court_label']); ?></p>
+                <?php endif; ?>
+                <?php if (!empty($translated_texts['register_label'])): ?>
+                    <p data-translate="register_label"><?php echo htmlspecialchars($translated_texts['register_label']); ?></p>
+                <?php endif; ?>
+                <?php if (!empty($translated_texts['vat_Label'])): ?>
+                    <p data-translate="vat_label"><?php echo htmlspecialchars($translated_texts['vat_label']); ?></p>
+                <?php endif; ?>
+                <p data-translate="franchise_note"><?php echo htmlspecialchars($translated_texts['franchise_note']); ?></p>
+                <p data-translate="contact_note"><?php echo htmlspecialchars($translated_texts['contact_note']); ?> <a href="mailto:<?php echo htmlspecialchars($translated_texts['contact_email']); ?>" class="email-link" data-translate="contact_email"><?php echo htmlspecialchars($translated_texts['contact_email']); ?></a>. <?php echo htmlspecialchars($translated_texts['contact_instruction']); ?></p>
                 <?php
                 $html = ob_get_clean();
                 ob_end_clean();

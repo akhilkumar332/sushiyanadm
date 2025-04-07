@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
             'datenschutz': 'Datenschutz',
             'select_branch': 'Filiale wählen:',
             'select_language': 'Sprache wählen:',
-            'footer_copyright': 'Sushi Yana © All Rights Reserved. 2025',
+            'footer_copyright': 'Sushi Yana © Alle Rechte vorbehalten. 2025',
             'no_items_found': 'Keine Artikel gefunden.',
             'allergens_additives': 'Allergene und Zusatzstoffe',
             'ingredients': 'Zutaten',
@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', function() {
             'unit_price': 'Einzelpreis',
             'subtotal': 'Gesamt',
             'inactivity_timer': 'Inaktivitätstimer: <span id="timer-countdown"></span>',
-            'seconds': 'Sekunden', // Added for timer translation
+            'seconds': 'Sekunden',
             'delete_return': 'Löschen & Zurückgeben',
             'notify_staff': 'Personal benachrichtigen',
             'order_placed': 'Bestellung aufgegeben! Bitte warten Sie, bis ein Mitarbeiter zu Ihnen kommt.',
@@ -94,7 +94,18 @@ document.addEventListener('DOMContentLoaded', function() {
             'order_deleted': 'Bestellung gelöscht',
             'order_complete_error': 'Fehler beim Abschließen: ',
             'order_delete_error': 'Fehler beim Löschen: ',
-            'new_order_received': 'Neue Bestellung #'
+            'new_order_received': 'Neue Bestellung #',
+            'title': 'Impressum',
+            'responsible_text': 'Verantwortlich für die Startseite und die weiteren Informationsseiten (ohne Onlineshops) dieser Webseite ist:',
+            'manager_label': 'Geschäftsführer: %s',
+            'tax_label': 'Steuernummer: %s',
+            'court_label': 'Zuständiges Gericht: %s',
+            'register_label': 'Handelsregister: %s',
+            'vat_label': 'Ust.: %s',
+            'franchise_note': 'Jede Sushi Yana Filiale wird von einem selbstständig tätigen Gewerbetreibenden als Franchisenehmer bewirtschaftet. Dieser organisiert Produktion und Auslieferung seiner Produkte für seinen Betrieb in eigener Verantwortung. Wenn du Fragen oder Anliegen zu deiner Lieferung hast, wende dich bitte an den Verantwortlichen des jeweiligen Betriebes, den du in vorstehender Liste finden kannst.',
+            'contact_note': 'Unsere Franchisezentrale erreichen Sie über die Mailadresse',
+            'contact_email': 'buero@sushi-yana.de',
+            'contact_instruction': 'Bitte nutzen Sie diese ausschließlich für allgemeine Anfragen.'
         },
         'en': {
             'impressum': 'Imprint',
@@ -154,7 +165,7 @@ document.addEventListener('DOMContentLoaded', function() {
             'unit_price': 'Unit Price',
             'subtotal': 'Subtotal',
             'inactivity_timer': 'Inactivity Timer: <span id="timer-countdown"></span>',
-            'seconds': 'Seconds', // Added for timer translation
+            'seconds': 'Seconds',
             'delete_return': 'Delete & Return',
             'notify_staff': 'Notify Staff',
             'order_placed': 'Order placed! Please wait for a staff member to assist you.',
@@ -183,7 +194,18 @@ document.addEventListener('DOMContentLoaded', function() {
             'order_deleted': 'Order deleted',
             'order_complete_error': 'Error completing: ',
             'order_delete_error': 'Error deleting: ',
-            'new_order_received': 'New order #'
+            'new_order_received': 'New order #',
+            'title': 'Imprint',
+            'responsible_text': 'Responsible for the homepage and the additional information pages (excluding online shops) of this website is:',
+            'manager_label': 'Manager: %s',
+            'tax_label': 'Tax Number: %s',
+            'court_label': 'Court: %s',
+            'register_label': 'Register: %s',
+            'vat_label': 'VAT: %s',
+            'franchise_note': 'Each Sushi Yana branch is operated by an independent franchisee. They are responsible for the production and delivery of their products for their own business. If you have any questions or concerns regarding your delivery, please contact the responsible person of the respective branch, whom you can find in the list above.',
+            'contact_note': 'You can reach our franchise headquarters via the email address',
+            'contact_email': 'buero@sushi-yana.de',
+            'contact_instruction': 'Please use this exclusively for general inquiries.'
         },
         'fr': {
             'impressum': 'Mentions légales',
@@ -243,7 +265,7 @@ document.addEventListener('DOMContentLoaded', function() {
             'unit_price': 'Prix unitaire',
             'subtotal': 'Sous-total',
             'inactivity_timer': 'Minuteur d’inactivité : <span id="timer-countdown"></span>',
-            'seconds': 'Secondes', // Added for timer translation
+            'seconds': 'Secondes',
             'delete_return': 'Supprimer et retourner',
             'notify_staff': 'Notifier le personnel',
             'order_placed': 'Commande passée ! Veuillez attendre qu’un membre du personnel vienne vous aider.',
@@ -272,7 +294,18 @@ document.addEventListener('DOMContentLoaded', function() {
             'order_deleted': 'Commande supprimée',
             'order_complete_error': 'Erreur de finalisation : ',
             'order_delete_error': 'Erreur de suppression : ',
-            'new_order_received': 'Nouvelle commande #'
+            'new_order_received': 'Nouvelle commande #',
+            'title': 'Mentions légales',
+            'responsible_text': 'Responsable de la page d’accueil et des pages d’information supplémentaires (hors boutiques en ligne) de ce site web est :',
+            'manager_label': 'Manager : %s',
+            'tax_label': 'Numéro fiscal : %s',
+            'court_label': 'Tribunal compétent : %s',
+            'register_label': 'Registre du commerce : %s',
+            'vat_label': 'TVA : %s',
+            'franchise_note': 'Chaque succursale Sushi Yana est gérée par un franchisé indépendant. Il est responsable de la production et de la livraison de ses produits pour son propre établissement. Si vous avez des questions ou des préoccupations concernant votre livraison, veuillez contacter le responsable de la succursale concernée, que vous pouvez trouver dans la liste ci-dessus.',
+            'contact_note': 'Vous pouvez joindre notre siège de franchise via l’adresse email',
+            'contact_email': 'buero@sushi-yana.de',
+            'contact_instruction': 'Veuillez utiliser cette adresse uniquement pour des demandes générales.'
         },
         'pl': {
             'impressum': 'Impressum',
@@ -332,7 +365,7 @@ document.addEventListener('DOMContentLoaded', function() {
             'unit_price': 'Cena jednostkowa',
             'subtotal': 'Podsuma',
             'inactivity_timer': 'Timer bezczynności: <span id="timer-countdown"></span>',
-            'seconds': 'Sekundy', // Added for timer translation
+            'seconds': 'Sekundy',
             'delete_return': 'Usuń i wróć',
             'notify_staff': 'Powiadom personel',
             'order_placed': 'Zamówienie złożone! Proszę czekać na pomoc pracownika.',
@@ -361,7 +394,18 @@ document.addEventListener('DOMContentLoaded', function() {
             'order_deleted': 'Zamówienie usunięte',
             'order_complete_error': 'Błąd zakończenia: ',
             'order_delete_error': 'Błąd usuwania: ',
-            'new_order_received': 'Nowe zamówienie #'
+            'new_order_received': 'Nowe zamówienie #',
+            'title': 'Impressum',
+            'responsible_text': 'Odpowiedzialnym za stronę główną oraz dodatkowe strony informacyjne (z wyłączeniem sklepów internetowych) tej witryny jest:',
+            'manager_label': 'Manager: %s',
+            'tax_label': 'Numer podatkowy: %s',
+            'court_label': 'Sąd właściwy: %s',
+            'register_label': 'Rejestr handlowy: %s',
+            'vat_label': 'VAT: %s',
+            'franchise_note': 'Każdy oddział Sushi Yana jest prowadzony przez niezależnego franczyzobiorcę. Odpowiada on za produkcję i dostawę swoich produktów dla swojego przedsiębiorstwa. Jeśli masz pytania lub wątpliwości dotyczące dostawy, skontaktuj się z odpowiedzialną osobą danego oddziału, którą znajdziesz na powyższej liście.',
+            'contact_note': 'Naszą centralę franczyzową można skontaktować pod adresem email',
+            'contact_email': 'buero@sushi-yana.de',
+            'contact_instruction': 'Prosimy używać tego wyłącznie do ogólnych zapytań.'
         },
         'it': {
             'impressum': 'Impressum',
@@ -421,7 +465,7 @@ document.addEventListener('DOMContentLoaded', function() {
             'unit_price': 'Prezzo unitario',
             'subtotal': 'Subtotale',
             'inactivity_timer': 'Timer di inattività: <span id="timer-countdown"></span>',
-            'seconds': 'Secondi', // Added for timer translation
+            'seconds': 'Secondi',
             'delete_return': 'Elimina e torna indietro',
             'notify_staff': 'Notifica il personale',
             'order_placed': 'Ordine effettuato! Attendi che un membro dello staff ti assista.',
@@ -450,7 +494,18 @@ document.addEventListener('DOMContentLoaded', function() {
             'order_deleted': 'Ordine eliminato',
             'order_complete_error': 'Errore nel completamento: ',
             'order_delete_error': 'Errore nell’eliminazione: ',
-            'new_order_received': 'Nuovo ordine #'
+            'new_order_received': 'Nuovo ordine #',
+            'title': 'Impressum',
+            'responsible_text': 'Responsabile della homepage e delle ulteriori pagine informative (esclusi i negozi online) di questo sito web è:',
+            'manager_label': 'Manager: %s',
+            'tax_label': 'Numero fiscale: %s',
+            'court_label': 'Tribunale competente: %s',
+            'register_label': 'Registro delle imprese: %s',
+            'vat_label': 'IVA: %s',
+            'franchise_note': 'Ogni filiale Sushi Yana è gestita da un franchising indipendente. Questi è responsabile della produzione e della consegna dei propri prodotti per la propria attività. Se hai domande o problemi relativi alla tua consegna, contatta il responsabile della filiale corrispondente, che puoi trovare nell’elenco sopra.',
+            'contact_note': 'Puoi raggiungere la nostra sede centrale del franchising tramite l’indirizzo email',
+            'contact_email': 'buero@sushi-yana.de',
+            'contact_instruction': 'Si prega di utilizzare questo esclusivamente per richieste generali.'
         },
         'ru': {
             'impressum': 'Импрессум',
@@ -510,7 +565,7 @@ document.addEventListener('DOMContentLoaded', function() {
             'unit_price': 'Цена за единицу',
             'subtotal': 'Подытог',
             'inactivity_timer': 'Таймер бездействия: <span id="timer-countdown"></span>',
-            'seconds': 'Секунд', // Added for timer translation
+            'seconds': 'Секунд',
             'delete_return': 'Удалить и вернуться',
             'notify_staff': 'Уведомить персонал',
             'order_placed': 'Заказ размещён! Пожалуйста, дождитесь сотрудника.',
@@ -539,7 +594,18 @@ document.addEventListener('DOMContentLoaded', function() {
             'order_deleted': 'Заказ удалён',
             'order_complete_error': 'Ошибка завершения: ',
             'order_delete_error': 'Ошибка удаления: ',
-            'new_order_received': 'Новый заказ #'
+            'new_order_received': 'Новый заказ #',
+            'title': 'Импрессум',
+            'responsible_text': 'Ответственным за главную страницу и дополнительные информационные страницы (кроме интернет-магазинов) этого сайта является:',
+            'manager_label': 'Менеджер: %s',
+            'tax_label': 'Налоговый номер: %s',
+            'court_label': 'Компетентный суд: %s',
+            'register_label': 'Торговый реестр: %s',
+            'vat_label': 'НДС: %s',
+            'franchise_note': 'Каждый филиал Sushi Yana управляется независимым франчайзи. Он отвечает за производство и доставку своих продуктов для своего бизнеса. Если у вас есть вопросы или проблемы с доставкой, пожалуйста, свяжитесь с ответственным лицом соответствующего филиала, которого вы можете найти в списке выше.',
+            'contact_note': 'Наш центральный офис франшизы можно связаться по адресу электронной почты',
+            'contact_email': 'buero@sushi-yana.de',
+            'contact_instruction': 'Пожалуйста, используйте это только для общих запросов.'
         },
         'tr': {
             'impressum': 'Künye',
@@ -599,7 +665,7 @@ document.addEventListener('DOMContentLoaded', function() {
             'unit_price': 'Birim Fiyat',
             'subtotal': 'Ara Toplam',
             'inactivity_timer': 'Hareketsizlik Zamanlayıcısı: <span id="timer-countdown"></span>',
-            'seconds': 'Saniye', // Added for timer translation
+            'seconds': 'Saniye',
             'delete_return': 'Sil ve Geri Dön',
             'notify_staff': 'Personeli Bilgilendir',
             'order_placed': 'Sipariş verildi! Lütfen bir personelin size yardımcı olmasını bekleyin.',
@@ -628,7 +694,18 @@ document.addEventListener('DOMContentLoaded', function() {
             'order_deleted': 'Sipariş silindi',
             'order_complete_error': 'Tamamlama hatası: ',
             'order_delete_error': 'Silme hatası: ',
-            'new_order_received': 'Yeni sipariş #'
+            'new_order_received': 'Yeni sipariş #',
+            'title': 'Künye',
+            'responsible_text': 'Bu web sitesinin ana sayfası ve diğer bilgi sayfalarından (çevrimiçi mağazalar hariç) sorumlu olan:',
+            'manager_label': 'Yönetici: %s',
+            'tax_label': 'Vergi Numarası: %s',
+            'court_label': 'Yetkili Mahkeme: %s',
+            'register_label': 'Ticaret Sicili: %s',
+            'vat_label': 'KDV: %s',
+            'franchise_note': 'Her Sushi Yana şubesi bağımsız bir franchisee tarafından işletilir. Bu kişi, kendi işletmesi için ürünlerin üretiminden ve teslimatından sorumludur. Teslimatla ilgili sorularınız veya endişeleriniz varsa, lütfen yukarıdaki listede bulabileceğiniz ilgili şubenin sorumlusuyla iletişime geçin.',
+            'contact_note': 'Franchise merkezimize şu e-posta adresinden ulaşabilirsiniz',
+            'contact_email': 'buero@sushi-yana.de',
+            'contact_instruction': 'Lütfen bunu yalnızca genel sorular için kullanın.'
         },
         'es': {
             'impressum': 'Aviso legal',
@@ -688,7 +765,7 @@ document.addEventListener('DOMContentLoaded', function() {
             'unit_price': 'Precio unitario',
             'subtotal': 'Subtotal',
             'inactivity_timer': 'Temporizador de inactividad: <span id="timer-countdown"></span>',
-            'seconds': 'Segundos', // Added for timer translation
+            'seconds': 'Segundos',
             'delete_return': 'Eliminar y regresar',
             'notify_staff': 'Notificar al personal',
             'order_placed': '¡Pedido realizado! Por favor, espera a que un miembro del personal te asista.',
@@ -717,7 +794,18 @@ document.addEventListener('DOMContentLoaded', function() {
             'order_deleted': 'Pedido eliminado',
             'order_complete_error': 'Error al completar: ',
             'order_delete_error': 'Error al eliminar: ',
-            'new_order_received': 'Nuevo pedido #'
+            'new_order_received': 'Nuevo pedido #',
+            'title': 'Aviso legal',
+            'responsible_text': 'Responsable de la página de inicio y de las páginas de información adicionales (excluyendo las tiendas en línea) de este sitio web es:',
+            'manager_label': 'Gerente: %s',
+            'tax_label': 'Número fiscal: %s',
+            'court_label': 'Tribunal competente: %s',
+            'register_label': 'Registro mercantil: %s',
+            'vat_label': 'IVA: %s',
+            'franchise_note': 'Cada sucursal de Sushi Yana es operada por un franquiciado independiente. Este es responsable de la producción y entrega de sus productos para su propio negocio. Si tienes preguntas o inquietudes sobre tu entrega, por favor contacta al responsable de la sucursal correspondiente, que puedes encontrar en la lista anterior.',
+            'contact_note': 'Puedes contactar con nuestra central de franquicias a través de la dirección de correo electrónico',
+            'contact_email': 'buero@sushi-yana.de',
+            'contact_instruction': 'Por favor, utiliza esto exclusivamente para consultas generales.'
         },
         'ar': {
             'impressum': 'بيانات الشركة',
@@ -777,7 +865,7 @@ document.addEventListener('DOMContentLoaded', function() {
             'unit_price': 'سعر الوحدة',
             'subtotal': 'المجموع الفرعي',
             'inactivity_timer': 'مؤقت الخمول: <span id="timer-countdown"></span>',
-            'seconds': 'ثوانٍ', // Added for timer translation
+            'seconds': 'ثوانٍ',
             'delete_return': 'حذف والعودة',
             'notify_staff': 'إعلام الموظفين',
             'order_placed': 'تم تقديم الطلب! يرجى الانتظار حتى يساعدك أحد الموظفين.',
@@ -806,7 +894,18 @@ document.addEventListener('DOMContentLoaded', function() {
             'order_deleted': 'تم حذف الطلب',
             'order_complete_error': 'خطأ أثناء الإكمال: ',
             'order_delete_error': 'خطأ أثناء الحذف: ',
-            'new_order_received': 'طلب جديد #'
+            'new_order_received': 'طلب جديد #',
+            'title': 'بيانات الشركة',
+            'responsible_text': 'المسؤول عن الصفحة الرئيسية وصفحات المعلومات الإضافية (باستثناء المتاجر عبر الإنترنت) لهذا الموقع هو:',
+            'manager_label': 'المدير: %s',
+            'tax_label': 'رقم الضريبة: %s',
+            'court_label': 'المحكمة المختصة: %s',
+            'register_label': 'السجل التجاري: %s',
+            'vat_label': 'ضريبة القيمة المضافة: %s',
+            'franchise_note': 'كل فرع من فروع سوشي يانا يديره صاحب امتياز مستقل. وهو مسؤول عن إنتاج وتسليم منتجاته لأعماله الخاصة. إذا كانت لديك أسئلة أو مخاوف بشأن تسليمك، يرجى التواصل مع المسؤول عن الفرع المعني، والذي يمكنك العثور عليه في القائمة أعلاه.',
+            'contact_note': 'يمكنك التواصل مع مقر الامتياز الخاص بنا عبر عنوان البريد الإلكتروني',
+            'contact_email': 'buero@sushi-yana.de',
+            'contact_instruction': 'يرجى استخدام هذا فقط للاستفسارات العامة.'
         }
     };
 
@@ -922,11 +1021,51 @@ document.addEventListener('DOMContentLoaded', function() {
             $.ajax({
                 url: BASE_PATH + 'config/api.php',
                 type: 'POST',
-                dataType: 'html', // Expect HTML response
+                dataType: 'html',
                 data: { action: 'get_translated_page', page: 'datenschutz', lang: lang },
                 success: function(data) {
                     $content.html(data);
-                    updateStaticText(lang); // Update any additional static text
+                    updateStaticText(lang);
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX error:', status, error);
+                    $content.html('<p>Error loading content.</p>');
+                }
+            });
+        } else if (page === 'impressum') {
+            const $content = $('.legal-content');
+            const branch = branchDropdown && branchDropdown.value ? branchDropdown.value : 'neukoelln';
+            $content.html('<div class="loading-spinner" style="display: block;"></div>');
+            $.ajax({
+                url: BASE_PATH + 'config/api.php',
+                type: 'GET',
+                dataType: 'json',
+                data: { action: 'get_branch_impressum', branch: branch, lang: lang },
+                success: function(response) {
+                    if (response.status === 'success') {
+                        const branchInfo = response.branch_info;
+                        // Helper function to safely get translation with fallback
+                        const t = (key, fallback = '') => translations[lang] && translations[lang][key] ? translations[lang][key] : fallback;
+                        // Construct HTML with proper substitution and formatting
+                        const html = `
+                            <h1 data-translate="title">${t('title', 'Impressum')}</h1>
+                            <p data-translate="responsible_text"><strong>${t('responsible_text', 'Responsible for this website:')}</strong></p>
+                            <p class="address-block">${branchInfo.name || 'N/A'}</p>
+                            <p class="address-block">${branchInfo.address ? branchInfo.address.replace(/\n/g, '<br>') : 'N/A'}</p>
+                            <p><a href="mailto:${branchInfo.email || ''}" class="email-link">${branchInfo.email || 'N/A'}</a></p>
+                            <p>${t('manager_label', 'Manager: %s').replace('%s', branchInfo.manager || 'N/A')}</p>
+                            <p>${t('tax_label', 'Tax Number: %s').replace('%s', branchInfo.tax_number || 'N/A')}</p>
+                            ${branchInfo.court ? `<p>${t('court_label', 'Court: %s').replace('%s', branchInfo.court)}</p>` : ''}
+                            ${branchInfo.register ? `<p>${t('register_label', 'Register: %s').replace('%s', branchInfo.register)}</p>` : ''}
+                            ${branchInfo.vat ? `<p>${t('vat_label', 'VAT: %s').replace('%s', branchInfo.vat)}</p>` : ''}
+                            <p data-translate="franchise_note">${t('franchise_note', 'Franchise note unavailable')}</p>
+                            <p data-translate="contact_note">${t('contact_note', 'Contact our headquarters at')} <a href="mailto:${t('contact_email', 'buero@sushi-yana.de')}" class="email-link">${t('contact_email', 'buero@sushi-yana.de')}</a>. ${t('contact_instruction', 'For general inquiries only')}</p>
+                        `;
+                        $content.html(html);
+                        updateStaticText(lang); // Update any static translations
+                    } else {
+                        $content.html('<p>Error loading branch data.</p>');
+                    }
                 },
                 error: function(xhr, status, error) {
                     console.error('AJAX error:', status, error);
@@ -956,7 +1095,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 success: function(response) {
                     if (response.status === 'success') {
                         currentLang = newLang;
-                        document.body.dataset.lang = newLang; // Sync body data attribute
+                        document.body.dataset.lang = newLang;
                         const currentUrl = new URL(window.location.href);
                         currentUrl.searchParams.set('lang', newLang);
                         window.history.pushState({}, document.title, currentUrl.toString());
@@ -985,8 +1124,29 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
         });
+    } if (branchDropdown) {
+        $(branchDropdown).off('change').on('change', function() {
+            const newBranch = this.value;
+            $.ajax({
+                url: BASE_PATH + 'config/api.php',
+                type: 'POST',
+                dataType: 'json',
+                data: { action: 'set_branch', branch: newBranch },
+                success: function(response) {
+                    if (response.status === 'success') {
+                        refreshContent(newBranch, currentLang);
+                        if (typeof showToast === 'function') {
+                            showToast('branch_changed', false, newBranch);
+                        }
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX error setting branch:', status, error);
+                }
+            });
+        });
     } else {
-        console.warn('Language dropdown not found on this page');
+        console.warn('Branch dropdown not found on this page');
     }
 
     // Handle back/forward navigation
@@ -995,8 +1155,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const lang = url.searchParams.get('lang') || currentLang;
         const branch = branchDropdown && branchDropdown.value ? branchDropdown.value : 'neukoelln';
         currentLang = lang;
-        document.body.dataset.lang = lang; // Sync body data attribute
-        if (languageDropdown) languageDropdown.value = lang; // Sync dropdown
+        document.body.dataset.lang = lang;
+        if (languageDropdown) languageDropdown.value = lang;
         refreshContent(branch, lang);
     });
 
