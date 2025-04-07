@@ -916,6 +916,23 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         } else if (['cart', 'final_order', 'sushi_vegetarisch'].includes(page)) {
             updateStaticText(lang);
+        } else if (page === 'datenschutz') {
+            const $content = $('.legal-content');
+            $content.html('<div class="loading-spinner" style="display: block;"></div>');
+            $.ajax({
+                url: BASE_PATH + 'config/api.php',
+                type: 'POST',
+                dataType: 'html', // Expect HTML response
+                data: { action: 'get_translated_page', page: 'datenschutz', lang: lang },
+                success: function(data) {
+                    $content.html(data);
+                    updateStaticText(lang); // Update any additional static text
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX error:', status, error);
+                    $content.html('<p>Error loading content.</p>');
+                }
+            });
         }
     }
 
