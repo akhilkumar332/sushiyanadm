@@ -52,14 +52,14 @@ $title = $translated_texts[0] ?? $categories[$category]['title'];
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <title data-translate="warmekueche_menu_page_title">Digitale Speisekarte - <?php echo htmlspecialchars($title); ?></title>
-    <link rel="stylesheet" href="<?php echo ASSETS_CSS; ?>styles.css">
-    <link rel="stylesheet" href="<?php echo ASSETS_CSS; ?>style-menu.css">
+    <link rel="stylesheet" href="<?php echo addCacheBuster(ASSETS_CSS . 'styles.css'); ?>">
+    <link rel="stylesheet" href="<?php echo addCacheBuster(ASSETS_CSS . 'style-menu.css'); ?>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-    <script src="<?php echo ASSETS_SCRIPTS; ?>translate.js"></script>
-    <script src="<?php echo ASSETS_SCRIPTS; ?>skripte.js"></script>
+    <script src="<?php echo addCacheBuster(ASSETS_SCRIPTS . 'translate.js'); ?>"></script>
+    <script src="<?php echo addCacheBuster(ASSETS_SCRIPTS . 'skripte.js'); ?>"></script>
 </head>
 <body class="artikelliste" data-page="warmekueche_menu" data-base-path="<?php echo BASE_PATH; ?>" data-session-cart="<?php echo htmlspecialchars(json_encode($_SESSION['cart'])); ?>" data-table="<?php echo htmlspecialchars($table); ?>" data-lang="<?php echo htmlspecialchars($current_lang); ?>">
     <header>

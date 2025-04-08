@@ -184,4 +184,10 @@ function translateText($texts, $sourceLang, $targetLang, $conn) {
 
     return $translated_texts;
 }
+include_once __DIR__ . '/cache-buster.php';
+
+function addCacheBuster($url) {
+    $cacheBusterVersion = $GLOBALS['cacheBusterVersion'];
+    return $url . '?v=' . htmlspecialchars($cacheBusterVersion);
+}
 ?>

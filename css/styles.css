@@ -810,6 +810,8 @@ body.navigation .grid-item:focus {
     position: relative;
     min-width: 0;
     word-wrap: break-word;
+    border-color: #6A2377;
+    border-style: solid;
 }
 
 .order-card h3 {
