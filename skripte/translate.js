@@ -1149,17 +1149,6 @@ document.addEventListener('DOMContentLoaded', function() {
         console.warn('Branch dropdown not found on this page');
     }
 
-    // Handle back/forward navigation
-    window.addEventListener('popstate', function(event) {
-        const url = new URL(window.location.href);
-        const lang = url.searchParams.get('lang') || currentLang;
-        const branch = branchDropdown && branchDropdown.value ? branchDropdown.value : 'neukoelln';
-        currentLang = lang;
-        document.body.dataset.lang = lang;
-        if (languageDropdown) languageDropdown.value = lang;
-        refreshContent(branch, lang);
-    });
-
     // Initial setup: Use session language and sync everything
     const branch = branchDropdown && branchDropdown.value ? branchDropdown.value : 'neukoelln';
     updateStaticText(currentLang);
