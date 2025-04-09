@@ -1050,10 +1050,10 @@ document.addEventListener('DOMContentLoaded', function() {
                         const html = `
                             <h1 data-translate="title">${t('title', 'Impressum')}</h1>
                             <p data-translate="responsible_text"><strong>${t('responsible_text', 'Responsible for this website:')}</strong></p>
-                            <p class="address-block">${branchInfo.name || 'N/A'}</p>
-                            <p class="address-block">${branchInfo.address ? branchInfo.address.replace(/\n/g, '<br>') : 'N/A'}</p>
-                            <p><a href="mailto:${branchInfo.email || ''}" class="email-link">${branchInfo.email || 'N/A'}</a></p>
-                            <p>${t('manager_label', 'Manager: %s').replace('%s', branchInfo.manager || 'N/A')}</p>
+                            <span class="address-block">${branchInfo.name || 'N/A'}</span></br>
+                            <span class="address-block">${branchInfo.address ? branchInfo.address.replace(/\n/g, '<br>') : 'N/A'}</span></br>
+                            <span><a href="mailto:${branchInfo.email || ''}" class="email-link">${branchInfo.email || 'N/A'}</a></span></br>
+                            <span>${t('manager_label', 'Manager: %s').replace('%s', branchInfo.manager || 'N/A')}</span></br>
                             <p>${t('tax_label', 'Tax Number: %s').replace('%s', branchInfo.tax_number || 'N/A')}</p>
                             ${branchInfo.court ? `<p>${t('court_label', 'Court: %s').replace('%s', branchInfo.court)}</p>` : ''}
                             ${branchInfo.register ? `<p>${t('register_label', 'Register: %s').replace('%s', branchInfo.register)}</p>` : ''}

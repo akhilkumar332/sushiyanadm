@@ -537,10 +537,10 @@ try {
                 ?>
                 <h1 data-translate="title"><?php echo htmlspecialchars($translated_texts['title']); ?></h1>
                 <p data-translate="responsible_text"><strong><?php echo htmlspecialchars($translated_texts['responsible_text']); ?></strong></p>
-                <p class="address-block" data-translate="name_label"><?php echo htmlspecialchars($translated_texts['name_label']); ?></p>
-                <p class="address-block" data-translate="address_label"><?php echo htmlspecialchars($translated_texts['address_label']); ?></p>
-                <p><a href="mailto:<?php echo htmlspecialchars($branch_info['email']); ?>" class="email-link" data-translate="email_label"><?php echo htmlspecialchars($translated_texts['email_label']); ?></a></p>
-                <p data-translate="manager_label"><?php echo htmlspecialchars($translated_texts['manager_label']); ?></p>
+                <span class="address-block" data-translate="name_label"><?php echo htmlspecialchars($translated_texts['name_label']); ?></pspan>
+                <span class="address-block" data-translate="address_label"><?php echo htmlspecialchars($translated_texts['address_label']); ?></span>
+                <span><a href="mailto:<?php echo htmlspecialchars($branch_info['email']); ?>" class="email-link" data-translate="email_label"><?php echo htmlspecialchars($translated_texts['email_label']); ?></a></span>
+                <span data-translate="manager_label"><?php echo htmlspecialchars($translated_texts['manager_label']); ?></span>
                 <p data-translate="tax_label"><?php echo htmlspecialchars($translated_texts['tax_label']); ?></p>
                 <?php if (!empty($translated_texts['court_label'])): ?>
                     <p data-translate="court_label"><?php echo htmlspecialchars($translated_texts['court_label']); ?></p>
