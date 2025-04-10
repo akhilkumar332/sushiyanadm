@@ -1,7 +1,3 @@
-<?php
-require_once $_SERVER['DOCUMENT_ROOT'] . '/config/config.php';
-?>
-
 <footer>
     <div class="footer-content">
         <div class="footer-links">

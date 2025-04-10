@@ -33,6 +33,9 @@ $_SESSION['language'] = $current_lang; // Sync session with current language
     $data_translate = 'sushi';
     include_once $_SERVER['DOCUMENT_ROOT'] . '/config/page-title.php';
     ?>
+    <div class="timer" id="inactivity-timer" aria-live="polite" data-translate="inactivity_timer">
+        Inaktivitätstimer: <span id="timer-countdown"></span>
+    </div>
     <div class="loading-spinner" id="loading-spinner"></div>
     <div class="grid-container" id="menu-grid" aria-busy="true">
         <div class="skeleton-item"><div class="skeleton-image"></div><div class="skeleton-details"><div class="skeleton-text"></div></div></div>

@@ -267,7 +267,7 @@ try {
             $lang = $_POST['lang'] ?? $_SESSION['language'] ?? 'de';
             if ($page === 'datenschutz') {
                 $texts_to_translate = [
-                    'title' => 'Datenschutzerklärung',
+                    'dtitle' => 'Datenschutzerklärung',
                     'section1' => '1. Datenschutz auf einen Blick',
                     'section1_sub1' => 'Allgemeine Hinweise',
                     'section1_sub1_p1' => 'Die folgenden Hinweise geben einen einfachen Überblick darüber, was mit Ihren personenbezogenen Daten passiert, wenn Sie diese Website besuchen. Personenbezogene Daten sind alle Daten, mit denen Sie persönlich identifiziert werden können. Ausführliche Informationen zum Thema Datenschutz entnehmen Sie unserer unter diesem Text aufgeführten Datenschutzerklärung.',
@@ -336,7 +336,7 @@ try {
                 header('Content-Type: text/html');
                 ob_start();
                 ?>
-                <h1 data-translate="title"><?php echo htmlspecialchars($translated_texts['title']); ?></h1>
+                <h1 data-translate="dtitle"><?php echo htmlspecialchars($translated_texts['dtitle']); ?></h1>
                 <h2 data-translate="section1"><?php echo htmlspecialchars($translated_texts['section1']); ?></h2>
                 <h3 data-translate="section1_sub1"><?php echo htmlspecialchars($translated_texts['section1_sub1']); ?></h3>
                 <p data-translate="section1_sub1_p1"><?php echo htmlspecialchars($translated_texts['section1_sub1_p1']); ?></p>

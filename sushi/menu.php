@@ -61,6 +61,9 @@ $title = translateText([$categories[$category]['title']], 'de', $current_lang, $
     $data_translate = 'page_title';
     include_once $_SERVER['DOCUMENT_ROOT'] . '/config/page-title.php'; 
     ?>
+    <div class="timer" id="inactivity-timer" aria-live="polite" data-translate="inactivity_timer">
+        Inaktivitätstimer: <span id="timer-countdown"></span>
+    </div>
     <div class="content">
         <h1 data-translate="<?php echo htmlspecialchars($title_key); ?>"><?php echo htmlspecialchars($title); ?></h1>
         <?php

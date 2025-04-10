@@ -98,6 +98,9 @@ $_SESSION['language'] = $lang; // Sync session with URL param if provided
                         <span data-translate="total_amount">Gesamtbetrag</span>
                         <span class="total-amount"><?php echo number_format($total, 2, ',', '.'); ?> €</span>
                     </div>
+                    <div class="timer" id="inactivity-timer" aria-live="polite" data-translate="inactivity_timer">
+                        Inaktivitätstimer: <span id="timer-countdown"></span>
+                    </div>
                 <?php endif; ?>
             </div>
             <?php if (!empty($_SESSION['cart'])): ?>

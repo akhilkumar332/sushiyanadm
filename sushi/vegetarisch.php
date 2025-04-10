@@ -57,6 +57,9 @@ foreach ($categories as $table => $data) {
     $data_translate = 'page_title';
     include_once $_SERVER['DOCUMENT_ROOT'] . '/config/page-title.php'; 
     ?>
+    <div class="timer" id="inactivity-timer" aria-live="polite" data-translate="inactivity_timer">
+        Inaktivitätstimer: <span id="timer-countdown"></span>
+    </div>
     <div class="content">
         <?php
         foreach ($translated_categories as $table => $data) {

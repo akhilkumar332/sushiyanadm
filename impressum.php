@@ -52,6 +52,9 @@ $current_branch = $_SESSION['branch'] ?? 'neukoelln';
     $data_translate = 'page_title';
     include_once $_SERVER['DOCUMENT_ROOT'] . '/config/page-title.php'; 
     ?>
+    <div class="timer" id="inactivity-timer" aria-live="polite" data-translate="inactivity_timer">
+        Inaktivitätstimer: <span id="timer-countdown"></span>
+    </div>
     <main>
         <div class="content legal-content">
             <!-- Content will be populated by translate.js -->
