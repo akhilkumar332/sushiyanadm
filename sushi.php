@@ -62,7 +62,7 @@ $_SESSION['language'] = $current_lang; // Sync session with current language
                 ['href' => MENU_SUSHI . '?category=nigiris', 'img' => ASSETS_IMAGES . 'sushi/Nigiris_Head.jpg', 'alt' => 'Nigiris', 'text' => 'Nigiris', 'key' => 'nigiris'],
                 ['href' => MENU_SUSHI . '?category=specialrolls', 'img' => ASSETS_IMAGES . 'sushi/special.jpg', 'alt' => 'Special Rolls', 'text' => 'Special Rolls', 'key' => 'special_rolls'],
                 ['href' => MENU_SUSHI . '?category=temaki', 'img' => ASSETS_IMAGES . 'sushi/temaki.jpg', 'alt' => 'Temaki', 'text' => 'Temaki', 'key' => 'temaki'],
-                ['href' => URL_SUSHI_VEGETARISCH, 'img' => ASSETS_IMAGES . 'sushi/Maki_Wakame.jpg', 'alt' => 'Vegetarisch', 'text' => 'Vegetarisch', 'key' => 'vegetarian'],
+                ['href' => URL_SUSHI_VEGETARISCH, 'img' => ASSETS_IMAGES . 'sushi/Maki_Wakame.jpg', 'alt' => 'Vegetarisches Sushi', 'text' => 'Vegetarisches Sushi', 'key' => 'vegetarian'],
             ];
             $texts_to_translate = [];
             foreach ($sushi_items as $item) {
