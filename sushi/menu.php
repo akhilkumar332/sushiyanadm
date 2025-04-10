@@ -56,6 +56,11 @@ $title = translateText([$categories[$category]['title']], 'de', $current_lang, $
     <header>
         <a href="<?php echo URL_HOME . '?lang=' . htmlspecialchars($current_lang); ?>"><img src="<?php echo ASSETS_IMAGES; ?>logo.webp" alt="Restaurant Logo" class="logo"></a>
     </header>
+    <?php 
+    $page_title = 'Speisekarte';
+    $data_translate = 'page_title';
+    include_once $_SERVER['DOCUMENT_ROOT'] . '/config/page-title.php'; 
+    ?>
     <div class="content">
         <h1 data-translate="<?php echo htmlspecialchars($title_key); ?>"><?php echo htmlspecialchars($title); ?></h1>
         <?php

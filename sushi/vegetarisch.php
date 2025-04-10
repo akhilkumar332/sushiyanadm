@@ -52,6 +52,11 @@ foreach ($categories as $table => $data) {
     <header>
         <a href="<?php echo URL_HOME . '?lang=' . htmlspecialchars($current_lang); ?>"><img src="<?php echo ASSETS_IMAGES; ?>logo.webp" alt="Restaurant Logo" class="logo"></a>
     </header>
+    <?php 
+    $page_title = 'Speisekarte';
+    $data_translate = 'page_title';
+    include_once $_SERVER['DOCUMENT_ROOT'] . '/config/page-title.php'; 
+    ?>
     <div class="content">
         <?php
         foreach ($translated_categories as $table => $data) {

@@ -121,6 +121,11 @@ foreach ($texts_to_translate as $key => $text) {
     <header>
         <a href="<?php echo URL_HOME . '?lang=' . htmlspecialchars($current_lang); ?>"><img src="<?php echo ASSETS_IMAGES; ?>logo.webp" alt="Restaurant Logo" class="logo"></a>
     </header>
+    <?php 
+    $page_title = 'Speisekarte';
+    $data_translate = 'page_title';
+    include_once $_SERVER['DOCUMENT_ROOT'] . '/config/page-title.php'; 
+    ?>
     <main>
         <div class="content legal-content">
             <h1 data-translate="title"><?php echo htmlspecialchars($translated_texts['title']); ?></h1>

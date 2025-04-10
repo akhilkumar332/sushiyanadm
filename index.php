@@ -28,9 +28,11 @@ $_SESSION['language'] = $current_lang; // Sync session with current language
     <header>
         <a href="<?php echo URL_HOME . '?lang=' . htmlspecialchars($current_lang); ?>"><img src="<?php echo ASSETS_IMAGES; ?>logo.webp" alt="Restaurant Logo" class="logo"></a>
     </header>
-    <div>
-        <h1 class="page-title" data-translate="page_title">Speisekarte</h1>
-    </div>
+    <?php 
+    $page_title = 'Speisekarte';
+    $data_translate = 'page_title';
+    include_once $_SERVER['DOCUMENT_ROOT'] . '/config/page-title.php'; 
+    ?>
     <div class="loading-spinner" id="loading-spinner"></div>
     <div class="grid-container" id="menu-grid" aria-busy="true">
         <div class="skeleton-item"><div class="skeleton-image"></div><div class="skeleton-details"><div class="skeleton-text"></div></div></div>
