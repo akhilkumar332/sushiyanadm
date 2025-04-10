@@ -537,19 +537,19 @@ try {
                 ?>
                 <h1 data-translate="title"><?php echo htmlspecialchars($translated_texts['title']); ?></h1>
                 <p data-translate="responsible_text"><strong><?php echo htmlspecialchars($translated_texts['responsible_text']); ?></strong></p>
-                <p class="address-block" data-translate="name_label"><?php echo htmlspecialchars($translated_texts['name_label']); ?></p>
-                <p class="address-block" data-translate="address_label"><?php echo htmlspecialchars($translated_texts['address_label']); ?></p>
-                <p><a href="mailto:<?php echo htmlspecialchars($branch_info['email']); ?>" class="email-link" data-translate="email_label"><?php echo htmlspecialchars($translated_texts['email_label']); ?></a></p>
-                <p data-translate="manager_label"><?php echo htmlspecialchars($translated_texts['manager_label']); ?></p>
-                <p data-translate="tax_label"><?php echo htmlspecialchars($translated_texts['tax_label']); ?></p>
+                <span class="address-block" data-translate="name_label"><?php echo htmlspecialchars($translated_texts['name_label']); ?></span><br>
+                <span class="address-block" data-translate="address_label"><?php echo htmlspecialchars($translated_texts['address_label']); ?></span><br>
+                <span><a href="mailto:<?php echo htmlspecialchars($branch_info['email']); ?>" class="email-link" data-translate="email_label"><?php echo htmlspecialchars($translated_texts['email_label']); ?></a></span><br>
+                <span data-translate="manager_label"><?php echo htmlspecialchars($translated_texts['manager_label']); ?></span><br>
+                <span data-translate="tax_label"><?php echo htmlspecialchars($translated_texts['tax_label']); ?></span><br>
                 <?php if (!empty($translated_texts['court_label'])): ?>
-                    <p data-translate="court_label"><?php echo htmlspecialchars($translated_texts['court_label']); ?></p>
+                    <span data-translate="court_label"><?php echo htmlspecialchars($translated_texts['court_label']); ?></span><br>
                 <?php endif; ?>
                 <?php if (!empty($translated_texts['register_label'])): ?>
-                    <p data-translate="register_label"><?php echo htmlspecialchars($translated_texts['register_label']); ?></p>
+                    <span data-translate="register_label"><?php echo htmlspecialchars($translated_texts['register_label']); ?></span><br>
                 <?php endif; ?>
                 <?php if (!empty($translated_texts['vat_Label'])): ?>
-                    <p data-translate="vat_label"><?php echo htmlspecialchars($translated_texts['vat_label']); ?></p>
+                    <span data-translate="vat_label"><?php echo htmlspecialchars($translated_texts['vat_label']); ?></span><br>
                 <?php endif; ?>
                 <p data-translate="franchise_note"><?php echo htmlspecialchars($translated_texts['franchise_note']); ?></p>
                 <p data-translate="contact_note"><?php echo htmlspecialchars($translated_texts['contact_note']); ?> <a href="mailto:<?php echo htmlspecialchars($translated_texts['contact_email']); ?>" class="email-link" data-translate="contact_email"><?php echo htmlspecialchars($translated_texts['contact_email']); ?></a>. <?php echo htmlspecialchars($translated_texts['contact_instruction']); ?></p>

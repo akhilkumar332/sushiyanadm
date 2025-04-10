@@ -37,6 +37,7 @@ $current_branch = $_SESSION['branch'] ?? 'neukoelln';
         }
         .legal-content h1 { font-size: 2rem; margin-bottom: 2rem; }
         .legal-content p { margin-bottom: 1.5rem; line-height: 1.6; }
+        .legal-content span { margin-bottom: 1.5rem; line-height: 1.6; }
         .legal-content a { color: #007bff; text-decoration: none; }
         .legal-content a:hover { text-decoration: underline; }
         .address-block { white-space: pre-line; }
