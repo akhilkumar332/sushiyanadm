@@ -108,7 +108,7 @@ body.artikelliste .grid-item:hover {
 /* Image container for dish images */
 body.artikelliste .dish-image-container {
     width: 100%;
-    height: 150px;
+    height: 175px;
     overflow: hidden;
     position: relative;
 }
@@ -149,8 +149,8 @@ body.artikelliste .ingredients-button {
     color: white;
     border: none;
     border-radius: 50%;
-    width: 36px;
-    height: 36px;
+    width: 45px;
+    height: 45px;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -167,7 +167,7 @@ body.artikelliste .ingredients-button:hover {
 
 body.artikelliste .info-button i,
 body.artikelliste .ingredients-button i {
-    font-size: 16px;
+    font-size: 22px;
 }
 
 /* Cart display styling */
@@ -176,8 +176,8 @@ body.artikelliste .cart-display {
     display: none; /* Hidden by default */
     align-items: center;
     justify-content: center;
-    width: 36px;
-    height: 36px;
+    width: 45px;
+    height: 45px;
     background-color: rgba(106, 36, 119, 0.9);
     border-radius: 50%;
     color: white;
@@ -195,7 +195,7 @@ body.artikelliste .cart-display:hover {
 }
 
 body.artikelliste .cart-display .fa-shopping-cart {
-    font-size: 16px;
+    font-size: 22px;
 }
 
 body.artikelliste .cart-display .product-count {
@@ -275,9 +275,9 @@ body.artikelliste .btn-increment {
     color: white;
     border: none;
     border-radius: 50%;
-    width: 28px;
-    height: 28px;
-    font-size: 16px;
+    width: 32px;
+    height: 32px;
+    font-size: 20px;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -322,7 +322,7 @@ body.artikelliste .price-button {
     color: white;
     border: none;
     border-radius: 8px;
-    padding: 6px 6px;
+    padding: 8px 2px;
     font-size: 13px;
     font-weight: 500;
     cursor: default;
@@ -460,7 +460,7 @@ body.artikelliste .dish-details {
     body.artikelliste .grid-container {
         grid-template-columns: repeat(2, 1fr); /* Changed from 1fr to create 2 columns */
         gap: 12px;
-        padding: 16px 8px;
+        padding: 10px 0px;
         width: 100%;
         max-width: 100%;
     }
@@ -475,20 +475,20 @@ body.artikelliste .dish-details {
     }
 
     body.artikelliste .dish-image-container {
-        height: 130px;
+        height: 172px;
     }
 
     body.artikelliste .info-button,
     body.artikelliste .ingredients-button,
     body.artikelliste .cart-display {
-        width: 32px;
-        height: 32px;
+        width: 42px;
+        height: 42px;
     }
 
     body.artikelliste .info-button i,
     body.artikelliste .ingredients-button i,
     body.artikelliste .cart-display .fa-shopping-cart {
-        font-size: 14px;
+        font-size: 20px;
     }
 
     body.artikelliste .dish-details {
@@ -508,7 +508,7 @@ body.artikelliste .dish-details {
 
     body.artikelliste .mini-logo {
         height: 1em;
-        max-height: 12px;
+        max-height: 15px;
     }
 
     body.artikelliste .quantity-controls {
@@ -519,9 +519,9 @@ body.artikelliste .dish-details {
 
     body.artikelliste .btn-decrement,
     body.artikelliste .btn-increment {
-        width: 24px;
-        height: 24px;
-        font-size: 14px;
+        width: 30px;
+        height: 30px;
+        font-size: 22px;
     }
 
     body.artikelliste .btn-decrement .spinner,
@@ -530,9 +530,10 @@ body.artikelliste .dish-details {
     }
 
     body.artikelliste .price-button {
-        padding: 5px 6px;
+        padding: 8px 3px;
         font-size: 11px;
         border-radius: 8px;
+        min-width: auto;
     }
 
     body.artikelliste .modal-content {
@@ -552,7 +553,7 @@ body.artikelliste .dish-details {
     }
 
     body.artikelliste .cart-display .product-count {
-        font-size: 8px;
+        font-size: 11px;
         padding: 0px 3px;
         top: -4px;
         right: -4px;
