@@ -60,7 +60,7 @@ $_SESSION['language'] = $lang; // Sync session with URL param if provided
                         }
                         list($table, $item_id) = explode(':', $item_key);
                         if (!in_array($table, $tables)) continue;
-                        $stmt = $conn->prepare("SELECT artikelname, preis, image FROM " . mysqli_real_escape_string($conn, $table) . " WHERE id = ?");
+                        $stmt = $conn->prepare("SELECT artikelnummer, artikelname, preis, image FROM " . mysqli_real_escape_string($conn, $table) . " WHERE id = ?");
                         $stmt->bind_param("i", $item_id);
                         $stmt->execute();
                         $result = $stmt->get_result();
@@ -74,6 +74,7 @@ $_SESSION['language'] = $lang; // Sync session with URL param if provided
                                      alt="<?php echo htmlspecialchars($item['artikelname']); ?>" 
                                      onerror="this.src='https://placehold.co/150';">
                                 <div class="cart-item-details">
+                                    <h3><?php echo htmlspecialchars($item['artikelnummer']); ?></h3>
                                     <h3><?php echo htmlspecialchars($item['artikelname']); ?></h3>
                                     <p><?php echo number_format($price, 2, ',', '.'); ?> €</p>
                                 </div>
