@@ -1145,8 +1145,8 @@ footer::before {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 40px;
-    height: 40px;
+    width: 50px;
+    height: 50px;
     transition: all 0.3s ease;
     position: relative;
 }
@@ -1161,7 +1161,7 @@ footer::before {
 .floating-bar .cart-button .fa-shopping-cart,
 .floating-bar .home-button .fa-home,
 .floating-bar .back-button .fa-arrow-left {
-    font-size: 18px;
+    font-size: 22px;
 }
 
 .floating-bar .cart-count {
@@ -1868,7 +1868,7 @@ body.navigation main {
     .floating-bar .cart-button .fa-shopping-cart,
     .floating-bar .home-button .fa-home,
     .floating-bar .back-button .fa-arrow-left {
-        font-size: 23px;
+        font-size: 22px;
     }
 
     .floating-bar .cart-count {
