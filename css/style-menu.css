@@ -146,7 +146,7 @@ body.artikelliste .grid-item:hover .action-buttons {
 body.artikelliste .info-button,
 body.artikelliste .ingredients-button {
     background-color: rgba(106, 36, 119, 0.9);
-    color: white;
+    color: #ffc100;
     border: none;
     border-radius: 50%;
     width: 45px;
@@ -180,7 +180,7 @@ body.artikelliste .cart-display {
     height: 45px;
     background-color: rgba(106, 36, 119, 0.9);
     border-radius: 50%;
-    color: white;
+    color: #ffc100;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
     transition: background-color 0.3s ease, transform 0.3s ease;
 }
@@ -203,7 +203,7 @@ body.artikelliste .cart-display .product-count {
     top: -6px;
     right: -6px;
     background: #6A2477;
-    color: #fff;
+    color: #ffc100;
     font-size: 10px;
     font-weight: bold;
     padding: 1px 4px;
@@ -272,7 +272,7 @@ body.artikelliste .quantity-controls {
 body.artikelliste .btn-decrement,
 body.artikelliste .btn-increment {
     background-color: #6A2477;
-    color: white;
+    color: #ffc100;
     border: none;
     border-radius: 50%;
     width: 32px;
@@ -319,7 +319,7 @@ body.artikelliste .btn-increment.loading span:not(.spinner) {
 /* Price button */
 body.artikelliste .price-button {
     background-color: #6A2477; /* Matching -/+ buttons */
-    color: white;
+    color: #ffc100;
     border: none;
     border-radius: 8px;
     padding: 8px 2px;

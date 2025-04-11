@@ -511,7 +511,7 @@ body.navigation .grid-item:focus {
 /* Confirm button styles in notify modal */
 .notify-modal .notify-modal-content #submit-table {
     background-color: #6A2477;
-    color: #fff;
+    color: #ffc100;
     border: 2px solid #D4AF37;
     padding: 10px 20px;
     border-radius: 50px;
@@ -673,7 +673,7 @@ body.navigation .grid-item:focus {
     font-size: 16px;
     font-weight: 500;
     background-color: #6A2477;
-    color: #fff;
+    color: #ffc100;
     transition: all 0.3s ease;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     cursor: pointer;
@@ -1137,7 +1137,7 @@ footer::before {
 .floating-bar .home-button,
 .floating-bar .back-button {
     background: #6A2477;
-    color: #fff;
+    color: #ffc100;
     padding: 10px;
     border-radius: 50%;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
@@ -1169,7 +1169,7 @@ footer::before {
     top: -8px;
     right: -8px;
     background: #6A2477;
-    color: #fff;
+    color: #ffc100;
     font-size: 12px;
     font-weight: bold;
     padding: 2px 6px;
@@ -1368,7 +1368,7 @@ body.navigation main {
     font-size: 16px;
     font-weight: 500;
     background-color: #6A2477;
-    color: #fff;
+    color: #ffc100;
     transition: all 0.3s ease;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
