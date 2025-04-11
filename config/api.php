@@ -161,6 +161,13 @@ try {
                     'manager' => 'Hussein Hamid',
                     'tax_number' => '16/329/04249'
                 ],
+                'brandenburg' => [
+                    'name' => 'Sushi Yana Brandenburg',
+                    'address' => "Silostraße 1\n14770 Brandenburg",
+                    'email' => 'brandenburg@sushi-yana.de',
+                    'manager' => 'xxxxxxxxxxxx',
+                    'tax_number' => 'xxxxxxxxxxxx'
+                ],
                 'charlottenburg' => [
                     'name' => 'Sushi Yana Charlottenburg',
                     'address' => "Lietzenburger Straße 29\n10789 Berlin",
@@ -215,6 +222,13 @@ try {
                     'tax_number' => '29/553/32890',
                     'vat' => 'DE347204498'
                 ],
+                'schoneweide' => [
+                    'name' => 'Sushi Yana Schoneweide',
+                    'address' => "Schnellerstraße 105\n12439 Berlin Schöneweide",
+                    'email' => 'schoneweide@sushi-yana.de',
+                    'manager' => 'xxxxxxxxxxxx',
+                    'tax_number' => 'xxxxxxxxxxxx'
+                ],
                 'spandau' => [
                     'name' => 'Sushi Yana Spandau',
                     'address' => "Pichelsdorferstraße 120\n13595 Berlin",
@@ -243,7 +257,7 @@ try {
                     'manager' => 'Mohamed Berjaoui',
                     'tax_number' => 'xx/xxx/xxx'
                 ],
-                'FFO' => [
+                'frankfurt(oder)' => [
                     'name' => 'Sushi Yana Frankfurt Oder',
                     'address' => "Dresdener Platz 9\n15232 Frankfurt (Oder)-Güldendorf",
                     'email' => 'sushi-yana-ff@outlook.de',
@@ -412,6 +426,13 @@ try {
                         'manager' => 'Hussein Hamid',
                         'tax_number' => '16/329/04249'
                     ],
+                    'brandenburg' => [
+                        'name' => 'Sushi Yana Brandenburg',
+                        'address' => "Silostraße 1\n14770 Brandenburg",
+                        'email' => 'brandenburg@sushi-yana.de',
+                        'manager' => 'xxxxxxxxxxxx',
+                        'tax_number' => 'xxxxxxxxxxxx'
+                    ],
                     'charlottenburg' => [
                         'name' => 'Sushi Yana Charlottenburg',
                         'address' => "Lietzenburger Straße 29\n10789 Berlin",
@@ -466,6 +487,13 @@ try {
                         'tax_number' => '29/553/32890',
                         'vat' => 'DE347204498'
                     ],
+                    'schoneweide' => [
+                        'name' => 'Sushi Yana Schoneweide',
+                        'address' => "Schnellerstraße 105\n12439 Berlin Schöneweide",
+                        'email' => 'schoneweide@sushi-yana.de',
+                        'manager' => 'xxxxxxxxxxxx',
+                        'tax_number' => 'xxxxxxxxxxxx'
+                    ],
                     'spandau' => [
                         'name' => 'Sushi Yana Spandau',
                         'address' => "Pichelsdorferstraße 120\n13595 Berlin",
@@ -494,7 +522,7 @@ try {
                         'manager' => 'Mohamed Berjaoui',
                         'tax_number' => 'xx/xxx/xxx'
                     ],
-                    'FFO' => [
+                    'frankfurt(oder)' => [
                         'name' => 'Sushi Yana Frankfurt Oder',
                         'address' => "Dresdener Platz 9\n15232 Frankfurt (Oder)-Güldendorf",
                         'email' => 'sushi-yana-ff@outlook.de',
@@ -607,9 +635,9 @@ try {
             exit;
         } elseif ($action === 'set_branch') {
             $branch = $_POST['branch'] ?? null;
-            $valid_branches = ['charlottenburg', 'friedrichshain', 'lichtenrade', 'mitte', 'moabit',
-                               'neukoelln', 'potsdam', 'rudow', 'spandau', 'tegel', 'weissensee',
-                               'zehlendorf', 'FFO'];
+            $valid_branches = ['brandenburg', 'charlottenburg', 'friedrichshain', 'lichtenrade', 'mitte', 'moabit',
+                               'neukoelln', 'potsdam', 'rudow', 'schoneweide', 'spandau', 'tegel', 'weissensee',
+                               'zehlendorf', 'frankfurt(oder)'];
             if ($branch && in_array($branch, $valid_branches)) {
                 $_SESSION['branch'] = $branch;
                 ob_end_clean();

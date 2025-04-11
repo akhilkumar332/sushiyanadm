@@ -3,9 +3,9 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/config/config.php';
 
 // List of branches
 $branches = [
-    'charlottenburg', 'friedrichshain', 'lichtenrade', 'mitte', 'moabit', 
-    'neukoelln', 'potsdam', 'rudow', 'spandau', 'tegel', 'weissensee', 
-    'zehlendorf', 'FFO'
+    'brandenburg', 'charlottenburg', 'friedrichshain', 'lichtenrade', 'mitte', 'moabit', 
+    'neukoelln', 'potsdam', 'rudow', 'schoneweide', 'spandau', 'tegel', 'weissensee', 
+    'zehlendorf', 'frankfurt(oder)'
 ];
 
 // List of languages
