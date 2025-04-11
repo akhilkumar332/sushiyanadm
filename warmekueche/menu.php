@@ -20,7 +20,7 @@ $_SESSION['language'] = $current_lang; // Sync session with current language
 $categories = [
     'chopsuey' => ['title' => 'Chop Suey', 'key' => 'chop_suey'],
     'erdnussgericht' => ['title' => 'Erdnussgericht', 'key' => 'peanut_dish'],
-    'extras' => ['title' => 'Extras', 'key' => 'extras'],
+    'extraswarm' => ['title' => 'Extras Warm', 'key' => 'extraswarm'],
     'gemuese' => ['title' => 'Gemüse', 'key' => 'vegetables'],
     'mangochutney' => ['title' => 'Mango Chutney', 'key' => 'mango_chutney'],
     'nudeln' => ['title' => 'Nudeln', 'key' => 'noodles'],

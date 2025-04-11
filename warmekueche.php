@@ -64,7 +64,7 @@ $_SESSION['language'] = $current_lang; // Sync session with current language
                 ['href' => MENU_WARMEKUECHE . '?category=chopsuey', 'img' => ASSETS_IMAGES . 'warmekueche/chop_suey.jpg', 'alt' => 'Chop Suey', 'text' => 'Chop Suey', 'key' => 'chop_suey'],
                 ['href' => MENU_WARMEKUECHE . '?category=redcurry', 'img' => ASSETS_IMAGES . 'warmekueche/red_curry.jpg', 'alt' => 'Red Curry', 'text' => 'Red Curry', 'key' => 'red_curry'],
                 ['href' => MENU_WARMEKUECHE . '?category=suesssauersauce', 'img' => ASSETS_IMAGES . 'warmekueche/suess_sauer_sauce.jpg', 'alt' => 'Süss-Sauer Sauce', 'text' => 'Süss-Sauer Sauce', 'key' => 'sweet_sour_sauce'],
-                ['href' => MENU_WARMEKUECHE . '?category=extras', 'img' => ASSETS_IMAGES . 'warmekueche/Extras.jpg', 'alt' => 'Extras', 'text' => 'Extras', 'key' => 'extras'],
+                ['href' => MENU_WARMEKUECHE . '?category=extraswarm', 'img' => ASSETS_IMAGES . 'warmekueche/Extras.jpg', 'alt' => 'Extras Warm', 'text' => 'Extras Warm', 'key' => 'extraswarm'],
             ];
             foreach ($warmekueche_items as $item) {
                 echo '<a href="' . htmlspecialchars($item['href']) . '" class="grid-item">';

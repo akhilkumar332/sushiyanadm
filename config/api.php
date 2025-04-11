@@ -93,7 +93,7 @@ try {
             $result = $stmt->get_result();
             $orders = [];
 
-            $tables = ['bowls', 'chopsuey', 'desserts', 'erdnussgericht', 'extras', 'extrasWarm', 'fingerfood',
+            $tables = ['bowls', 'chopsuey', 'desserts', 'erdnussgericht', 'extras', 'extraswarm', 'fingerfood',
                        'gemuese', 'getraenke', 'gyoza', 'insideoutrolls', 'makis', 'mangochutney', 'menues',
                        'miniyanarolls', 'nigiris', 'nudeln', 'redcurry', 'reis', 'salate', 'sashimi',
                        'sommerrollen', 'specialrolls', 'suesssauersauce', 'suppen', 'temaki', 'warmgetraenke',
