@@ -50,7 +50,7 @@ if (file_exists($cacheFile) && (time() - filemtime($cacheFile)) < $cacheTTL) {
 }
 
 // Set version with reset key
-$resetKey = 'reset-v1.9';
+$resetKey = 'reset-v1.10';
 $version = ($latestMtime ?: time()) . '-' . $resetKey;
 
 // Make $version and $fileHash available to the including script

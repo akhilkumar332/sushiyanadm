@@ -32,6 +32,16 @@ function closeTableModal() {
     if (modal) modal.style.display = "none";
 }
 
+function openAddonModal(id) {
+    const modal = document.getElementById('addonModal' + id);
+    if (modal) modal.style.display = "flex";
+}
+
+function closeAddonModal(id) {
+    const modal = document.getElementById('addonModal' + id);
+    if (modal) modal.style.display = "none";
+}
+
 // Close modal when clicking outside
 window.addEventListener('click', function(event) {
     const modals = document.getElementsByClassName('modal');
@@ -50,7 +60,11 @@ function updateLocalCart(sessionCart) {
 
 function updateCartCount() {
     const cart = JSON.parse(localStorage.getItem('cart') || '{}');
-    const total = Object.values(cart).reduce((a, b) => a + b, 0);
+    let total = 0;
+    for (let itemKey in cart) {
+        const quantity = typeof cart[itemKey] === 'object' ? (cart[itemKey].quantity || 0) : (cart[itemKey] || 0);
+        total += quantity;
+    }
     const cartCountElement = document.getElementById('cart-count');
     if (cartCountElement) {
         cartCountElement.textContent = total;
@@ -58,7 +72,7 @@ function updateCartCount() {
     }
     document.querySelectorAll('.product-count').forEach(span => {
         const itemKey = span.dataset.itemKey;
-        const quantity = cart[itemKey] || 0;
+        const quantity = typeof cart[itemKey] === 'object' ? (cart[itemKey]?.quantity || 0) : (cart[itemKey] || 0);
         span.textContent = quantity;
         const cartDisplay = span.closest('.cart-display');
         if (cartDisplay) {
@@ -74,7 +88,8 @@ function showToast(messageKey, isError = false, additionalText = '') {
         return;
     }
     const lang = document.getElementById('language-dropdown')?.value || 'de';
-    const message = (typeof getTranslation === 'function' ? getTranslation(messageKey, lang) : messageKey) + additionalText;
+    let message = typeof getTranslation === 'function' ? getTranslation(messageKey, lang) : messageKey;
+    message += additionalText;
     Toastify({
         text: `<i class="${isError ? 'fas fa-exclamation-circle' : 'fas fa-check-circle'}"></i> ${message}`,
         duration: 3000,
@@ -86,7 +101,7 @@ function showToast(messageKey, isError = false, additionalText = '') {
 }
 
 // Update cart quantity function
-function updateCart(itemKey, quantity, element, button) {
+function updateCart(itemKey, quantity, element, button, addon = null) {
     const BASE_PATH = document.body.dataset.basePath || '/';
     if (button) {
         $(button).addClass('loading').prop('disabled', true);
@@ -95,22 +110,20 @@ function updateCart(itemKey, quantity, element, button) {
         url: BASE_PATH + 'config/api.php',
         type: 'POST',
         dataType: 'json',
-        data: { action: 'update', item_key: itemKey, quantity: quantity },
+        data: { action: 'update', item_key: itemKey, quantity: quantity, addon: addon },
         success: function(response) {
             if (response?.status === 'success') {
-                if (quantity <= 0) {
-                    showToast('item_removed');
-                } else {
-                    showToast(quantity > (parseInt(element.text()) || 0) ? 'quantity_increased' : 'quantity_decreased');
-                }
+                showToast('cart_updated');
                 updateLocalCart(response.cart);
             } else {
-                showToast('update_error', true, response?.message || 'Unbekannter Fehler');
+                const lang = document.getElementById('language-dropdown')?.value || 'de';
+                showToast('update_error', true, getTranslation('server_error_details', lang) + (response?.message || ''));
             }
         },
         error: function(xhr, status, error) {
             console.error('AJAX error:', status, error, 'Response:', xhr.responseText);
-            showToast('update_error', true, getTranslation('server_error', document.getElementById('language-dropdown')?.value || 'de'));
+            const lang = document.getElementById('language-dropdown')?.value || 'de';
+            showToast('update_error', true, getTranslation('server_error_details', lang));
         },
         complete: function() {
             if (button) {
@@ -165,12 +178,23 @@ function attachArtikellisteListeners() {
         });
     });
 
+    document.querySelectorAll('.addon-close').forEach(span => {
+        span.addEventListener('click', function() {
+            closeAddonModal(this.dataset.id);
+        });
+    });
+
     $('.btn-increment').off('click').on('click', function() {
         const itemKey = $(this).data('item-key');
         const $countSpan = $(this).closest('.grid-item').find('.product-count');
         const currentQuantity = parseInt($countSpan.text() || 0);
         const newQuantity = currentQuantity + 1;
+        const isInsideOutRolls = itemKey.startsWith('insideoutrolls:');
         updateCart(itemKey, newQuantity, $countSpan, this);
+        if (isInsideOutRolls) {
+            const id = itemKey.split(':')[1];
+            setTimeout(() => openAddonModal(id), 500); // Delay to ensure cart update completes
+        }
     });
 
     $('.btn-decrement').off('click').on('click', function() {
@@ -179,6 +203,21 @@ function attachArtikellisteListeners() {
         const currentQuantity = parseInt($countSpan.text() || 0);
         const newQuantity = Math.max(0, currentQuantity - 1);
         updateCart(itemKey, newQuantity, $countSpan, this);
+    });
+
+    $('.addon-form').off('submit').on('submit', function(e) {
+        e.preventDefault();
+        const itemKey = $(this).data('item-key');
+        const $countSpan = $(`.product-count[data-item-key="${itemKey}"]`);
+        const selectedAddon = $(this).find('input[name="addon"]:checked').val();
+        if (!selectedAddon) {
+            showToast('select_one_addon', true);
+            return;
+        }
+        const id = itemKey.split(':')[1];
+        const currentQuantity = parseInt($countSpan.text() || 0) || 1; // Ensure at least 1
+        updateCart(itemKey, currentQuantity, $countSpan, null, selectedAddon);
+        closeAddonModal(id);
     });
 }
 
@@ -198,7 +237,8 @@ function loadBranches() {
                     branchFilter.append(`<option value="${branch}">${branch}</option>`);
                 });
             } else {
-                showToast('branch_load_error', true, response?.message || 'Unbekannter Fehler');
+                const lang = document.getElementById('language-dropdown')?.value || 'de';
+                showToast('branch_load_error', true, getTranslation('server_error_details', lang) + (response?.message || ''));
             }
         },
         error: function(xhr, status, error) {
@@ -229,9 +269,11 @@ function loadOrders(filter = 'daily', order_by = 'desc', page = 1, branch = '', 
                 if (isPolling && existingOrderIds.has(order.id)) return;
                 let itemsHtml = '<table class="order-table"><thead><tr><th>Nummer</th><th>Artikel</th><th class="quantity">Menge</th><th class="price">Einzelpreis</th><th class="subtotal">Gesamt</th></tr></thead><tbody>';
                 order.items.forEach(item => {
+                    // Display add-on name for insideoutrolls items
+                    const displayName = item.addon ? `${item.artikelname} (${item.addon})` : item.artikelname;
                     itemsHtml += `<tr>
                         <td>${item.artikelnummer || 'N/A'}</td>
-                        <td>${item.artikelname || 'Unbekannt'}</td>
+                        <td>${displayName || 'Unbekannt'}</td>
                         <td class="quantity">${item.quantity || 0}</td>
                         <td class="price">${(item.price || 0).toFixed(2)} €</td>
                         <td class="subtotal">${(item.subtotal || 0).toFixed(2)} €</td>
@@ -295,12 +337,15 @@ function loadOrders(filter = 'daily', order_by = 'desc', page = 1, branch = '', 
                 renderOrders('active-orders-list', 'active-pagination', data, 'active');
             } else {
                 console.error('API error for active orders:', data?.message);
-                if (!isPolling) showToast('active_orders_error', true, data?.message || 'Unbekannter Fehler');
+                if (!isPolling) {
+                    const lang = document.getElementById('language-dropdown')?.value || 'de';
+                    showToast('active_orders_error', true, getTranslation('server_error_details', lang) + (data?.message || ''));
+                }
             }
         },
         error: function(xhr, status, error) {
             console.error('AJAX error for active orders:', status, error, 'Response:', xhr.responseText);
-            if (!isPolling) showToast('active_orders_error', true, getTranslation('server_error', document.getElementById('language-dropdown')?.value || 'de'));
+            if (!isPolling) showToast('active_orders_error', true);
         }
     });
 
@@ -314,12 +359,13 @@ function loadOrders(filter = 'daily', order_by = 'desc', page = 1, branch = '', 
                     renderOrders('completed-orders-list', 'completed-pagination', data, 'completed');
                 } else {
                     console.error('API error for completed orders:', data?.message);
-                    showToast('completed_orders_error', true, data?.message || 'Unbekannter Fehler');
+                    const lang = document.getElementById('language-dropdown')?.value || 'de';
+                    showToast('completed_orders_error', true, getTranslation('server_error_details', lang) + (data?.message || ''));
                 }
             },
             error: function(xhr, status, error) {
                 console.error('AJAX error for completed orders:', status, error, 'Response:', xhr.responseText);
-                showToast('completed_orders_error', true, getTranslation('server_error', document.getElementById('language-dropdown')?.value || 'de'));
+                showToast('completed_orders_error', true);
             }
         });
     }
@@ -369,12 +415,13 @@ document.addEventListener('DOMContentLoaded', function() {
                         loadOrders($('#date-filter').val(), $('#order-filter').val(), 1, $('#branch-filter').val());
                     }
                 } else {
-                    showToast('branch_change_error', true, response?.message || 'Unbekannter Fehler');
+                    const lang = document.getElementById('language-dropdown')?.value || 'de';
+                    showToast('branch_change_error', true, getTranslation('server_error_details', lang) + (response?.message || ''));
                 }
             },
             error: function(xhr, status, error) {
                 console.error('AJAX error:', status, error, 'Response:', xhr.responseText);
-                showToast('branch_change_error', true, getTranslation('server_error', document.getElementById('language-dropdown')?.value || 'de'));
+                showToast('branch_change_error', true);
             },
             complete: function() {
                 $spinner.hide();
@@ -457,7 +504,7 @@ document.addEventListener('DOMContentLoaded', function() {
         function updateTotal() {
             let total = 0;
             $('.cart-item').each(function() {
-                const subtotal = parseFloat($(this).find('.quantity').text().replace(' €', '').replace(',', '.'));
+                const subtotal = parseFloat($(this).find('.subtotal').text().replace(' €', '').replace(',', '.'));
                 total += subtotal;
             });
             $('.total-amount').text(total.toFixed(2).replace('.', ',') + ' €');
@@ -480,12 +527,13 @@ document.addEventListener('DOMContentLoaded', function() {
                         showToast('item_removed');
                         updateLocalCart(response.cart);
                     } else {
-                        showToast('remove_error', true, response?.message || 'Unbekannter Fehler');
+                        const lang = document.getElementById('language-dropdown')?.value || 'de';
+                        showToast('remove_error', true, getTranslation('server_error_details', lang) + (response?.message || ''));
                     }
                 },
                 error: function(xhr, status, error) {
                     console.error('AJAX error:', status, error, 'Response:', xhr.responseText);
-                    showToast('remove_error', true, getTranslation('server_error', document.getElementById('language-dropdown')?.value || 'de'));
+                    showToast('remove_error', true);
                 }
             });
         }
@@ -496,8 +544,8 @@ document.addEventListener('DOMContentLoaded', function() {
             let quantity = parseInt($input.val()) + 1;
             updateCart(itemKey, quantity, $input, this);
             $input.val(quantity);
-            const price = parseFloat($(this).closest('.cart-item').find('.cart-item-details p').text().replace(' €', '').replace(',', '.'));
-            $(this).closest('.cart-item').find('.quantity').text((price * quantity).toFixed(2).replace('.', ',') + ' €');
+            const price = parseFloat($(this).closest('.cart-item').find('.item-price').data('price'));
+            $(this).closest('.cart-item').find('.subtotal').text((price * quantity).toFixed(2).replace('.', ',') + ' €');
             updateTotal();
         });
 
@@ -515,8 +563,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             } else {
                 $input.val(quantity);
-                const price = parseFloat($(this).closest('.cart-item').find('.cart-item-details p').text().replace(' €', '').replace(',', '.'));
-                $(this).closest('.cart-item').find('.quantity').text((price * quantity).toFixed(2).replace('.', ',') + ' €');
+                const price = parseFloat($(this).closest('.cart-item').find('.item-price').data('price'));
+                $(this).closest('.cart-item').find('.subtotal').text((price * quantity).toFixed(2).replace('.', ',') + ' €');
             }
             updateTotal();
         });
@@ -533,8 +581,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     $('.cart-buttons').remove();
                 }
             } else {
-                const price = parseFloat($(this).closest('.cart-item').find('.cart-item-details p').text().replace(' €', '').replace(',', '.'));
-                $(this).closest('.cart-item').find('.quantity').text((price * quantity).toFixed(2).replace('.', ',') + ' €');
+                const price = parseFloat($(this).closest('.cart-item').find('.item-price').data('price'));
+                $(this).closest('.cart-item').find('.subtotal').text((price * quantity).toFixed(2).replace('.', ',') + ' €');
             }
             updateTotal();
         });
@@ -591,14 +639,14 @@ document.addEventListener('DOMContentLoaded', function() {
             countdownStartTime = Date.now();
             $('#inactivity-timer').show().addClass('visible');
             const $countdown = $('#timer-countdown');
-            const lang = document.getElementById('language-dropdown')?.value || document.body.dataset.lang || 'de'; // Get current language
-            const secondsText = getTranslation('seconds', lang); // Fetch translated "seconds"
+            const lang = document.getElementById('language-dropdown')?.value || document.body.dataset.lang || 'de';
+            const secondsText = getTranslation('seconds', lang);
 
             countdownInterval = setInterval(function() {
                 const elapsedSinceStart = Date.now() - countdownStartTime;
                 const remainingMs = countdownDuration - elapsedSinceStart;
                 const remainingSeconds = Math.max(0, Math.floor(remainingMs / 1000));
-                $countdown.text(remainingSeconds.toString().padStart(2, '0') + ' ' + secondsText); // Use translated text
+                $countdown.text(remainingSeconds.toString().padStart(2, '0') + ' ' + secondsText);
                 if (remainingSeconds <= 10) {
                     $('#inactivity-timer').addClass('warning');
                 } else {
@@ -661,12 +709,13 @@ document.addEventListener('DOMContentLoaded', function() {
                         showToast('order_submit_success');
                         localStorage.setItem('lastOrderTime', Date.now().toString());
                     } else {
-                        showToast('order_submit_error', true, response?.message || 'Unbekannter Fehler');
+                        const lang = document.getElementById('language-dropdown')?.value || 'de';
+                        showToast('order_submit_error', true, getTranslation('server_error_details', lang) + (response?.message || ''));
                     }
                 },
                 error: function(xhr, status, error) {
                     console.error('AJAX error:', status, error, 'Response:', xhr.responseText);
-                    showToast('order_submit_error', true, getTranslation('server_error', document.getElementById('language-dropdown')?.value || 'de'));
+                    showToast('order_submit_error', true);
                 }
             });
         });
@@ -725,12 +774,13 @@ document.addEventListener('DOMContentLoaded', function() {
                             showToast('order_completed');
                             loadOrders(currentFilter, currentOrderBy, currentPage, currentBranch);
                         } else {
-                            showToast('order_complete_error', true, response?.message || 'Unbekannter Fehler');
+                            const lang = document.getElementById('language-dropdown')?.value || 'de';
+                            showToast('order_complete_error', true, getTranslation('server_error_details', lang) + (response?.message || ''));
                         }
                     },
                     error: function(xhr, status, error) {
                         console.error('AJAX error:', status, error, 'Response:', xhr.responseText);
-                        showToast('order_complete_error', true, getTranslation('server_error', document.getElementById('language-dropdown')?.value || 'de'));
+                        showToast('order_complete_error', true);
                     }
                 });
             } else if (action === 'delete') {
@@ -744,12 +794,13 @@ document.addEventListener('DOMContentLoaded', function() {
                             showToast('order_deleted');
                             loadOrders(currentFilter, currentOrderBy, currentPage, currentBranch);
                         } else {
-                            showToast('order_delete_error', true, response?.message || 'Unbekannter Fehler');
+                            const lang = document.getElementById('language-dropdown')?.value || 'de';
+                            showToast('order_delete_error', true, getTranslation('server_error_details', lang) + (response?.message || ''));
                         }
                     },
                     error: function(xhr, status, error) {
                         console.error('AJAX error:', status, error, 'Response:', xhr.responseText);
-                        showToast('order_delete_error', true, getTranslation('server_error', document.getElementById('language-dropdown')?.value || 'de'));
+                        showToast('order_delete_error', true);
                     }
                 });
             }

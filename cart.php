@@ -14,7 +14,7 @@ $tables = [
 ];
 
 // Use session language, override with URL parameter if provided
-$lang = isset($_GET['lang']) ? $_GET['lang'] : $_SESSION['language'];
+$lang = isset($_GET['lang']) ? $_GET['lang'] : ($_SESSION['language'] ?? 'de');
 $_SESSION['language'] = $lang; // Sync session with URL param if provided
 ?>
 
@@ -54,7 +54,7 @@ $_SESSION['language'] = $lang; // Sync session with URL param if provided
                 <?php else: ?>
                     <?php
                     $total = 0;
-                    foreach ($_SESSION['cart'] as $item_key => $quantity) {
+                    foreach ($_SESSION['cart'] as $item_key => $item_data) {
                         if (strpos($item_key, ':') === false) {
                             continue;
                         }
@@ -65,9 +65,22 @@ $_SESSION['language'] = $lang; // Sync session with URL param if provided
                         $stmt->execute();
                         $result = $stmt->get_result();
                         if ($item = $result->fetch_assoc()) {
+                            $quantity = is_array($item_data) ? (int)($item_data['quantity'] ?? 0) : (int)$item_data;
+                            if ($quantity <= 0) continue;
                             $price = floatval($item['preis']);
                             $subtotal = $price * $quantity;
                             $total += $subtotal;
+                            $addon_name = '';
+                            if ($table === 'insideoutrolls' && is_array($item_data) && isset($item_data['addon'])) {
+                                $addon_stmt = $conn->prepare("SELECT name FROM addons WHERE id = ?");
+                                $addon_stmt->bind_param("i", $item_data['addon']);
+                                $addon_stmt->execute();
+                                $addon_result = $addon_stmt->get_result();
+                                if ($addon_row = $addon_result->fetch_assoc()) {
+                                    $addon_name = translateText([$addon_row['name']], 'de', $lang, $conn)[0];
+                                }
+                                $addon_stmt->close();
+                            }
                             ?>
                             <div class="cart-item" data-item-key="<?php echo htmlspecialchars($item_key); ?>">
                                 <img src="<?php echo htmlspecialchars($item['image']); ?>" 
@@ -76,15 +89,18 @@ $_SESSION['language'] = $lang; // Sync session with URL param if provided
                                 <div class="cart-item-details">
                                     <h3><?php echo htmlspecialchars($item['artikelnummer']); ?></h3>
                                     <h3><?php echo htmlspecialchars($item['artikelname']); ?></h3>
-                                    <p><?php echo number_format($price, 2, ',', '.'); ?> €</p>
+                                    <?php if ($addon_name): ?>
+                                        <p data-translate="addon">Add-On: <?php echo htmlspecialchars($addon_name); ?></p>
+                                    <?php endif; ?>
+                                    <p class="item-price" data-price="<?php echo $price; ?>"><?php echo number_format($price, 2, ',', '.'); ?> €</p>
                                 </div>
                                 <div class="cart-item-actions">
                                     <div class="quantity-controls">
-                                        <button type="button" class="btn-decrement" data-item-key="<?php echo htmlspecialchars($item_key); ?>">-</button>
-                                        <input type="number" name="quantity" value="<?php echo $quantity; ?>" min="0" class="quantity-input" data-item-key="<?php echo htmlspecialchars($item_key); ?>">
-                                        <button type="button" class="btn-increment" data-item-key="<?php echo htmlspecialchars($item_key); ?>">+</button>
+                                        <button type="button" class="btn-decrement" data-item-key="<?php echo htmlspecialchars($item_key); ?>" data-table="<?php echo htmlspecialchars($table); ?>" data-id="<?php echo htmlspecialchars($item_id); ?>">-</button>
+                                        <input type="number" name="quantity" value="<?php echo $quantity; ?>" min="0" class="quantity-input" data-item-key="<?php echo htmlspecialchars($item_key); ?>" data-table="<?php echo htmlspecialchars($table); ?>" data-id="<?php echo htmlspecialchars($item_id); ?>">
+                                        <button type="button" class="btn-increment" data-item-key="<?php echo htmlspecialchars($item_key); ?>" data-table="<?php echo htmlspecialchars($table); ?>" data-id="<?php echo htmlspecialchars($item_id); ?>">+</button>
                                     </div>
-                                    <span class="quantity"><?php echo number_format($subtotal, 2, ',', '.'); ?> €</span>
+                                    <span class="quantity subtotal"><?php echo number_format($subtotal, 2, ',', '.'); ?> €</span>
                                     <button type="button" class="btn-remove" data-item-key="<?php echo htmlspecialchars($item_key); ?>">
                                         <i class="fas fa-trash"></i>
                                     </button>

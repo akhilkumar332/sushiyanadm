@@ -53,12 +53,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['table'])) {
             $beschreibung_unused = $translated_texts[$text_index++]; // Not used in grid
             $allergene_unused = $translated_texts[$text_index++]; // Not used in grid
             $item_key = htmlspecialchars($table . ':' . (int)$row["id"]);
-            $quantity_in_cart = isset($_SESSION['cart'][$item_key]) ? (int)$_SESSION['cart'][$item_key] : 0;
+            $quantity_in_cart = isset($_SESSION['cart'][$item_key]['quantity']) ? (int)$_SESSION['cart'][$item_key]['quantity'] : 0;
             ?>
             <div class="grid-item">
                 <div class="dish-image-container">
                     <img src="<?php echo htmlspecialchars(ASSETS_IMAGES . substr((string)$row['image'], 7)); ?>" 
-                         onerror="this.src='<?php echo ASSETS_IMAGES; ?>/deafult.jpg';" 
+                         onerror="this.src='<?php echo ASSETS_IMAGES; ?>deafult.jpg';" 
                          alt="<?php echo htmlspecialchars($artikelname); ?>" 
                          class="dish-image">
                 </div>
@@ -101,7 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['table'])) {
                         <button class="price-button" aria-label="Preis: <?php echo htmlspecialchars((string)$row["preis"]); ?>">
                             <?php echo htmlspecialchars((string)$row["preis"]); ?>
                         </button>
-                        <button type="button" class="btn-increment" data-item-key="<?php echo $item_key; ?>">
+                        <button type="button" class="btn-increment" data-item-key="<?php echo $item_key; ?>" data-product-name="<?php echo htmlspecialchars($artikelname); ?>">
                             <span>+</span>
                             <span class="spinner"><i class="fas fa-spinner fa-spin"></i></span>
                         </button>
@@ -157,6 +157,33 @@ if ($result instanceof mysqli_result) {
             </div>
         </div>
         <?php
+        // Add add-on modal for insideoutrolls
+        if ($table === 'insideoutrolls') {
+            $addons = getAddonsForCategory('insideoutrolls', $conn);
+            $translated_addon_names = translateText(array_column($addons, 'name'), 'de', $current_lang, $conn);
+            ?>
+            <div id="addonModal<?php echo (int)$row["id"]; ?>" class="modal addon-modal">
+                <div class="modal-content">
+                    <span class="close addon-close" data-id="<?php echo (int)$row["id"]; ?>" aria-label="Modal schließen">×</span>
+                    <h2>Add-Ons: <?php echo htmlspecialchars($row['artikelname']); ?></h2>
+                    <form class="addon-form" data-item-key="<?php echo htmlspecialchars($table . ':' . (int)$row["id"]); ?>">
+                        <p data-translate="select_one_addon">Bitte wählen Sie ein Add-On aus (maximal 1):</p>
+                        <?php
+                        foreach ($addons as $index => $addon) {
+                            ?>
+                            <label>
+                                <input type="radio" name="addon" value="<?php echo (int)$addon['id']; ?>" class="addon-radio">
+                                <?php echo htmlspecialchars($translated_addon_names[$index]); ?> (<?php echo number_format($addon['price'], 2, ',', '.'); ?> €)
+                            </label><br>
+                            <?php
+                        }
+                        ?>
+                        <button type="submit" class="btn addon-submit" data-translate="add_to_cart">Zum Warenkorb hinzufügen</button>
+                    </form>
+                </div>
+            </div>
+            <?php
+        }
     }
 }
 ?>

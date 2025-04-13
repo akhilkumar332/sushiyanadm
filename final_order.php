@@ -15,7 +15,7 @@ $tables = [
 ];
 
 // Use session language, override with URL parameter if provided
-$lang = isset($_GET['lang']) ? $_GET['lang'] : $_SESSION['language'];
+$lang = isset($_GET['lang']) ? $_GET['lang'] : ($_SESSION['language'] ?? 'de');
 $_SESSION['language'] = $lang; // Sync session with URL param if provided
 
 // Get current timestamp in German format
@@ -66,35 +66,76 @@ $timestamp = date('d.m.Y H:i:s');
                     <tbody>
                         <?php
                         $total = 0;
-                        foreach ($_SESSION['cart'] as $item_key => $quantity) {
+                        foreach ($_SESSION['cart'] as $item_key => $cart_item) {
                             if (strpos($item_key, ':') === false) {
                                 error_log("Invalid cart item key: $item_key");
                                 continue;
                             }
-                            list($table, $item_id) = explode(':', $item_key);
-                            if (!in_array($table, $tables)) continue;
-                            $stmt = $conn->prepare("SELECT artikelnummer, artikelname, preis FROM " . mysqli_real_escape_string($conn, $table) . " WHERE id = ?");
+                            list($table, $item_id) = explode(':', $item_key, 2);
+                            if (!in_array($table, $tables)) {
+                                error_log("Invalid table in item key: $table");
+                                continue;
+                            }
+                            
+                            $quantity = is_array($cart_item) ? ($cart_item['quantity'] ?? 1) : $cart_item;
+                            $addon = is_array($cart_item) ? ($cart_item['addon'] ?? null) : null;
+                            
+                            $query = "SELECT artikelnummer, artikelname, preis FROM " . mysqli_real_escape_string($conn, $table) . " WHERE id = ?";
+                            $stmt = $conn->prepare($query);
                             $stmt->bind_param("i", $item_id);
                             $stmt->execute();
                             $result = $stmt->get_result();
                             $item = $result->fetch_assoc();
+                            
+                            if (!$item) {
+                                error_log("Item not found for ID: $item_id in table: $table");
+                                $stmt->close();
+                                continue;
+                            }
+                            
                             $price = floatval($item['preis']);
+                            if ($table === 'insideoutrolls' && $addon) {
+                                $addon_stmt = $conn->prepare("SELECT price FROM addons WHERE id = ?");
+                                $addon_stmt->bind_param("i", $addon);
+                                $addon_stmt->execute();
+                                $addon_result = $addon_stmt->get_result();
+                                if ($addon_row = $addon_result->fetch_assoc()) {
+                                    $price += floatval($addon_row['price'] ?? 0.00);
+                                }
+                                $addon_stmt->close();
+                            }
+                            
                             $subtotal = $price * $quantity;
                             $total += $subtotal;
+                            
+                            $artikelname = htmlspecialchars($item['artikelname']);
+                            if ($table === 'insideoutrolls' && $addon) {
+                                $addon_name_stmt = $conn->prepare("SELECT name FROM addons WHERE id = ?");
+                                $addon_name_stmt->bind_param("i", $addon);
+                                $addon_name_stmt->execute();
+                                $addon_name_result = $addon_name_stmt->get_result();
+                                if ($addon_name_row = $addon_name_result->fetch_assoc()) {
+                                    $artikelname .= " (" . htmlspecialchars($addon_name_row['name']) . ")";
+                                }
+                                $addon_name_stmt->close();
+                            }
                             ?>
                             <tr>
                                 <td><?php echo htmlspecialchars($item['artikelnummer']); ?></td>
-                                <td><?php echo htmlspecialchars($item['artikelname']); ?></td>
+                                <td><?php echo $artikelname; ?></td>
                                 <td class="quantity"><?php echo $quantity; ?></td>
-                                <td class="price"><?php echo number_format($price, 2); ?> €</td>
-                                <td class="subtotal"><?php echo number_format($subtotal, 2); ?> €</td>
+                                <td class="price" data-price="<?php echo $price; ?>"><?php echo number_format($price, 2, ',', '.'); ?> €</td>
+                                <td class="subtotal"><?php echo number_format($subtotal, 2, ',', '.'); ?> €</td>
                             </tr>
-                        <?php $stmt->close(); } ?>
+                        <?php 
+                            $stmt->close();
+                        } 
+                        ?>
                     </tbody>
                 </table>
                 <div class="bill-total">
                     <span data-translate="total_amount">Gesamtbetrag</span>
-                    <span><?php echo number_format($total, 2); ?> €</span>
+                    <span><?php echo number_format($total, 2, ',', '.'); ?> €</span>
                 </div>
                 <div class="timer" id="inactivity-timer" aria-live="polite" data-translate="inactivity_timer">
                     Inaktivitätstimer: <span id="timer-countdown"></span>
@@ -103,7 +144,7 @@ $timestamp = date('d.m.Y H:i:s');
             <div class="bill-buttons">
                 <button class="btn" id="back-to-home" data-translate="delete_return">Löschen & Zurückgeben</button>
                 <button class="btn" id="notify-staff" data-translate="notify_staff">Personal benachrichtigen</button>
-                <p id="order-confirmation" data-translate="order_placed">Bestellung aufgegeben! Bitte warten Sie, bis ein Mitarbeiter zu Ihnen kommt.</p>
+                <p id="order-confirmation" style="display: none;" data-translate="order_placed">Bestellung aufgegeben! Bitte warten Sie, bis ein Mitarbeiter zu Ihnen kommt.</p>
             </div>
         </div>
         <!-- Table Number Modal -->

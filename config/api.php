@@ -104,10 +104,11 @@ try {
                 if (!is_array($items)) continue;
                 $detailed_items = [];
                 $total = 0;
-                foreach ($items as $item_key => $quantity) {
+                foreach ($items as $item_key => $item_data) {
                     if (strpos($item_key, ':') === false) continue;
                     list($table, $item_id) = explode(':', $item_key);
                     if (!in_array($table, $tables)) continue;
+                    $quantity = is_array($item_data) ? (int)($item_data['quantity'] ?? 0) : (int)$item_data;
                     $item_stmt = $conn->prepare("SELECT artikelnummer, artikelname, preis FROM " . mysqli_real_escape_string($conn, $table) . " WHERE id = ?");
                     if (!$item_stmt) continue;
                     $item_stmt->bind_param("i", $item_id);
@@ -116,15 +117,34 @@ try {
                     $item = $item_result->fetch_assoc();
                     if ($item) {
                         $price = floatval($item['preis']);
+                        $addon_price = 0;
+                        $addon_name = null;
+                        if ($table === 'insideoutrolls' && is_array($item_data) && isset($item_data['addon'])) {
+                            $addon_stmt = $conn->prepare("SELECT id, name, price FROM addons WHERE id = ?");
+                            $addon_stmt->bind_param("i", $item_data['addon']);
+                            $addon_stmt->execute();
+                            $addon_result = $addon_stmt->get_result();
+                            if ($addon_row = $addon_result->fetch_assoc()) {
+                                $addon_name = $addon_row['name'];
+                                $addon_price = floatval($addon_row['price'] ?? 0);
+                            }
+                            $addon_stmt->close();
+                        }
+                        $price += $addon_price;
                         $subtotal = $price * $quantity;
                         $total += $subtotal;
-                        $detailed_items[] = [
+                        $detailed_item = [
                             'artikelnummer' => $item['artikelnummer'],
                             'artikelname' => $item['artikelname'],
                             'quantity' => $quantity,
                             'price' => $price,
                             'subtotal' => $subtotal
                         ];
+                        if ($addon_name) {
+                            $detailed_item['addon'] = $addon_name;
+                            $detailed_item['addon_price'] = $addon_price;
+                        }
+                        $detailed_items[] = $detailed_item;
                     }
                     $item_stmt->close();
                 }
@@ -309,7 +329,7 @@ try {
                     'section3' => '3. Allgemeine Hinweise und Pflichtinformationen',
                     'section3_sub1' => 'Datenschutz',
                     'section3_sub1_p1' => 'Die Betreiber dieser Seiten nehmen den Schutz Ihrer persönlichen Daten sehr ernst. Wir behandeln Ihre personenbezogenen Daten vertraulich und entsprechend den gesetzlichen Datenschutzvorschriften sowie dieser Datenschutzerklärung.',
-                    'section3_sub1_p2' => 'Wenn Sie diese Website benutzen, werden verschiedene personenbezogenen Daten erhoben. Personenbezogene Daten sind Daten, mit denen Sie persönlich identifiziert werden können. Die vorliegende Datenschutzerklärung erläutert, welche Daten wir erheben und wofür wir sie nutzen. Sie erläutert auch, wie und zu welchem Zweck das geschieht.',
+                    'section3_sub1_p2' => 'Wenn Sie diese Website benutzen, werden verschiedene personenbezogene Daten erhoben. Personenbezogene Daten sind Daten, mit denen Sie persönlich identifiziert werden können. Die vorliegende Datenschutzerklärung erläutert, welche Daten wir erheben und wofür wir sie nutzen. Sie erläutert auch, wie und zu welchem Zweck das geschieht.',
                     'section3_sub1_p3' => 'Wir weisen darauf hin, dass die Datenübertragung im Internet (z. B. bei der Kommunikation per E-Mail) Sicherheitslücken aufweisen kann. Ein lückenloser Schutz der Daten vor dem Zugriff durch Dritte ist nicht möglich.',
                     'section3_sub2' => 'Hinweis zur verantwortlichen Stelle',
                     'section3_sub2_p1' => 'Die verantwortliche Stelle für die Datenverarbeitung auf dieser Website ist:',
@@ -663,22 +683,65 @@ try {
         $table = $_POST['table'] ?? null;
         $quantity = isset($_POST['quantity']) ? (int)$_POST['quantity'] : null;
         $item_key = ($item_id && $table) ? "$table:$item_id" : ($_POST['item_key'] ?? null);
+        $addon = isset($_POST['addon']) ? (int)$_POST['addon'] : null;
 
         switch ($action) {
             case 'add':
                 if (!$item_id || !$table) throw new Exception('Missing item_id or table');
-                $_SESSION['cart'][$item_key] = ($_SESSION['cart'][$item_key] ?? 0) + 1;
+                if ($table === 'insideoutrolls') {
+                    $_SESSION['cart'][$item_key] = [
+                        'quantity' => ($_SESSION['cart'][$item_key]['quantity'] ?? 0) + 1,
+                        'addon' => $_SESSION['cart'][$item_key]['addon'] ?? null
+                    ];
+                } else {
+                    $_SESSION['cart'][$item_key] = max(1, ($_SESSION['cart'][$item_key] ?? 0) + 1);
+                }
                 $message = 'Item added to cart';
                 break;
 
             case 'update':
                 if (!$item_key || $quantity === null) throw new Exception('Missing item_key or quantity');
-                if ($quantity <= 0) {
-                    unset($_SESSION['cart'][$item_key]);
-                    $message = 'Item removed from cart';
+                if (strpos($item_key, ':') === false) throw new Exception('Invalid item_key format');
+                list($table, $item_id) = explode(':', $item_key);
+                if ($table === 'insideoutrolls') {
+                    $addon_id = null;
+                    if ($addon !== null) {
+                        $stmt = $conn->prepare("SELECT id FROM addons WHERE id = ? AND category = 'insideoutrolls'");
+                        if (!$stmt) throw new Exception("Prepare failed: " . $conn->error);
+                        $stmt->bind_param("i", $addon);
+                        $stmt->execute();
+                        $result = $stmt->get_result();
+                        if ($result->num_rows > 0) {
+                            $addon_id = $addon;
+                        }
+                        $stmt->close();
+                    }
+                    if ($quantity <= 0) {
+                        unset($_SESSION['cart'][$item_key]);
+                        $message = 'Item removed from cart';
+                    } else {
+                        $previous_quantity = $_SESSION['cart'][$item_key]['quantity'] ?? 0;
+                        $_SESSION['cart'][$item_key] = [
+                            'quantity' => $quantity,
+                            'addon' => $addon_id ?? ($_SESSION['cart'][$item_key]['addon'] ?? null)
+                        ];
+                        if ($addon_id !== null) {
+                            $message = $previous_quantity == 0 ? 'Item added with add-on' : 'Item updated with add-on';
+                        } else {
+                            $message = $previous_quantity < $quantity ? 'Item quantity increased' : 
+                                       ($previous_quantity > $quantity ? 'Item quantity decreased' : 'Cart updated');
+                        }
+                    }
                 } else {
-                    $_SESSION['cart'][$item_key] = $quantity;
-                    $message = 'Cart updated';
+                    if ($quantity <= 0) {
+                        unset($_SESSION['cart'][$item_key]);
+                        $message = 'Item removed from cart';
+                    } else {
+                        $previous_quantity = $_SESSION['cart'][$item_key] ?? 0;
+                        $_SESSION['cart'][$item_key] = $quantity;
+                        $message = $previous_quantity < $quantity ? 'Item quantity increased' : 
+                                   ($previous_quantity > $quantity ? 'Item quantity decreased' : 'Cart updated');
+                    }
                 }
                 break;
 

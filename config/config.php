@@ -184,6 +184,21 @@ function translateText($texts, $sourceLang, $targetLang, $conn) {
 
     return $translated_texts;
 }
+
+// Function to get add-ons for a specific category
+function getAddonsForCategory($category, $conn) {
+    $stmt = $conn->prepare("SELECT id, name, price FROM addons WHERE category = ? ORDER BY id ASC");
+    $stmt->bind_param("s", $category);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $addons = [];
+    while ($row = $result->fetch_assoc()) {
+        $addons[] = $row;
+    }
+    $stmt->close();
+    return $addons;
+}
+
 include_once __DIR__ . '/cache-buster.php';
 
 function addCacheBuster($url) {
