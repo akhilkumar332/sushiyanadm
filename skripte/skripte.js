@@ -599,8 +599,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Final order page
     const pagePath = window.location.pathname;
     if (pagePath !== '/index.php' && pagePath !== '/view/online-orders.php') {
-        const inactivityTimeout = 1 * 60 * 1000; // 1 minute
-        const timerThreshold = 1 * 30 * 1000; // 30 seconds
+        const inactivityTimeout = 2 * 60 * 1000; // 2 minutes
+        const timerThreshold = 3 * 30 * 1000; // 30 seconds
         const countdownDuration = 30 * 1000; // 30 seconds countdown
         let lastActivityTime = Date.now();
         let countdownInterval = null;
